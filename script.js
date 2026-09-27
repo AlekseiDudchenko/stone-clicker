@@ -44,6 +44,10 @@ const STORM_STONES_PER_SWIRL = 75;
 const BASE_STORM_COST = 12000;
 const STORM_COST_GROWTH = 1.4;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
+const SILVERFISH_UNLOCK_TOTAL = 100;
+const SILVERFISH_BASE_INTERVAL = 16000;
+const SILVERFISH_MIN_INTERVAL = 6500;
+const SILVERFISH_MAX_COUNT = 6;
 
 const TRANSLATIONS = {
   en: {
@@ -289,6 +293,7 @@ function createInitialState() {
     holeProgressMs: 0,
     storms: 0,
     stormProgressMs: 0,
+    silverfishProgressMs: 0,
     desertIntroSeen: false,
     stoneSkin: 'classic',
     language: 'en',
@@ -348,6 +353,9 @@ function loadState() {
       storms: Number.isFinite(saved.storms) ? Math.min(MAX_STORMS, Math.max(0, Math.floor(saved.storms))) : 0,
       stormProgressMs: Number.isFinite(saved.stormProgressMs)
         ? Math.min(STORM_INTERVAL - 1, Math.max(0, saved.stormProgressMs))
+        : 0,
+      silverfishProgressMs: Number.isFinite(saved.silverfishProgressMs)
+        ? Math.max(0, saved.silverfishProgressMs)
         : 0,
       desertIntroSeen: saved.desertIntroSeen === true,
       stoneSkin: ['classic', 'desert'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
@@ -730,6 +738,108 @@ function renderBiome() {
   saveState();
 }
 
+
+function silverfishLevel() {
+  if (state.totalStones < SILVERFISH_UNLOCK_TOTAL) return 0;
+  return Math.max(1, Math.floor(Math.log10(Math.max(state.totalStones, SILVERFISH_UNLOCK_TOTAL))) - 1);
+}
+
+function silverfishInterval() {
+  const level = silverfishLevel();
+  if (level === 0) return Infinity;
+  return Math.max(SILVERFISH_MIN_INTERVAL, SILVERFISH_BASE_INTERVAL - (level - 1) * 1100);
+}
+
+function silverfishCount() {
+  const level = silverfishLevel();
+  if (level === 0) return 0;
+  return Math.min(SILVERFISH_MAX_COUNT, 1 + Math.floor((level - 1) / 2));
+}
+
+function silverfishStealPerBug() {
+  const level = silverfishLevel();
+  if (level === 0 || state.stones <= 0) return 0;
+  const percentage = 0.006 + level * 0.002;
+  return Math.max(1, Math.floor(state.stones * percentage));
+}
+
+function calculateSilverfishTheft() {
+  const count = silverfishCount();
+  if (count === 0 || state.stones <= 0) return { count: 0, stolen: 0 };
+
+  const wanted = count * silverfishStealPerBug();
+  const attackCap = Math.max(1, Math.floor(state.stones * 0.12));
+  return { count, stolen: Math.min(state.stones, wanted, attackCap) };
+}
+
+function spawnSilverfishVisual(count, stolen) {
+  const rect = stone.getBoundingClientRect();
+  const centerX = rect.left + rect.width * 0.5;
+  const centerY = rect.top + rect.height * 0.58;
+
+  for (let index = 0; index < count; index += 1) {
+    const bug = document.createElement('span');
+    bug.className = 'silverfish';
+    const angle = ((index / Math.max(1, count)) * Math.PI * 2) + (Math.random() - 0.5) * 0.7;
+    const distance = 95 + Math.random() * 85;
+    bug.style.left = `${centerX}px`;
+    bug.style.top = `${centerY}px`;
+    bug.style.setProperty('--silverfish-x', `${Math.cos(angle) * distance}px`);
+    bug.style.setProperty('--silverfish-y', `${Math.sin(angle) * distance}px`);
+    bug.style.animationDelay = `${index * 65}ms`;
+    document.body.append(bug);
+    bug.addEventListener('animationend', () => bug.remove());
+  }
+
+  if (stolen > 0) {
+    const label = document.createElement('span');
+    label.className = 'silverfish-theft';
+    label.textContent = `-${formatNumber(stolen)} 🪨`;
+    label.style.left = `${centerX}px`;
+    label.style.top = `${rect.top + rect.height * 0.28}px`;
+    document.body.append(label);
+    label.addEventListener('animationend', () => label.remove());
+  }
+
+  stone.classList.remove('stone--silverfish-hit');
+  void stone.offsetWidth;
+  stone.classList.add('stone--silverfish-hit');
+  window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 480);
+}
+
+function triggerSilverfishAttack(showVisual = true) {
+  const { count, stolen } = calculateSilverfishTheft();
+  if (count === 0 || stolen === 0) return 0;
+
+  state.stones = Math.max(0, state.stones - stolen);
+  if (showVisual) spawnSilverfishVisual(count, stolen);
+  return stolen;
+}
+
+function applyOfflineSilverfishTheft(elapsedMs) {
+  if (silverfishLevel() === 0 || state.stones <= 0 || elapsedMs <= 0) return;
+
+  const interval = silverfishInterval();
+  const accumulated = state.silverfishProgressMs + elapsedMs;
+  const attacks = Math.floor(accumulated / interval);
+  state.silverfishProgressMs = accumulated % interval;
+  if (attacks <= 0) return;
+
+  const startingStones = state.stones;
+  const offlineCap = Math.floor(startingStones * Math.min(0.35, 0.08 + silverfishLevel() * 0.04));
+  let stolenOffline = 0;
+
+  for (let index = 0; index < attacks && state.stones > 0 && stolenOffline < offlineCap; index += 1) {
+    const stolen = triggerSilverfishAttack(false);
+    if (stolen <= 0) break;
+    stolenOffline += stolen;
+  }
+
+  if (stolenOffline > offlineCap) {
+    state.stones += stolenOffline - offlineCap;
+  }
+}
+
 function render() {
   const stonesText = formatNumber(state.stones);
   counter.setAttribute('aria-label', tf('stonesAria', { count: stonesText }));
@@ -1071,6 +1181,7 @@ function applyOfflineProgress() {
   } else {
     state.stormProgressMs = 0;
   }
+  applyOfflineSilverfishTheft(elapsedMs);
   state.lastSaved = Date.now();
 }
 
@@ -1088,6 +1199,7 @@ function tick() {
   if (state.tractors > 0) state.tractorProgressMs += elapsedMs;
   if (state.holes > 0) state.holeProgressMs += elapsedMs;
   if (state.storms > 0) state.stormProgressMs += elapsedMs;
+  if (silverfishLevel() > 0) state.silverfishProgressMs += elapsedMs;
   lastTick = now;
 
   const completedDrops = Math.floor(state.crewProgressMs / CREW_DROP_INTERVAL);
@@ -1153,6 +1265,12 @@ function tick() {
     playStormSwirl();
   }
 
+  const currentSilverfishInterval = silverfishInterval();
+  if (silverfishLevel() > 0 && state.silverfishProgressMs >= currentSilverfishInterval) {
+    state.silverfishProgressMs %= currentSilverfishInterval;
+    triggerSilverfishAttack(true);
+  }
+
   render();
 }
 
@@ -1174,7 +1292,7 @@ resetProgressButton.addEventListener('click', () => {
 
   biomeBanner.classList.remove('biome-banner--show');
   biomeBanner.hidden = true;
-  document.querySelectorAll('.flying-stone').forEach((element) => element.remove());
+  document.querySelectorAll('.flying-stone, .silverfish, .silverfish-theft').forEach((element) => element.remove());
 
   applyTranslations();
   saveState();
