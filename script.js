@@ -44,10 +44,10 @@ const STORM_STONES_PER_SWIRL = 75;
 const BASE_STORM_COST = 12000;
 const STORM_COST_GROWTH = 1.4;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
-const SILVERFISH_UNLOCK_TOTAL = 100;
-const SILVERFISH_BASE_INTERVAL = 16000;
-const SILVERFISH_MIN_INTERVAL = 6500;
-const SILVERFISH_MAX_COUNT = 6;
+const SILVERFISH_UNLOCK_TOTAL = 20;
+const SILVERFISH_BASE_INTERVAL = 8000;
+const SILVERFISH_MIN_INTERVAL = 3500;
+const SILVERFISH_MAX_COUNT = 5;
 
 const TRANSLATIONS = {
   en: {
@@ -747,7 +747,7 @@ function silverfishLevel() {
 function silverfishInterval() {
   const level = silverfishLevel();
   if (level === 0) return Infinity;
-  return Math.max(SILVERFISH_MIN_INTERVAL, SILVERFISH_BASE_INTERVAL - (level - 1) * 1100);
+  return Math.max(SILVERFISH_MIN_INTERVAL, SILVERFISH_BASE_INTERVAL - (level - 1) * 750);
 }
 
 function silverfishCount() {
@@ -772,33 +772,73 @@ function calculateSilverfishTheft() {
   return { count, stolen: Math.min(state.stones, wanted, attackCap) };
 }
 
+function silverfishHitPoints() {
+  const level = silverfishLevel();
+  return Math.min(12, 3 + level * 2);
+}
+
+function showSilverfishHit(bug, remaining) {
+  const hp = bug.querySelector('.silverfish__hp');
+  if (hp) hp.textContent = '❤'.repeat(Math.max(0, remaining));
+
+  bug.classList.remove('silverfish--hit');
+  void bug.offsetWidth;
+  bug.classList.add('silverfish--hit');
+}
+
 function spawnSilverfishVisual(count, stolen) {
   const rect = stone.getBoundingClientRect();
   const centerX = rect.left + rect.width * 0.5;
-  const centerY = rect.top + rect.height * 0.58;
+  const centerY = rect.top + rect.height * 0.56;
+  const hpPerBug = silverfishHitPoints();
 
   for (let index = 0; index < count; index += 1) {
-    const bug = document.createElement('span');
+    const bug = document.createElement('button');
+    bug.type = 'button';
     bug.className = 'silverfish';
+    bug.setAttribute('aria-label', 'Silverfish');
 
     const side = index % 2 === 0 ? -1 : 1;
-    const spread = 190 + Math.random() * 150;
-    const vertical = (Math.random() - 0.5) * 150;
+    const spread = 260 + Math.random() * 160;
+    const vertical = (Math.random() - 0.5) * 190;
     const startX = centerX + side * spread;
     const startY = centerY + vertical;
+    const targetOffsetX = side * (55 + (index % 3) * 26);
+    const targetOffsetY = -55 + (index % 3) * 48;
 
     bug.style.left = `${startX}px`;
     bug.style.top = `${startY}px`;
-    bug.style.setProperty('--to-stone-x', `${centerX - startX}px`);
-    bug.style.setProperty('--to-stone-y', `${centerY - startY}px`);
-    bug.style.setProperty('--leave-x', `${side * (90 + Math.random() * 90)}px`);
-    bug.style.setProperty('--leave-y', `${(Math.random() - 0.5) * 90}px`);
-    bug.style.animationDelay = `${index * 90}ms`;
+    bug.style.setProperty('--to-stone-x', `${centerX + targetOffsetX - startX}px`);
+    bug.style.setProperty('--to-stone-y', `${centerY + targetOffsetY - startY}px`);
+    bug.style.animationDelay = `${index * 100}ms`;
+
+    let hp = hpPerBug;
+    const hpLabel = document.createElement('span');
+    hpLabel.className = 'silverfish__hp';
+    hpLabel.textContent = '❤'.repeat(hp);
+    bug.append(hpLabel);
+
+    bug.addEventListener('click', (event) => {
+      event.stopPropagation();
+      hp -= 1;
+
+      if (hp <= 0) {
+        bug.disabled = true;
+        bug.classList.add('silverfish--defeated');
+        window.setTimeout(() => bug.remove(), 320);
+        return;
+      }
+
+      showSilverfishHit(bug, hp);
+    });
+
     document.body.append(bug);
-    bug.addEventListener('animationend', () => bug.remove());
   }
 
-  if (stolen > 0) {
+  window.setTimeout(() => {
+    if (stolen <= 0) return;
+    state.stones = Math.max(0, state.stones - stolen);
+
     const label = document.createElement('span');
     label.className = 'silverfish-theft';
     label.textContent = `-${formatNumber(stolen)} 🪨`;
@@ -806,20 +846,24 @@ function spawnSilverfishVisual(count, stolen) {
     label.style.top = `${rect.top + rect.height * 0.24}px`;
     document.body.append(label);
     label.addEventListener('animationend', () => label.remove());
-  }
 
-  stone.classList.remove('stone--silverfish-hit');
-  void stone.offsetWidth;
-  stone.classList.add('stone--silverfish-hit');
-  window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 900);
+    stone.classList.remove('stone--silverfish-hit');
+    void stone.offsetWidth;
+    stone.classList.add('stone--silverfish-hit');
+    window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 900);
+    render();
+  }, 1100);
 }
 
 function triggerSilverfishAttack(showVisual = true) {
   const { count, stolen } = calculateSilverfishTheft();
   if (count === 0 || stolen === 0) return 0;
 
-  state.stones = Math.max(0, state.stones - stolen);
-  if (showVisual) spawnSilverfishVisual(count, stolen);
+  if (showVisual) {
+    spawnSilverfishVisual(count, stolen);
+  } else {
+    state.stones = Math.max(0, state.stones - stolen);
+  }
   return stolen;
 }
 
