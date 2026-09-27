@@ -44,10 +44,10 @@ const STORM_STONES_PER_SWIRL = 75;
 const BASE_STORM_COST = 12000;
 const STORM_COST_GROWTH = 1.4;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
-const SILVERFISH_UNLOCK_TOTAL = 20;
-const SILVERFISH_BASE_INTERVAL = 6500;
-const SILVERFISH_MIN_INTERVAL = 2800;
-const SILVERFISH_MAX_COUNT = 10;
+const SILVERFISH_UNLOCK_TOTAL = 1000;
+const SILVERFISH_BASE_INTERVAL = 45000;
+const SILVERFISH_MIN_INTERVAL = 30000;
+const SILVERFISH_MAX_COUNT = 4;
 
 const TRANSLATIONS = {
   en: {
@@ -747,13 +747,13 @@ function silverfishLevel() {
 function silverfishInterval() {
   const level = silverfishLevel();
   if (level === 0) return Infinity;
-  return Math.max(SILVERFISH_MIN_INTERVAL, SILVERFISH_BASE_INTERVAL - (level - 1) * 750);
+  return Math.max(SILVERFISH_MIN_INTERVAL, SILVERFISH_BASE_INTERVAL - (level - 1) * 1800);
 }
 
 function silverfishCount() {
   const level = silverfishLevel();
   if (level === 0) return 0;
-  return Math.min(SILVERFISH_MAX_COUNT, 2 + Math.floor(level * 1.5));
+  return Math.min(SILVERFISH_MAX_COUNT, 2 + Math.floor((level - 1) / 2));
 }
 
 function silverfishStealPerBug() {
@@ -778,7 +778,7 @@ function calculateSilverfishTheft() {
 
 function silverfishHitPoints() {
   const level = silverfishLevel();
-  return Math.min(24, 8 + level * 3);
+  return Math.min(10, 4 + level);
 }
 
 function showSilverfishHit(bug, remaining) {
@@ -819,16 +819,29 @@ function spawnSilverfishVisual(count) {
 
     let hp = hpPerBug;
     let stealTimer = null;
+    let stealCount = 0;
 
     const hpLabel = document.createElement('span');
     hpLabel.className = 'silverfish__hp';
     hpLabel.textContent = `${hp} HP`;
     bug.append(hpLabel);
 
+    const finishEventForBug = () => {
+      if (stealTimer) {
+        window.clearInterval(stealTimer);
+        stealTimer = null;
+      }
+      if (!bug.isConnected || bug.disabled) return;
+      bug.disabled = true;
+      bug.classList.add('silverfish--defeated');
+      window.setTimeout(() => bug.remove(), 320);
+    };
+
     const stealOnce = () => {
       if (!bug.isConnected || bug.disabled || state.stones <= 0) return;
       const stolen = Math.min(state.stones, silverfishStealPerBug());
       if (stolen <= 0) return;
+      stealCount += 1;
 
       state.stones = Math.max(0, state.stones - stolen);
 
@@ -846,6 +859,8 @@ function spawnSilverfishVisual(count) {
       stone.classList.add('stone--silverfish-hit');
       window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 900);
       render();
+
+      if (stealCount >= 3) finishEventForBug();
     };
 
     bug.addEventListener('click', (event) => {
@@ -854,10 +869,7 @@ function spawnSilverfishVisual(count) {
       hpLabel.textContent = `${Math.max(0, hp)} HP`;
 
       if (hp <= 0) {
-        if (stealTimer) window.clearInterval(stealTimer);
-        bug.disabled = true;
-        bug.classList.add('silverfish--defeated');
-        window.setTimeout(() => bug.remove(), 320);
+        finishEventForBug();
         return;
       }
 
@@ -870,7 +882,7 @@ function spawnSilverfishVisual(count) {
       if (!bug.isConnected || bug.disabled) return;
       bug.classList.add('silverfish--at-stone');
       stealOnce();
-      stealTimer = window.setInterval(stealOnce, 1800);
+      if (!bug.disabled) stealTimer = window.setInterval(stealOnce, 3200);
     }, arrivalDelay);
   }
 }
@@ -897,7 +909,7 @@ function applyOfflineSilverfishTheft(elapsedMs) {
   if (attacks <= 0) return;
 
   const startingStones = state.stones;
-  const offlineCap = Math.floor(startingStones * Math.min(0.5, 0.12 + silverfishLevel() * 0.05));
+  const offlineCap = Math.floor(startingStones * Math.min(0.18, 0.06 + silverfishLevel() * 0.02));
   let stolenOffline = 0;
 
   for (let index = 0; index < attacks && state.stones > 0 && stolenOffline < offlineCap; index += 1) {
@@ -1337,7 +1349,11 @@ function tick() {
   }
 
   const currentSilverfishInterval = silverfishInterval();
-  if (silverfishLevel() > 0 && state.silverfishProgressMs >= currentSilverfishInterval) {
+  if (
+    silverfishLevel() > 0
+    && state.silverfishProgressMs >= currentSilverfishInterval
+    && !document.querySelector('.silverfish')
+  ) {
     state.silverfishProgressMs %= currentSilverfishInterval;
     triggerSilverfishAttack(true);
   }
