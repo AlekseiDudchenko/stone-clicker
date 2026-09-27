@@ -791,6 +791,7 @@ function spawnSilverfishVisual(count, stolen) {
   const centerX = rect.left + rect.width * 0.5;
   const centerY = rect.top + rect.height * 0.56;
   const hpPerBug = silverfishHitPoints();
+  let survivingBugs = count;
 
   for (let index = 0; index < count; index += 1) {
     const bug = document.createElement('button');
@@ -823,6 +824,7 @@ function spawnSilverfishVisual(count, stolen) {
       hp -= 1;
 
       if (hp <= 0) {
+        survivingBugs = Math.max(0, survivingBugs - 1);
         bug.disabled = true;
         bug.classList.add('silverfish--defeated');
         window.setTimeout(() => bug.remove(), 320);
@@ -836,12 +838,13 @@ function spawnSilverfishVisual(count, stolen) {
   }
 
   window.setTimeout(() => {
-    if (stolen <= 0) return;
-    state.stones = Math.max(0, state.stones - stolen);
+    if (stolen <= 0 || survivingBugs <= 0) return;
+    const actualStolen = Math.max(1, Math.floor(stolen * (survivingBugs / count)));
+    state.stones = Math.max(0, state.stones - actualStolen);
 
     const label = document.createElement('span');
     label.className = 'silverfish-theft';
-    label.textContent = `-${formatNumber(stolen)} 🪨`;
+    label.textContent = `-${formatNumber(actualStolen)} 🪨`;
     label.style.left = `${centerX}px`;
     label.style.top = `${rect.top + rect.height * 0.24}px`;
     document.body.append(label);
