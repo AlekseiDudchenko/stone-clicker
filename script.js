@@ -44,10 +44,11 @@ const STORM_STONES_PER_SWIRL = 75;
 const BASE_STORM_COST = 12000;
 const STORM_COST_GROWTH = 1.4;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
-const SILVERFISH_UNLOCK_TOTAL = 1000;
-const SILVERFISH_BASE_INTERVAL = 45000;
-const SILVERFISH_MIN_INTERVAL = 30000;
-const SILVERFISH_MAX_COUNT = 4;
+const SILVERFISH_UNLOCK_TOTAL = 5000;
+const SILVERFISH_EVENT_VERSION = 2;
+const SILVERFISH_MIN_INTERVAL = 60 * 1000;
+const SILVERFISH_MAX_INTERVAL = 20 * 60 * 1000;
+const SILVERFISH_MAX_COUNT = 3;
 
 const TRANSLATIONS = {
   en: {
@@ -294,6 +295,8 @@ function createInitialState() {
     storms: 0,
     stormProgressMs: 0,
     silverfishProgressMs: 0,
+    silverfishNextIntervalMs: 0,
+    silverfishEventVersion: SILVERFISH_EVENT_VERSION,
     desertIntroSeen: false,
     stoneSkin: 'classic',
     language: 'en',
@@ -354,9 +357,15 @@ function loadState() {
       stormProgressMs: Number.isFinite(saved.stormProgressMs)
         ? Math.min(STORM_INTERVAL - 1, Math.max(0, saved.stormProgressMs))
         : 0,
-      silverfishProgressMs: Number.isFinite(saved.silverfishProgressMs)
-        ? Math.max(0, saved.silverfishProgressMs)
-        : 0,
+      silverfishProgressMs:
+        saved.silverfishEventVersion === SILVERFISH_EVENT_VERSION && Number.isFinite(saved.silverfishProgressMs)
+          ? Math.max(0, saved.silverfishProgressMs)
+          : 0,
+      silverfishNextIntervalMs:
+        saved.silverfishEventVersion === SILVERFISH_EVENT_VERSION && Number.isFinite(saved.silverfishNextIntervalMs)
+          ? Math.min(SILVERFISH_MAX_INTERVAL, Math.max(SILVERFISH_MIN_INTERVAL, saved.silverfishNextIntervalMs))
+          : 0,
+      silverfishEventVersion: SILVERFISH_EVENT_VERSION,
       desertIntroSeen: saved.desertIntroSeen === true,
       stoneSkin: ['classic', 'desert'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
       language: ['en', 'ru', 'de'].includes(saved.language) ? saved.language : 'en',
@@ -744,16 +753,25 @@ function silverfishLevel() {
   return Math.max(1, Math.floor(Math.log10(Math.max(state.totalStones, SILVERFISH_UNLOCK_TOTAL))) - 1);
 }
 
+function chooseSilverfishInterval() {
+  return Math.floor(
+    SILVERFISH_MIN_INTERVAL
+      + Math.random() * (SILVERFISH_MAX_INTERVAL - SILVERFISH_MIN_INTERVAL),
+  );
+}
+
 function silverfishInterval() {
-  const level = silverfishLevel();
-  if (level === 0) return Infinity;
-  return Math.max(SILVERFISH_MIN_INTERVAL, SILVERFISH_BASE_INTERVAL - (level - 1) * 1800);
+  if (silverfishLevel() === 0) return Infinity;
+  if (!Number.isFinite(state.silverfishNextIntervalMs) || state.silverfishNextIntervalMs < SILVERFISH_MIN_INTERVAL) {
+    state.silverfishNextIntervalMs = chooseSilverfishInterval();
+  }
+  return state.silverfishNextIntervalMs;
 }
 
 function silverfishCount() {
   const level = silverfishLevel();
   if (level === 0) return 0;
-  return Math.min(SILVERFISH_MAX_COUNT, 2 + Math.floor((level - 1) / 2));
+  return Math.min(SILVERFISH_MAX_COUNT, 1 + Math.floor(level / 2));
 }
 
 function silverfishStealPerBug() {
@@ -900,27 +918,24 @@ function triggerSilverfishAttack(showVisual = true) {
 }
 
 function applyOfflineSilverfishTheft(elapsedMs) {
-  if (silverfishLevel() === 0 || state.stones <= 0 || elapsedMs <= 0) return;
-
-  const interval = silverfishInterval();
-  const accumulated = state.silverfishProgressMs + elapsedMs;
-  const attacks = Math.floor(accumulated / interval);
-  state.silverfishProgressMs = accumulated % interval;
-  if (attacks <= 0) return;
-
-  const startingStones = state.stones;
-  const offlineCap = Math.floor(startingStones * Math.min(0.18, 0.06 + silverfishLevel() * 0.02));
-  let stolenOffline = 0;
-
-  for (let index = 0; index < attacks && state.stones > 0 && stolenOffline < offlineCap; index += 1) {
-    const stolen = triggerSilverfishAttack(false);
-    if (stolen <= 0) break;
-    stolenOffline += stolen;
+  if (silverfishLevel() === 0 || state.stones <= 0 || elapsedMs <= 0) {
+    state.silverfishProgressMs = 0;
+    return;
   }
 
-  if (stolenOffline > offlineCap) {
-    state.stones += stolenOffline - offlineCap;
+  // Visible silverfish events should never be waiting at the door when the player opens the game.
+  // Offline time may cause at most one small missed-event penalty, then the visible timer starts fresh.
+  const missedEventThreshold = silverfishInterval();
+  if (elapsedMs >= missedEventThreshold) {
+    const { stolen } = calculateSilverfishTheft();
+    if (stolen > 0) {
+      const offlineCap = Math.max(1, Math.floor(state.stones * 0.08));
+      state.stones = Math.max(0, state.stones - Math.min(stolen, offlineCap));
+    }
   }
+
+  state.silverfishProgressMs = 0;
+  state.silverfishNextIntervalMs = chooseSilverfishInterval();
 }
 
 function render() {
@@ -1354,8 +1369,10 @@ function tick() {
     && state.silverfishProgressMs >= currentSilverfishInterval
     && !document.querySelector('.silverfish')
   ) {
-    state.silverfishProgressMs %= currentSilverfishInterval;
+    state.silverfishProgressMs = 0;
+    state.silverfishNextIntervalMs = chooseSilverfishInterval();
     triggerSilverfishAttack(true);
+    saveState();
   }
 
   render();
