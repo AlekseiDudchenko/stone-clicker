@@ -9,47 +9,327 @@
   <body>
     <div class="layout">
       <main class="game" aria-label="Stone Clicker">
+        <label class="language-switcher" for="language-select">
+          <span aria-hidden="true">&#127760;</span>
+          <select id="language-select" aria-label="Language">
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </label>
         <header class="stats">
-          <output id="stone-count" class="counter" aria-live="polite">Stones: 0</output>
-          <p id="stone-rate" class="rate">per second: 0</p>
-          <p id="click-power" class="click-power">per click: 1</p>
+          <p id="biome-chip" class="biome-chip" hidden><span data-i18n="unlockedBiome">Unlocked biome</span> · <strong data-i18n="desert">Desert</strong></p>
+          <output id="stone-count" class="counter" aria-live="polite">
+            <span data-i18n="stonesLabel">Stones</span>: <span id="stone-value" class="number stone-number" aria-hidden="true"><span class="stone-digit">0</span></span>
+          </output>
+          <p class="stat-line"><span data-i18n="perSecond">per second</span>: <span id="rate-value" class="number">1</span></p>
+          <p class="stat-line"><span data-i18n="perClick">per click</span>: <span class="number">1</span></p>
         </header>
 
-        <button id="stone" class="stone" type="button" aria-label="Collect stones"></button>
+        <div id="biome-banner" class="biome-banner" role="status" aria-live="polite" hidden>
+          <span class="biome-banner__eyebrow" data-i18n="newBiome">New biome</span>
+          <strong class="biome-banner__title" data-i18n="desertUpper">DESERT</strong>
+        </div>
 
-        <p id="total-stats" class="total-stats"></p>
+        <div class="stone-stage">
+          <button id="stone" class="stone" type="button" aria-label="Collect a stone"></button>
+          <div class="skin-picker" role="group" aria-labelledby="skin-picker-label">
+            <span id="skin-picker-label" class="skin-picker__label" data-i18n="stoneSkins">Stone skins</span>
+            <button class="skin-option skin-option--classic" type="button" data-stone-skin="classic" aria-pressed="true">
+              <span class="skin-option__preview" aria-hidden="true"></span>
+              <span data-i18n="classicSkin">Classic</span>
+            </button>
+            <button class="skin-option skin-option--desert" type="button" data-stone-skin="desert" aria-pressed="false">
+              <span class="skin-option__preview" aria-hidden="true"></span>
+              <span data-i18n="desertSkin">Desert</span>
+              <span class="skin-option__lock" data-i18n="lockedShort">🔒</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="total-stats">
+          <span data-i18n="totalMined">Total mined</span>: <span id="total-value" class="number">0</span>
+          <span class="stat-separator" aria-hidden="true">·</span>
+          <span data-i18n="clicks">Clicks</span>: <span id="clicks-value" class="number">0</span>
+        </p>
       </main>
 
-      <aside class="shop" aria-label="Shop">
-        <section class="shop__section">
-          <h2 class="shop__title">Upgrades</h2>
-          <div id="upgrades" class="upgrades"></div>
-          <p id="upgrades-empty" class="shop__empty">Keep digging to unlock upgrades.</p>
-        </section>
+      <aside class="future-panel" aria-label="Future updates">
+        <div class="future-list">
+          <section class="future-strip crew-card" aria-labelledby="crew-title">
+            <div class="crew-card__heading">
+              <span class="crew-card__hero" aria-hidden="true">&#128100;</span>
+              <div>
+                <h2 id="crew-title" class="crew-card__title" data-i18n="crewTitle">Stone Crew</h2>
+                <p class="crew-card__description" data-i18n="crewDescription">Every second, the crew throws stones at the poor guy. You keep them.</p>
+              </div>
+            </div>
 
-        <section class="shop__section">
-          <h2 class="shop__title">Buildings</h2>
-          <div id="buildings" class="buildings"></div>
-        </section>
+            <div class="crew-action">
+              <div id="crew-roster" class="crew-roster" aria-label="1 of 8 people hired">
+                <span class="crew-person crew-person--active" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+                <span class="crew-person" aria-hidden="true"></span>
+              </div>
 
-        <section class="shop__section">
-          <h2 class="shop__title">Prizes <span id="prizes-count" class="shop__count"></span></h2>
-          <div id="prizes" class="prizes"></div>
-        </section>
+              <span class="crew-route" aria-hidden="true">&#8594;</span>
 
-        <section class="shop__section">
-          <h2 class="shop__title">Themes</h2>
-          <div id="themes" class="themes"></div>
-        </section>
+              <div id="crew-target" class="crew-target" aria-label="Stone collector">
+                <span class="crew-target__person" aria-hidden="true">
+                  <span class="crew-target__face">&gt;﹏&lt;</span>
+                  <span class="crew-target__pain">&#10022;</span>
+                </span>
+                <span class="crew-target__label" data-i18n="poorGuy">Poor guy</span>
+              </div>
+            </div>
 
-        <button id="reset" class="reset" type="button">Reset progress</button>
+            <div class="crew-card__footer">
+              <p class="crew-card__count"><span id="crew-count" class="number">1</span> / 8 <span data-i18n="people">people</span></p>
+              <button id="hire-person" class="hire-button" type="button">
+                <span id="hire-label">Hire</span>
+                <span id="hire-price"><span id="crew-cost" class="number">10</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip sales-card" aria-labelledby="sales-title">
+            <div class="sales-card__heading">
+              <span class="sales-card__hero" aria-hidden="true">&#9935;</span>
+              <div>
+                <h2 id="sales-title" class="sales-card__title" data-i18n="salesTitle">Sales</h2>
+                <p class="sales-card__description" data-i18n="salesDescription">Each recruit mines 1.5 stones per second with a pickaxe.</p>
+              </div>
+            </div>
+
+            <div id="sales-roster" class="sales-roster" aria-label="0 of 8 Sales recruits hired">
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+              <span class="sales-person" aria-hidden="true"><span class="sales-person__pickaxe">&#9935;</span></span>
+            </div>
+
+            <div class="sales-card__footer">
+              <p class="sales-card__count"><span id="sales-count" class="number">0</span> / 8 <span data-i18n="salesPeople">Sales</span></p>
+              <button id="recruit-sales" class="hire-button" type="button">
+                <span id="sales-hire-label">Recruit</span>
+                <span id="sales-hire-price"><span id="sales-cost" class="number">39</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip creators-card" aria-labelledby="creators-title">
+            <div class="creators-card__heading">
+              <span class="creators-card__hero" aria-hidden="true">&#9670;</span>
+              <div>
+                <h2 id="creators-title" class="creators-card__title" data-i18n="creatorsTitle">Diamond Creators</h2>
+                <p class="creators-card__description" data-i18n="creatorsDescription">Famous creators dig for diamonds. 2.5 stones per second each.</p>
+              </div>
+            </div>
+
+            <div id="creators-roster" class="creators-roster" aria-label="0 of 8 Diamond Creators invited">
+              <span class="creator-person creator-person--cyan" title="BastiGHG" aria-hidden="true"><span class="creator-person__mark">B</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--orange" title="Paluten" aria-hidden="true"><span class="creator-person__mark">P</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--lime" title="MrLololoshka" aria-hidden="true"><span class="creator-person__mark">&#9783;</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--purple" title="FixPlay" aria-hidden="true"><span class="creator-person__mark">F</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--cast" title="Heiko CastCrafter" aria-hidden="true"><span class="creator-person__mark">C</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--mrbeast" title="MrBeast" aria-hidden="true"><span class="creator-person__mark">M</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--wichtiger" title="Wichtiger" aria-hidden="true"><span class="creator-person__mark">W</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+              <span class="creator-person creator-person--black" title="Zombey" aria-hidden="true"><span class="creator-person__mark">Z</span><span class="creator-person__pickaxe">&#9935;</span><span class="creator-person__diamond">&#9670;</span></span>
+            </div>
+
+            <div class="creators-card__footer">
+              <p class="creators-card__count"><span id="creators-count" class="number">0</span> / 8 <span data-i18n="creators">creators</span></p>
+              <button id="invite-creator" class="hire-button" type="button">
+                <span id="creator-hire-label">Invite</span>
+                <span id="creator-hire-price"><span id="creator-cost" class="number">95</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip water-card" aria-labelledby="water-title">
+            <div class="water-card__heading">
+              <span class="water-card__hero" aria-hidden="true">&#128167;</span>
+              <div>
+                <h2 id="water-title" class="water-card__title" data-i18n="waterTitle">Water Sources</h2>
+                <p class="water-card__description" data-i18n="waterDescription">Each flowing source brings 4 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="water-roster" class="water-roster" aria-label="0 of 8 Water Sources built">
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+              <span class="water-source" aria-hidden="true"><span class="water-source__drop"></span></span>
+            </div>
+
+            <div class="water-card__footer">
+              <p class="water-card__count"><span id="water-count" class="number">0</span> / 8 <span data-i18n="sources">sources</span></p>
+              <button id="build-water" class="hire-button" type="button">
+                <span id="water-build-label">Build</span>
+                <span id="water-build-price"><span id="water-cost" class="number">220</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip diggers-card" aria-labelledby="diggers-title">
+            <div class="diggers-card__heading">
+              <span class="diggers-card__hero" aria-hidden="true"><span class="shovel-icon"></span></span>
+              <div>
+                <h2 id="diggers-title" class="diggers-card__title" data-i18n="diggersTitle">Shovel Diggers</h2>
+                <p class="diggers-card__description" data-i18n="diggersDescription">Each digger shovels up 7 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="diggers-roster" class="diggers-roster" aria-label="0 of 8 Shovel Diggers hired">
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+              <span class="digger-person" aria-hidden="true"><span class="digger-person__shovel"></span></span>
+            </div>
+
+            <div class="diggers-card__footer">
+              <p class="diggers-card__count"><span id="diggers-count" class="number">0</span> / 8 <span data-i18n="diggers">diggers</span></p>
+              <button id="hire-digger" class="hire-button" type="button">
+                <span id="digger-hire-label">Hire</span>
+                <span id="digger-hire-price"><span id="digger-cost" class="number">520</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip cactus-card" aria-labelledby="cactus-title">
+            <div class="cactus-card__heading">
+              <span class="cactus-card__hero" aria-hidden="true">&#127797;</span>
+              <div>
+                <h2 id="cactus-title" class="cactus-card__title" data-i18n="cactusTitle">Stone Cacti</h2>
+                <p class="cactus-card__description" data-i18n="cactusDescription">Each cactus grows 12 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="cactus-roster" class="cactus-roster" aria-label="0 of 8 Stone Cacti planted">
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+              <span class="cactus-plant" aria-hidden="true"><span class="cactus-plant__stone"></span></span>
+            </div>
+
+            <div class="cactus-card__footer">
+              <p class="cactus-card__count"><span id="cactus-count" class="number">0</span> / 8 <span data-i18n="cacti">cacti</span></p>
+              <button id="plant-cactus" class="hire-button" type="button">
+                <span id="cactus-buy-label">Plant</span>
+                <span id="cactus-buy-price"><span id="cactus-cost" class="number">1150</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip tractors-card" aria-labelledby="tractors-title">
+            <div class="tractors-card__heading">
+              <span class="tractors-card__hero" aria-hidden="true">&#128668;</span>
+              <div>
+                <h2 id="tractors-title" class="tractors-card__title" data-i18n="tractorsTitle">Sand Tractors</h2>
+                <p class="tractors-card__description" data-i18n="tractorsDescription">Each tractor scoops up 25 stones per second with its front bucket.</p>
+              </div>
+            </div>
+
+            <div id="tractors-roster" class="tractors-roster" aria-label="0 of 8 Sand Tractors bought">
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+              <span class="tractor-machine" aria-hidden="true"><span class="tractor-machine__bucket"></span></span>
+            </div>
+
+            <div class="tractors-card__footer">
+              <p class="tractors-card__count"><span id="tractors-count" class="number">0</span> / 8 <span data-i18n="tractors">tractors</span></p>
+              <button id="buy-tractor" class="hire-button" type="button">
+                <span id="tractor-buy-label">Buy</span>
+                <span id="tractor-buy-price"><span id="tractor-cost" class="number">3500</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip holes-card" aria-labelledby="holes-title">
+            <div class="holes-card__heading">
+              <span class="holes-card__hero" aria-hidden="true">&#128371;</span>
+              <div>
+                <h2 id="holes-title" class="holes-card__title" data-i18n="holesTitle">Stone Holes</h2>
+                <p class="holes-card__description" data-i18n="holesDescription">Stones tumble into each hole, bringing 48 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="holes-roster" class="holes-roster" aria-label="0 of 8 Stone Holes opened">
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+              <span class="stone-hole" aria-hidden="true"><span class="stone-hole__falling-stone"></span></span>
+            </div>
+
+            <div class="holes-card__footer">
+              <p class="holes-card__count"><span id="holes-count" class="number">0</span> / 8 <span data-i18n="holes">holes</span></p>
+              <button id="open-hole" class="hire-button" type="button">
+                <span id="hole-buy-label">Open</span>
+                <span id="hole-buy-price"><span id="hole-cost" class="number">6900</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <section class="future-strip storms-card" aria-labelledby="storms-title">
+            <div class="storms-card__heading">
+              <span class="storms-card__hero" aria-hidden="true">&#127786;</span>
+              <div>
+                <h2 id="storms-title" class="storms-card__title" data-i18n="stormsTitle">Sandstorms</h2>
+                <p class="storms-card__description" data-i18n="stormsDescription">Each desert whirlwind carries 75 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="storms-roster" class="storms-roster" aria-label="0 of 8 Sandstorms summoned">
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+              <span class="sandstorm" aria-hidden="true"><span class="sandstorm__dust"></span></span>
+            </div>
+
+            <div class="storms-card__footer">
+              <p class="storms-card__count"><span id="storms-count" class="number">0</span> / 8 <span data-i18n="storms">storms</span></p>
+              <button id="summon-storm" class="hire-button" type="button">
+                <span id="storm-buy-label">Summon</span>
+                <span id="storm-buy-price"><span id="storm-cost" class="number">12000</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
+          <div class="future-strip" aria-hidden="true"></div>
+          <div class="future-strip" aria-hidden="true"></div>
+          <div class="future-strip" aria-hidden="true"></div>
+          <div class="future-strip" aria-hidden="true"></div>
+          <div class="future-strip" aria-hidden="true"></div>
+          <div class="future-strip" aria-hidden="true"></div>
+        </div>
       </aside>
     </div>
 
-    <div id="toasts" class="toasts"></div>
-
-    <script src="themes.js"></script>
-    <script src="prizes.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -1,157 +1,479 @@
 const SAVE_KEY = 'stone-clicker-save-v1';
-const COST_GROWTH = 1.15;
-const MAX_OFFLINE_SECONDS = 60 * 60 * 8;
+const MAX_PEOPLE = 8;
+const CREW_DROP_INTERVAL = 1000;
+const BASE_PERSON_COST = 10;
+const PERSON_COST_GROWTH = 1.4;
+const MAX_SALES = 8;
+const SALES_INTERVAL = 1000;
+const SALES_STONES_PER_SWING = 1.5;
+const BASE_SALES_COST = 39;
+const SALES_COST_GROWTH = 1.4;
+const MAX_CREATORS = 8;
+const CREATOR_INTERVAL = 1000;
+const CREATOR_STONES_PER_SEARCH = 2.5;
+const BASE_CREATOR_COST = 95;
+const CREATOR_COST_GROWTH = 1.4;
+const MAX_WATER_SOURCES = 8;
+const WATER_INTERVAL = 1000;
+const WATER_STONES_PER_FLOW = 4;
+const BASE_WATER_COST = 220;
+const WATER_COST_GROWTH = 1.4;
+const MAX_DIGGERS = 8;
+const DIGGER_INTERVAL = 1000;
+const DIGGER_STONES_PER_SCOOP = 7;
+const BASE_DIGGER_COST = 520;
+const DIGGER_COST_GROWTH = 1.4;
+const MAX_CACTI = 8;
+const CACTUS_INTERVAL = 1000;
+const CACTUS_STONES_PER_GROWTH = 12;
+const BASE_CACTUS_COST = 1150;
+const CACTUS_COST_GROWTH = 1.4;
+const MAX_TRACTORS = 8;
+const TRACTOR_INTERVAL = 1000;
+const TRACTOR_STONES_PER_SCOOP = 25;
+const BASE_TRACTOR_COST = 3500;
+const TRACTOR_COST_GROWTH = 1.4;
+const MAX_HOLES = 8;
+const HOLE_INTERVAL = 1000;
+const HOLE_STONES_PER_DROP = 48;
+const BASE_HOLE_COST = 6900;
+const HOLE_COST_GROWTH = 1.4;
+const MAX_STORMS = 8;
+const STORM_INTERVAL = 1000;
+const STORM_STONES_PER_SWIRL = 75;
+const BASE_STORM_COST = 12000;
+const STORM_COST_GROWTH = 1.4;
+const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
 
-const BUILDINGS = [
-  { id: 'pebbler', name: 'Pebbler', icon: '🪨', baseCost: 15, rate: 0.1, description: 'Picks up pebbles nobody wanted.' },
-  { id: 'miner', name: 'Miner', icon: '⛏️', baseCost: 100, rate: 1, description: 'Swings a pickaxe with enthusiasm.' },
-  { id: 'quarry', name: 'Quarry', icon: '🏔️', baseCost: 1100, rate: 8, description: 'A big hole full of opportunity.' },
-  { id: 'drill', name: 'Drill Rig', icon: '🛠️', baseCost: 12000, rate: 47, description: 'Bores deep into the bedrock.' },
-  { id: 'golem', name: 'Stone Golem', icon: '🗿', baseCost: 130000, rate: 260, description: 'Made of stone, makes more stone.' },
-  { id: 'volcano', name: 'Volcano', icon: '🌋', baseCost: 1400000, rate: 1400, description: 'Cooks fresh rock from magma.' },
-  { id: 'meteor', name: 'Meteor Magnet', icon: '☄️', baseCost: 20000000, rate: 7800, description: 'Pulls asteroids out of the sky.' },
-];
-
-// Each upgrade unlocks once its requirement is met and applies a permanent effect.
-const UPGRADES = [
-  { id: 'gloves', name: 'Work Gloves', icon: '🧤', cost: 100, description: 'Clicking is twice as effective.', type: 'click', multiplier: 2, requires: { clicks: 20 } },
-  { id: 'hammer', name: 'Sledgehammer', icon: '🔨', cost: 5000, description: 'Clicking is twice as effective.', type: 'click', multiplier: 2, requires: { clicks: 250 } },
-  { id: 'dynamite', name: 'Dynamite', icon: '🧨', cost: 250000, description: 'Clicking is twice as effective.', type: 'click', multiplier: 2, requires: { clicks: 1000 } },
-  { id: 'rockfist', name: 'Rock Fist', icon: '✊', cost: 10000, description: 'Each click also gains 1% of your stones per second.', type: 'clickRate', percent: 0.01, requires: { total: 5000 } },
-  { id: 'pebbler-1', name: 'Sharper Eyes', icon: '👀', cost: 150, description: 'Pebblers are twice as efficient.', type: 'building', building: 'pebbler', multiplier: 2, requires: { pebbler: 1 } },
-  { id: 'pebbler-2', name: 'Pebble Bags', icon: '🎒', cost: 1500, description: 'Pebblers are twice as efficient.', type: 'building', building: 'pebbler', multiplier: 2, requires: { pebbler: 10 } },
-  { id: 'miner-1', name: 'Steel Pickaxes', icon: '⚒️', cost: 1000, description: 'Miners are twice as efficient.', type: 'building', building: 'miner', multiplier: 2, requires: { miner: 1 } },
-  { id: 'miner-2', name: 'Helmet Lamps', icon: '💡', cost: 10000, description: 'Miners are twice as efficient.', type: 'building', building: 'miner', multiplier: 2, requires: { miner: 10 } },
-  { id: 'quarry-1', name: 'Conveyor Belts', icon: '🏗️', cost: 11000, description: 'Quarries are twice as efficient.', type: 'building', building: 'quarry', multiplier: 2, requires: { quarry: 1 } },
-  { id: 'quarry-2', name: 'Blasting Crews', icon: '💥', cost: 110000, description: 'Quarries are twice as efficient.', type: 'building', building: 'quarry', multiplier: 2, requires: { quarry: 10 } },
-  { id: 'drill-1', name: 'Diamond Bits', icon: '💎', cost: 120000, description: 'Drill Rigs are twice as efficient.', type: 'building', building: 'drill', multiplier: 2, requires: { drill: 1 } },
-  { id: 'golem-1', name: 'Runic Cores', icon: '🔮', cost: 1300000, description: 'Stone Golems are twice as efficient.', type: 'building', building: 'golem', multiplier: 2, requires: { golem: 1 } },
-  { id: 'volcano-1', name: 'Lava Channels', icon: '🔥', cost: 14000000, description: 'Volcanoes are twice as efficient.', type: 'building', building: 'volcano', multiplier: 2, requires: { volcano: 1 } },
-  { id: 'meteor-1', name: 'Orbital Nets', icon: '🛰️', cost: 200000000, description: 'Meteor Magnets are twice as efficient.', type: 'building', building: 'meteor', multiplier: 2, requires: { meteor: 1 } },
-  { id: 'geology', name: 'Geology Degree', icon: '🎓', cost: 50000, description: 'All production +10%.', type: 'global', multiplier: 1.1, requires: { total: 20000 } },
-  { id: 'tectonics', name: 'Plate Tectonics', icon: '🌍', cost: 5000000, description: 'All production +25%.', type: 'global', multiplier: 1.25, requires: { total: 1000000 } },
-];
+const TRANSLATIONS = {
+  en: {
+    appTitle: 'Stone Clicker', language: 'Language', mainAria: 'Stone Clicker game', futureAria: 'Upgrades',
+    stoneAria: 'Collect a stone', stoneSkins: 'Stone skins', classicSkin: 'Classic', desertSkin: 'Desert',
+    lockedShort: '🔒', skinOptionAria: 'Use the {skin} stone skin', skinLockedAria: 'The {skin} stone skin is locked',
+    stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click',
+    totalMined: 'Total mined', clicks: 'Clicks', unlockedBiome: 'Unlocked biome', newBiome: 'New biome',
+    desert: 'Desert', desertUpper: 'DESERT', crewTitle: 'Stone Crew',
+    crewDescription: 'Every second, the crew throws stones at the poor guy. You keep them.', poorGuy: 'Poor guy',
+    people: 'people', hire: 'Hire', crewFull: 'Crew full', stonesUnit: 'stones', salesTitle: 'Sales',
+    salesDescription: 'Each recruit mines 1.5 stones per second with a pickaxe.', salesPeople: 'Sales',
+    recruit: 'Recruit', teamFull: 'Team full', locked: 'Locked', creatorsTitle: 'Diamond Creators',
+    creatorsDescription: 'Famous creators dig for diamonds. 2.5 stones per second each.', creators: 'creators',
+    invite: 'Invite', waterTitle: 'Water Sources', waterDescription: 'Each flowing source brings 4 stones per second.',
+    sources: 'sources', build: 'Build', allFlowing: 'All flowing', diggersTitle: 'Shovel Diggers',
+    diggersDescription: 'Each digger shovels up 7 stones per second.', diggers: 'diggers',
+    cactusTitle: 'Stone Cacti', cactusDescription: 'Each cactus grows 12 stones per second.', cacti: 'cacti', plant: 'Plant',
+    tractorsTitle: 'Sand Tractors', tractorsDescription: 'Each tractor scoops up 25 stones per second with its front bucket.',
+    tractors: 'tractors', buy: 'Buy', holesTitle: 'Stone Holes',
+    holesDescription: 'Stones tumble into each hole, bringing 48 stones per second.', holes: 'holes', open: 'Open',
+    stormsTitle: 'Sandstorms', stormsDescription: 'Each desert whirlwind carries 75 stones per second.',
+    storms: 'storms', summon: 'Summon',
+    stonesAria: 'Stones: {count}', crewRosterAria: '{count} of 8 people hired', targetAria: 'Stone collector',
+    hirePersonAria: 'Hire another person for {cost} stones', crewFullAria: 'Maximum crew size reached',
+    salesRosterAria: '{count} of 8 Sales recruited', salesLockedAria: 'Hire all 8 Stone Crew people to unlock Sales',
+    salesFullAria: 'Maximum Sales team size reached', salesBuyAria: 'Recruit Sales for {cost} stones',
+    creatorsRosterAria: '{count} of 8 Diamond Creators invited',
+    creatorsLockedAria: 'Recruit all 8 Sales to unlock Diamond Creators',
+    creatorsFullAria: 'Maximum creator team size reached', creatorsBuyAria: 'Invite a Diamond Creator for {cost} stones',
+    waterRosterAria: '{count} of 8 Water Sources built',
+    waterLockedAria: 'Invite all 8 Diamond Creators to unlock Water Sources',
+    waterFullAria: 'Maximum number of Water Sources reached', waterBuyAria: 'Build a Water Source for {cost} stones',
+    diggersRosterAria: '{count} of 8 Shovel Diggers hired',
+    diggersLockedAria: 'Build all 8 Water Sources to unlock Shovel Diggers',
+    diggersFullAria: 'Maximum number of Shovel Diggers reached', diggersBuyAria: 'Hire a Shovel Digger for {cost} stones',
+    cactusRosterAria: '{count} of 8 Stone Cacti planted', cactusLockedAria: 'Hire all 8 Shovel Diggers to unlock Stone Cacti',
+    cactusFullAria: 'Maximum number of Stone Cacti reached', cactusBuyAria: 'Plant a Stone Cactus for {cost} stones',
+    tractorsRosterAria: '{count} of 8 Sand Tractors bought', tractorsLockedAria: 'Plant all 8 Stone Cacti to unlock Sand Tractors',
+    tractorsFullAria: 'Maximum number of Sand Tractors reached', tractorsBuyAria: 'Buy a Sand Tractor for {cost} stones',
+    holesRosterAria: '{count} of 8 Stone Holes opened', holesLockedAria: 'Buy all 8 Sand Tractors to unlock Stone Holes',
+    holesFullAria: 'Maximum number of Stone Holes reached', holesBuyAria: 'Open a Stone Hole for {cost} stones',
+    stormsRosterAria: '{count} of 8 Sandstorms summoned', stormsLockedAria: 'Open all 8 Stone Holes to unlock Sandstorms',
+    stormsFullAria: 'Maximum number of Sandstorms reached', stormsBuyAria: 'Summon a Sandstorm for {cost} stones',
+  },
+  ru: {
+    appTitle: 'Кликер камней', language: 'Язык', mainAria: 'Игра «Кликер камней»', futureAria: 'Улучшения',
+    stoneAria: 'Добыть камень', stoneSkins: 'Скины камня', classicSkin: 'Обычный', desertSkin: 'Пустынный',
+    lockedShort: '🔒', skinOptionAria: 'Выбрать скин камня «{skin}»', skinLockedAria: 'Скин камня «{skin}» пока закрыт',
+    stonesLabel: 'Камни', perSecond: 'в секунду', perClick: 'за клик',
+    totalMined: 'Всего добыто', clicks: 'Клики', unlockedBiome: 'Открытый биом', newBiome: 'Новый биом',
+    desert: 'Пустыня', desertUpper: 'ПУСТЫНЯ', crewTitle: 'Каменная команда',
+    crewDescription: 'Каждую секунду команда бросает камни в беднягу. Камни достаются тебе.', poorGuy: 'Бедняга',
+    people: 'людей', hire: 'Нанять', crewFull: 'Команда полна', stonesUnit: 'камней', salesTitle: 'Продажи',
+    salesDescription: 'Каждый работник добывает киркой 1,5 камня в секунду.', salesPeople: 'работников',
+    recruit: 'Нанять', teamFull: 'Команда полна', locked: 'Закрыто', creatorsTitle: 'Алмазные ютуберы',
+    creatorsDescription: 'Известные ютуберы ищут алмазы. Каждый приносит 2,5 камня в секунду.', creators: 'ютуберов',
+    invite: 'Пригласить', waterTitle: 'Источники воды', waterDescription: 'Каждый текущий источник приносит 4 камня в секунду.',
+    sources: 'источников', build: 'Построить', allFlowing: 'Все текут', diggersTitle: 'Копатели с лопатами',
+    diggersDescription: 'Каждый копатель добывает лопатой 7 камней в секунду.', diggers: 'копателей',
+    cactusTitle: 'Каменные кактусы', cactusDescription: 'Каждый кактус выращивает 12 камней в секунду.', cacti: 'кактусов', plant: 'Посадить',
+    tractorsTitle: 'Песчаные тракторы', tractorsDescription: 'Каждый трактор захватывает передним ковшом 25 камней в секунду.',
+    tractors: 'тракторов', buy: 'Купить', holesTitle: 'Каменные ямы',
+    holesDescription: 'В каждую яму сыпятся камни. Она приносит 48 камней в секунду.', holes: 'ям', open: 'Открыть',
+    stormsTitle: 'Песчаные бури', stormsDescription: 'Каждый пустынный вихрь приносит 75 камней в секунду.',
+    storms: 'бурь', summon: 'Призвать',
+    stonesAria: 'Камни: {count}', crewRosterAria: 'Нанято людей: {count} из 8', targetAria: 'Сборщик камней',
+    hirePersonAria: 'Нанять ещё одного человека за {cost} камней', crewFullAria: 'Достигнут максимум команды',
+    salesRosterAria: 'Нанято работников: {count} из 8', salesLockedAria: 'Найми всю команду из 8 человек, чтобы открыть Продажи',
+    salesFullAria: 'Достигнут максимум работников', salesBuyAria: 'Нанять работника за {cost} камней',
+    creatorsRosterAria: 'Приглашено ютуберов: {count} из 8',
+    creatorsLockedAria: 'Найми всех 8 работников, чтобы открыть Алмазных ютуберов',
+    creatorsFullAria: 'Достигнут максимум ютуберов', creatorsBuyAria: 'Пригласить ютубера за {cost} камней',
+    waterRosterAria: 'Построено источников: {count} из 8',
+    waterLockedAria: 'Пригласи всех 8 ютуберов, чтобы открыть Источники воды',
+    waterFullAria: 'Достигнут максимум источников воды', waterBuyAria: 'Построить источник за {cost} камней',
+    diggersRosterAria: 'Нанято копателей: {count} из 8',
+    diggersLockedAria: 'Построй все 8 источников воды, чтобы открыть копателей с лопатами',
+    diggersFullAria: 'Достигнут максимум копателей', diggersBuyAria: 'Нанять копателя за {cost} камней',
+    cactusRosterAria: 'Посажено кактусов: {count} из 8', cactusLockedAria: 'Найми всех 8 копателей, чтобы открыть каменные кактусы',
+    cactusFullAria: 'Достигнут максимум кактусов', cactusBuyAria: 'Посадить каменный кактус за {cost} камней',
+    tractorsRosterAria: 'Куплено тракторов: {count} из 8', tractorsLockedAria: 'Посади все 8 кактусов, чтобы открыть песчаные тракторы',
+    tractorsFullAria: 'Достигнут максимум тракторов', tractorsBuyAria: 'Купить песчаный трактор за {cost} камней',
+    holesRosterAria: 'Открыто каменных ям: {count} из 8', holesLockedAria: 'Купи все 8 песчаных тракторов, чтобы открыть каменные ямы',
+    holesFullAria: 'Достигнут максимум каменных ям', holesBuyAria: 'Открыть каменную яму за {cost} камней',
+    stormsRosterAria: 'Призвано песчаных бурь: {count} из 8', stormsLockedAria: 'Открой все 8 каменных ям, чтобы открыть песчаные бури',
+    stormsFullAria: 'Достигнут максимум песчаных бурь', stormsBuyAria: 'Призвать песчаную бурю за {cost} камней',
+  },
+  de: {
+    appTitle: 'Stein-Klicker', language: 'Sprache', mainAria: 'Stein-Klicker-Spiel', futureAria: 'Verbesserungen',
+    stoneAria: 'Einen Stein sammeln', stoneSkins: 'Stein-Skins', classicSkin: 'Klassisch', desertSkin: 'Wüste',
+    lockedShort: '🔒', skinOptionAria: 'Stein-Skin „{skin}“ verwenden', skinLockedAria: 'Stein-Skin „{skin}“ ist gesperrt',
+    stonesLabel: 'Steine', perSecond: 'pro Sekunde', perClick: 'pro Klick',
+    totalMined: 'Insgesamt abgebaut', clicks: 'Klicks', unlockedBiome: 'Freigeschaltetes Biom', newBiome: 'Neues Biom',
+    desert: 'Wüste', desertUpper: 'WÜSTE', crewTitle: 'Steintrupp',
+    crewDescription: 'Jede Sekunde wirft der Trupp Steine auf den armen Kerl. Du behältst sie.', poorGuy: 'Armer Kerl',
+    people: 'Personen', hire: 'Anheuern', crewFull: 'Trupp voll', stonesUnit: 'Steine', salesTitle: 'Verkauf',
+    salesDescription: 'Jeder Arbeiter baut mit einer Spitzhacke 1,5 Steine pro Sekunde ab.', salesPeople: 'Arbeiter',
+    recruit: 'Anwerben', teamFull: 'Team voll', locked: 'Gesperrt', creatorsTitle: 'Diamant-Creator',
+    creatorsDescription: 'Bekannte Creator suchen Diamanten. Jeder bringt 2,5 Steine pro Sekunde.', creators: 'Creator',
+    invite: 'Einladen', waterTitle: 'Wasserquellen', waterDescription: 'Jede fließende Quelle bringt 4 Steine pro Sekunde.',
+    sources: 'Quellen', build: 'Bauen', allFlowing: 'Alle fließen', diggersTitle: 'Schaufelgräber',
+    diggersDescription: 'Jeder Gräber schaufelt 7 Steine pro Sekunde aus.', diggers: 'Gräber',
+    cactusTitle: 'Steinkakteen', cactusDescription: 'Jeder Kaktus erzeugt 12 Steine pro Sekunde.', cacti: 'Kakteen', plant: 'Pflanzen',
+    tractorsTitle: 'Sandtraktoren', tractorsDescription: 'Jeder Traktor schaufelt mit seiner Frontschaufel 25 Steine pro Sekunde.',
+    tractors: 'Traktoren', buy: 'Kaufen', holesTitle: 'Steinlöcher',
+    holesDescription: 'In jedes Loch fallen Steine. Es bringt 48 Steine pro Sekunde.', holes: 'Löcher', open: 'Öffnen',
+    stormsTitle: 'Sandstürme', stormsDescription: 'Jeder Wüstenwirbel bringt 75 Steine pro Sekunde.',
+    storms: 'Stürme', summon: 'Beschwören',
+    stonesAria: 'Steine: {count}', crewRosterAria: '{count} von 8 Personen angeheuert', targetAria: 'Steinsammler',
+    hirePersonAria: 'Eine weitere Person für {cost} Steine anheuern', crewFullAria: 'Maximale Truppgröße erreicht',
+    salesRosterAria: '{count} von 8 Arbeitern angeworben', salesLockedAria: 'Heuere alle 8 Personen an, um Verkauf freizuschalten',
+    salesFullAria: 'Maximale Arbeiterzahl erreicht', salesBuyAria: 'Arbeiter für {cost} Steine anwerben',
+    creatorsRosterAria: '{count} von 8 Diamant-Creatorn eingeladen',
+    creatorsLockedAria: 'Wirb alle 8 Arbeiter an, um Diamant-Creator freizuschalten',
+    creatorsFullAria: 'Maximale Creatorzahl erreicht', creatorsBuyAria: 'Diamant-Creator für {cost} Steine einladen',
+    waterRosterAria: '{count} von 8 Wasserquellen gebaut',
+    waterLockedAria: 'Lade alle 8 Diamant-Creator ein, um Wasserquellen freizuschalten',
+    waterFullAria: 'Maximale Anzahl an Wasserquellen erreicht', waterBuyAria: 'Wasserquelle für {cost} Steine bauen',
+    diggersRosterAria: '{count} von 8 Schaufelgräbern angeheuert',
+    diggersLockedAria: 'Baue alle 8 Wasserquellen, um Schaufelgräber freizuschalten',
+    diggersFullAria: 'Maximale Anzahl an Schaufelgräbern erreicht', diggersBuyAria: 'Schaufelgräber für {cost} Steine anheuern',
+    cactusRosterAria: '{count} von 8 Steinkakteen gepflanzt', cactusLockedAria: 'Heuere alle 8 Schaufelgräber an, um Steinkakteen freizuschalten',
+    cactusFullAria: 'Maximale Anzahl an Steinkakteen erreicht', cactusBuyAria: 'Steinkaktus für {cost} Steine pflanzen',
+    tractorsRosterAria: '{count} von 8 Sandtraktoren gekauft', tractorsLockedAria: 'Pflanze alle 8 Steinkakteen, um Sandtraktoren freizuschalten',
+    tractorsFullAria: 'Maximale Anzahl an Sandtraktoren erreicht', tractorsBuyAria: 'Sandtraktor für {cost} Steine kaufen',
+    holesRosterAria: '{count} von 8 Steinlöchern geöffnet', holesLockedAria: 'Kaufe alle 8 Sandtraktoren, um Steinlöcher freizuschalten',
+    holesFullAria: 'Maximale Anzahl an Steinlöchern erreicht', holesBuyAria: 'Steinloch für {cost} Steine öffnen',
+    stormsRosterAria: '{count} von 8 Sandstürmen beschworen', stormsLockedAria: 'Öffne alle 8 Steinlöcher, um Sandstürme freizuschalten',
+    stormsFullAria: 'Maximale Anzahl an Sandstürmen erreicht', stormsBuyAria: 'Sandsturm für {cost} Steine beschwören',
+  },
+};
 
 const counter = document.querySelector('#stone-count');
-const rateLabel = document.querySelector('#stone-rate');
-const clickPowerLabel = document.querySelector('#click-power');
-const totalStats = document.querySelector('#total-stats');
+const game = document.querySelector('.game');
+const futurePanel = document.querySelector('.future-panel');
+const languageSelect = document.querySelector('#language-select');
+const stoneValue = document.querySelector('#stone-value');
+const rateValue = document.querySelector('#rate-value');
+const totalValue = document.querySelector('#total-value');
+const clicksValue = document.querySelector('#clicks-value');
 const stone = document.querySelector('#stone');
-const buildingsList = document.querySelector('#buildings');
-const upgradesList = document.querySelector('#upgrades');
-const upgradesEmpty = document.querySelector('#upgrades-empty');
-const resetButton = document.querySelector('#reset');
-const prizesList = document.querySelector('#prizes');
-const prizesCount = document.querySelector('#prizes-count');
-const themesList = document.querySelector('#themes');
-const toasts = document.querySelector('#toasts');
+const skinOptions = [...document.querySelectorAll('[data-stone-skin]')];
+const desertSkinLock = document.querySelector('.skin-option--desert .skin-option__lock');
+const biomeChip = document.querySelector('#biome-chip');
+const biomeBanner = document.querySelector('#biome-banner');
+const crewCount = document.querySelector('#crew-count');
+const crewRoster = document.querySelector('#crew-roster');
+const crewPeople = [...document.querySelectorAll('.crew-person')];
+const crewCard = document.querySelector('.crew-card');
+const crewTarget = document.querySelector('#crew-target');
+const crewTargetPerson = document.querySelector('.crew-target__person');
+const hireButton = document.querySelector('#hire-person');
+const hireLabel = document.querySelector('#hire-label');
+const hirePrice = document.querySelector('#hire-price');
+const crewCost = document.querySelector('#crew-cost');
+const salesCard = document.querySelector('.sales-card');
+const salesRoster = document.querySelector('#sales-roster');
+const salesPeople = [...document.querySelectorAll('.sales-person')];
+const salesCount = document.querySelector('#sales-count');
+const salesButton = document.querySelector('#recruit-sales');
+const salesHireLabel = document.querySelector('#sales-hire-label');
+const salesHirePrice = document.querySelector('#sales-hire-price');
+const salesCost = document.querySelector('#sales-cost');
+const creatorsCard = document.querySelector('.creators-card');
+const creatorsRoster = document.querySelector('#creators-roster');
+const creatorPeople = [...document.querySelectorAll('.creator-person')];
+const creatorsCount = document.querySelector('#creators-count');
+const creatorButton = document.querySelector('#invite-creator');
+const creatorHireLabel = document.querySelector('#creator-hire-label');
+const creatorHirePrice = document.querySelector('#creator-hire-price');
+const creatorCost = document.querySelector('#creator-cost');
+const waterCard = document.querySelector('.water-card');
+const waterRoster = document.querySelector('#water-roster');
+const waterSources = [...document.querySelectorAll('.water-source')];
+const waterCount = document.querySelector('#water-count');
+const waterButton = document.querySelector('#build-water');
+const waterBuildLabel = document.querySelector('#water-build-label');
+const waterBuildPrice = document.querySelector('#water-build-price');
+const waterCost = document.querySelector('#water-cost');
+const diggersCard = document.querySelector('.diggers-card');
+const diggersRoster = document.querySelector('#diggers-roster');
+const diggerPeople = [...document.querySelectorAll('.digger-person')];
+const diggersCount = document.querySelector('#diggers-count');
+const diggerButton = document.querySelector('#hire-digger');
+const diggerHireLabel = document.querySelector('#digger-hire-label');
+const diggerHirePrice = document.querySelector('#digger-hire-price');
+const diggerCost = document.querySelector('#digger-cost');
+const cactusCard = document.querySelector('.cactus-card');
+const cactusRoster = document.querySelector('#cactus-roster');
+const cactusPlants = [...document.querySelectorAll('.cactus-plant')];
+const cactusCount = document.querySelector('#cactus-count');
+const cactusButton = document.querySelector('#plant-cactus');
+const cactusBuyLabel = document.querySelector('#cactus-buy-label');
+const cactusBuyPrice = document.querySelector('#cactus-buy-price');
+const cactusCost = document.querySelector('#cactus-cost');
+const tractorsCard = document.querySelector('.tractors-card');
+const tractorsRoster = document.querySelector('#tractors-roster');
+const tractorMachines = [...document.querySelectorAll('.tractor-machine')];
+const tractorsCount = document.querySelector('#tractors-count');
+const tractorButton = document.querySelector('#buy-tractor');
+const tractorBuyLabel = document.querySelector('#tractor-buy-label');
+const tractorBuyPrice = document.querySelector('#tractor-buy-price');
+const tractorCost = document.querySelector('#tractor-cost');
+const holesCard = document.querySelector('.holes-card');
+const holesRoster = document.querySelector('#holes-roster');
+const stoneHoles = [...document.querySelectorAll('.stone-hole')];
+const holesCount = document.querySelector('#holes-count');
+const holeButton = document.querySelector('#open-hole');
+const holeBuyLabel = document.querySelector('#hole-buy-label');
+const holeBuyPrice = document.querySelector('#hole-buy-price');
+const holeCost = document.querySelector('#hole-cost');
+const stormsCard = document.querySelector('.storms-card');
+const stormsRoster = document.querySelector('#storms-roster');
+const sandstorms = [...document.querySelectorAll('.sandstorm')];
+const stormsCount = document.querySelector('#storms-count');
+const stormButton = document.querySelector('#summon-storm');
+const stormBuyLabel = document.querySelector('#storm-buy-label');
+const stormBuyPrice = document.querySelector('#storm-buy-price');
+const stormCost = document.querySelector('#storm-cost');
 
 function createInitialState() {
   return {
     stones: 0,
     totalStones: 0,
     clicks: 0,
-    buildings: Object.fromEntries(BUILDINGS.map((building) => [building.id, 0])),
-    upgrades: [],
-    prizes: [],
-    theme: 'classic',
+    people: 1,
+    crewProgressMs: 0,
+    sales: 0,
+    salesProgressMs: 0,
+    creators: 0,
+    creatorProgressMs: 0,
+    waterSources: 0,
+    waterProgressMs: 0,
+    diggers: 0,
+    diggerProgressMs: 0,
+    cacti: 0,
+    cactusProgressMs: 0,
+    tractors: 0,
+    tractorProgressMs: 0,
+    holes: 0,
+    holeProgressMs: 0,
+    storms: 0,
+    stormProgressMs: 0,
+    desertIntroSeen: false,
+    stoneSkin: 'classic',
+    language: 'en',
     lastSaved: Date.now(),
   };
 }
 
-let state = loadState();
-
 function loadState() {
   const fresh = createInitialState();
+
   try {
     const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
     if (!saved) return fresh;
+
     return {
-      ...fresh,
-      ...saved,
-      buildings: { ...fresh.buildings, ...saved.buildings },
-      upgrades: Array.isArray(saved.upgrades) ? saved.upgrades : [],
-      prizes: Array.isArray(saved.prizes) ? saved.prizes : [],
+      stones: Number.isFinite(saved.stones) ? Math.max(0, saved.stones) : 0,
+      totalStones: Number.isFinite(saved.totalStones) ? Math.max(0, saved.totalStones) : 0,
+      clicks: Number.isFinite(saved.clicks) ? Math.max(0, saved.clicks) : 0,
+      people: Number.isFinite(saved.people) ? Math.min(MAX_PEOPLE, Math.max(1, Math.floor(saved.people))) : 1,
+      crewProgressMs: Number.isFinite(saved.crewProgressMs)
+        ? Math.min(CREW_DROP_INTERVAL - 1, Math.max(0, saved.crewProgressMs))
+        : 0,
+      sales: Number.isFinite(saved.sales) ? Math.min(MAX_SALES, Math.max(0, Math.floor(saved.sales))) : 0,
+      salesProgressMs: Number.isFinite(saved.salesProgressMs)
+        ? Math.min(SALES_INTERVAL - 1, Math.max(0, saved.salesProgressMs))
+        : 0,
+      creators: Number.isFinite(saved.creators)
+        ? Math.min(MAX_CREATORS, Math.max(0, Math.floor(saved.creators)))
+        : 0,
+      creatorProgressMs: Number.isFinite(saved.creatorProgressMs)
+        ? Math.min(CREATOR_INTERVAL - 1, Math.max(0, saved.creatorProgressMs))
+        : 0,
+      waterSources: Number.isFinite(saved.waterSources)
+        ? Math.min(MAX_WATER_SOURCES, Math.max(0, Math.floor(saved.waterSources)))
+        : 0,
+      waterProgressMs: Number.isFinite(saved.waterProgressMs)
+        ? Math.min(WATER_INTERVAL - 1, Math.max(0, saved.waterProgressMs))
+        : 0,
+      diggers: Number.isFinite(saved.diggers) ? Math.min(MAX_DIGGERS, Math.max(0, Math.floor(saved.diggers))) : 0,
+      diggerProgressMs: Number.isFinite(saved.diggerProgressMs)
+        ? Math.min(DIGGER_INTERVAL - 1, Math.max(0, saved.diggerProgressMs))
+        : 0,
+      cacti: Number.isFinite(saved.cacti) ? Math.min(MAX_CACTI, Math.max(0, Math.floor(saved.cacti))) : 0,
+      cactusProgressMs: Number.isFinite(saved.cactusProgressMs)
+        ? Math.min(CACTUS_INTERVAL - 1, Math.max(0, saved.cactusProgressMs))
+        : 0,
+      tractors: Number.isFinite(saved.tractors)
+        ? Math.min(MAX_TRACTORS, Math.max(0, Math.floor(saved.tractors)))
+        : 0,
+      tractorProgressMs: Number.isFinite(saved.tractorProgressMs)
+        ? Math.min(TRACTOR_INTERVAL - 1, Math.max(0, saved.tractorProgressMs))
+        : 0,
+      holes: Number.isFinite(saved.holes) ? Math.min(MAX_HOLES, Math.max(0, Math.floor(saved.holes))) : 0,
+      holeProgressMs: Number.isFinite(saved.holeProgressMs)
+        ? Math.min(HOLE_INTERVAL - 1, Math.max(0, saved.holeProgressMs))
+        : 0,
+      storms: Number.isFinite(saved.storms) ? Math.min(MAX_STORMS, Math.max(0, Math.floor(saved.storms))) : 0,
+      stormProgressMs: Number.isFinite(saved.stormProgressMs)
+        ? Math.min(STORM_INTERVAL - 1, Math.max(0, saved.stormProgressMs))
+        : 0,
+      desertIntroSeen: saved.desertIntroSeen === true,
+      stoneSkin: ['classic', 'desert'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
+      language: ['en', 'ru', 'de'].includes(saved.language) ? saved.language : 'en',
+      lastSaved: Number.isFinite(saved.lastSaved) ? saved.lastSaved : Date.now(),
     };
   } catch {
     return fresh;
   }
 }
 
+let state = loadState();
+
+function t(key) {
+  return TRANSLATIONS[state.language][key] ?? TRANSLATIONS.en[key] ?? key;
+}
+
+function tf(key, values) {
+  return Object.entries(values).reduce(
+    (text, [name, value]) => text.replaceAll(`{${name}}`, value),
+    t(key),
+  );
+}
+
+function applyTranslations() {
+  document.documentElement.lang = state.language;
+  languageSelect.value = state.language;
+  languageSelect.setAttribute('aria-label', t('language'));
+  game.setAttribute('aria-label', t('mainAria'));
+  futurePanel.setAttribute('aria-label', t('futureAria'));
+  stone.setAttribute('aria-label', t('stoneAria'));
+  crewTarget.setAttribute('aria-label', t('targetAria'));
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  salesCard.dataset.lockLabel = t('locked').toUpperCase();
+  creatorsCard.dataset.lockLabel = t('locked').toUpperCase();
+  waterCard.dataset.lockLabel = t('locked').toUpperCase();
+  diggersCard.dataset.lockLabel = t('locked').toUpperCase();
+  cactusCard.dataset.lockLabel = t('locked').toUpperCase();
+  tractorsCard.dataset.lockLabel = t('locked').toUpperCase();
+  holesCard.dataset.lockLabel = t('locked').toUpperCase();
+  stormsCard.dataset.lockLabel = t('locked').toUpperCase();
+}
+
 function saveState() {
   state.lastSaved = Date.now();
+
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   } catch {
-    // Storage may be unavailable (private mode); the game still works without saving.
+    // The clicker still works when storage is unavailable.
   }
 }
 
 const SUFFIXES = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc'];
 
-function formatNumber(value, decimals = 0) {
-  if (value < 1000) {
-    return value.toFixed(value % 1 === 0 ? 0 : decimals);
-  }
+function formatNumber(value) {
+  if (value < 1000) return Math.floor(value).toString();
+
   const tier = Math.min(Math.floor(Math.log10(value) / 3), SUFFIXES.length - 1);
   const scaled = value / 1000 ** tier;
-  return `${scaled.toFixed(scaled < 100 ? 2 : 1)}${SUFFIXES[tier]}`;
+  return `${scaled.toFixed(scaled < 10 ? 2 : 1)}${SUFFIXES[tier]}`;
 }
 
-function hasUpgrade(id) {
-  return state.upgrades.includes(id);
-}
+function renderStoneValue(value) {
+  const characters = [...value].map((character) => {
+    const digit = document.createElement('span');
+    digit.className = 'stone-digit';
+    digit.textContent = character;
+    return digit;
+  });
 
-function ownedUpgrades() {
-  return UPGRADES.filter((upgrade) => hasUpgrade(upgrade.id));
-}
-
-function hasPrize(id) {
-  return state.prizes.includes(id);
-}
-
-function prizeBonus() {
-  return PRIZES.filter((prize) => hasPrize(prize.id)).reduce((sum, prize) => sum + (prize.bonus || 0), 0);
-}
-
-function globalMultiplier() {
-  const fromUpgrades = ownedUpgrades()
-    .filter((upgrade) => upgrade.type === 'global')
-    .reduce((product, upgrade) => product * upgrade.multiplier, 1);
-  return fromUpgrades * (1 + prizeBonus());
-}
-
-function buildingRate(building) {
-  const multiplier = ownedUpgrades()
-    .filter((upgrade) => upgrade.type === 'building' && upgrade.building === building.id)
-    .reduce((product, upgrade) => product * upgrade.multiplier, 1);
-  return building.rate * multiplier * globalMultiplier();
+  stoneValue.replaceChildren(...characters);
 }
 
 function stonesPerSecond() {
-  return BUILDINGS.reduce((sum, building) => sum + buildingRate(building) * state.buildings[building.id], 0);
+  const crewRate = state.people / (CREW_DROP_INTERVAL / 1000);
+  const salesRate = (state.sales * SALES_STONES_PER_SWING) / (SALES_INTERVAL / 1000);
+  const creatorRate = (state.creators * CREATOR_STONES_PER_SEARCH) / (CREATOR_INTERVAL / 1000);
+  const waterRate = (state.waterSources * WATER_STONES_PER_FLOW) / (WATER_INTERVAL / 1000);
+  const diggerRate = (state.diggers * DIGGER_STONES_PER_SCOOP) / (DIGGER_INTERVAL / 1000);
+  const cactusRate = (state.cacti * CACTUS_STONES_PER_GROWTH) / (CACTUS_INTERVAL / 1000);
+  const tractorRate = (state.tractors * TRACTOR_STONES_PER_SCOOP) / (TRACTOR_INTERVAL / 1000);
+  const holeRate = (state.holes * HOLE_STONES_PER_DROP) / (HOLE_INTERVAL / 1000);
+  const stormRate = (state.storms * STORM_STONES_PER_SWIRL) / (STORM_INTERVAL / 1000);
+  return crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate;
 }
 
-function stonesPerClick() {
-  const base = ownedUpgrades()
-    .filter((upgrade) => upgrade.type === 'click')
-    .reduce((product, upgrade) => product * upgrade.multiplier, 1);
-  const fromRate = ownedUpgrades()
-    .filter((upgrade) => upgrade.type === 'clickRate')
-    .reduce((sum, upgrade) => sum + upgrade.percent * stonesPerSecond(), 0);
-  return base + fromRate;
+function nextPersonCost() {
+  return Math.ceil(BASE_PERSON_COST * PERSON_COST_GROWTH ** (state.people - 1));
 }
 
-function buildingCost(building) {
-  return Math.ceil(building.baseCost * COST_GROWTH ** state.buildings[building.id]);
+function nextSalesCost() {
+  return Math.ceil(BASE_SALES_COST * SALES_COST_GROWTH ** state.sales);
 }
 
-function isUpgradeUnlocked(upgrade) {
-  return Object.entries(upgrade.requires).every(([key, amount]) => {
-    if (key === 'clicks') return state.clicks >= amount;
-    if (key === 'total') return state.totalStones >= amount;
-    return state.buildings[key] >= amount;
-  });
+function nextCreatorCost() {
+  return Math.ceil(BASE_CREATOR_COST * CREATOR_COST_GROWTH ** state.creators);
+}
+
+function nextWaterCost() {
+  return Math.ceil(BASE_WATER_COST * WATER_COST_GROWTH ** state.waterSources);
+}
+
+function nextDiggerCost() {
+  return Math.ceil(BASE_DIGGER_COST * DIGGER_COST_GROWTH ** state.diggers);
+}
+
+function nextCactusCost() {
+  return Math.ceil(BASE_CACTUS_COST * CACTUS_COST_GROWTH ** state.cacti);
+}
+
+function nextTractorCost() {
+  return Math.ceil(BASE_TRACTOR_COST * TRACTOR_COST_GROWTH ** state.tractors);
+}
+
+function nextHoleCost() {
+  return Math.ceil(BASE_HOLE_COST * HOLE_COST_GROWTH ** state.holes);
+}
+
+function nextStormCost() {
+  return Math.ceil(BASE_STORM_COST * STORM_COST_GROWTH ** state.storms);
+}
+
+function formatRate(value) {
+  return Number.isInteger(value) ? value.toString() : value.toFixed(2);
 }
 
 function gainStones(amount) {
@@ -159,277 +481,681 @@ function gainStones(amount) {
   state.totalStones += amount;
 }
 
-function showToast(icon, title, text) {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.setAttribute('role', 'status');
-  toast.innerHTML = `<span class="toast__icon" aria-hidden="true"></span><span><strong></strong><br /><span></span></span>`;
-  toast.querySelector('.toast__icon').textContent = icon;
-  toast.querySelector('strong').textContent = title;
-  toast.querySelector('span > span').textContent = text;
-  toasts.append(toast);
-  toast.addEventListener('animationend', (event) => {
-    if (event.animationName === 'toast-out') toast.remove();
+function renderCrew() {
+  const isFull = state.people >= MAX_PEOPLE;
+  const cost = nextPersonCost();
+
+  crewCount.textContent = state.people;
+  crewRoster.setAttribute('aria-label', tf('crewRosterAria', { count: state.people }));
+  crewPeople.forEach((person, index) => person.classList.toggle('crew-person--active', index < state.people));
+
+  hireLabel.textContent = isFull ? t('crewFull') : t('hire');
+  hirePrice.hidden = isFull;
+  crewCost.textContent = formatNumber(cost);
+  hireButton.disabled = isFull || state.stones < cost;
+  hireButton.setAttribute(
+    'aria-label',
+    isFull ? t('crewFullAria') : tf('hirePersonAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderSales() {
+  const isLocked = state.people < MAX_PEOPLE;
+  const isFull = state.sales >= MAX_SALES;
+  const cost = nextSalesCost();
+
+  salesCard.classList.toggle('upgrade-card--locked', isLocked);
+  salesCount.textContent = state.sales;
+  salesRoster.setAttribute('aria-label', tf('salesRosterAria', { count: state.sales }));
+  salesPeople.forEach((person, index) => person.classList.toggle('sales-person--active', index < state.sales));
+
+  salesHireLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('recruit');
+  salesHirePrice.hidden = isLocked || isFull;
+  salesCost.textContent = formatNumber(cost);
+  salesButton.disabled = isLocked || isFull || state.stones < cost;
+  salesButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('salesLockedAria')
+      : isFull
+        ? t('salesFullAria')
+        : tf('salesBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderCreators() {
+  const isLocked = state.sales < MAX_SALES;
+  const isFull = state.creators >= MAX_CREATORS;
+  const cost = nextCreatorCost();
+
+  creatorsCard.classList.toggle('upgrade-card--locked', isLocked);
+  creatorsCount.textContent = state.creators;
+  creatorsRoster.setAttribute('aria-label', tf('creatorsRosterAria', { count: state.creators }));
+  creatorPeople.forEach((person, index) => person.classList.toggle('creator-person--active', index < state.creators));
+
+  creatorHireLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('invite');
+  creatorHirePrice.hidden = isLocked || isFull;
+  creatorCost.textContent = formatNumber(cost);
+  creatorButton.disabled = isLocked || isFull || state.stones < cost;
+  creatorButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('creatorsLockedAria')
+      : isFull
+        ? t('creatorsFullAria')
+        : tf('creatorsBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderWaterSources() {
+  const isLocked = state.creators < MAX_CREATORS;
+  const isFull = state.waterSources >= MAX_WATER_SOURCES;
+  const cost = nextWaterCost();
+
+  waterCard.classList.toggle('upgrade-card--locked', isLocked);
+  waterCount.textContent = state.waterSources;
+  waterRoster.setAttribute('aria-label', tf('waterRosterAria', { count: state.waterSources }));
+  waterSources.forEach((source, index) => source.classList.toggle('water-source--active', index < state.waterSources));
+
+  waterBuildLabel.textContent = isLocked ? t('locked') : isFull ? t('allFlowing') : t('build');
+  waterBuildPrice.hidden = isLocked || isFull;
+  waterCost.textContent = formatNumber(cost);
+  waterButton.disabled = isLocked || isFull || state.stones < cost;
+  waterButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('waterLockedAria')
+      : isFull
+        ? t('waterFullAria')
+        : tf('waterBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderDiggers() {
+  const isLocked = state.waterSources < MAX_WATER_SOURCES;
+  const isFull = state.diggers >= MAX_DIGGERS;
+  const cost = nextDiggerCost();
+
+  diggersCard.classList.toggle('upgrade-card--locked', isLocked);
+  diggersCount.textContent = state.diggers;
+  diggersRoster.setAttribute('aria-label', tf('diggersRosterAria', { count: state.diggers }));
+  diggerPeople.forEach((person, index) => person.classList.toggle('digger-person--active', index < state.diggers));
+
+  diggerHireLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('hire');
+  diggerHirePrice.hidden = isLocked || isFull;
+  diggerCost.textContent = formatNumber(cost);
+  diggerButton.disabled = isLocked || isFull || state.stones < cost;
+  diggerButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('diggersLockedAria')
+      : isFull
+        ? t('diggersFullAria')
+        : tf('diggersBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderCacti() {
+  const isLocked = state.diggers < MAX_DIGGERS;
+  const isFull = state.cacti >= MAX_CACTI;
+  const cost = nextCactusCost();
+
+  cactusCard.classList.toggle('upgrade-card--locked', isLocked);
+  cactusCount.textContent = state.cacti;
+  cactusRoster.setAttribute('aria-label', tf('cactusRosterAria', { count: state.cacti }));
+  cactusPlants.forEach((plant, index) => plant.classList.toggle('cactus-plant--active', index < state.cacti));
+
+  cactusBuyLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('plant');
+  cactusBuyPrice.hidden = isLocked || isFull;
+  cactusCost.textContent = formatNumber(cost);
+  cactusButton.disabled = isLocked || isFull || state.stones < cost;
+  cactusButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('cactusLockedAria')
+      : isFull
+        ? t('cactusFullAria')
+        : tf('cactusBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderTractors() {
+  const isLocked = state.cacti < MAX_CACTI;
+  const isFull = state.tractors >= MAX_TRACTORS;
+  const cost = nextTractorCost();
+
+  tractorsCard.classList.toggle('upgrade-card--locked', isLocked);
+  tractorsCount.textContent = state.tractors;
+  tractorsRoster.setAttribute('aria-label', tf('tractorsRosterAria', { count: state.tractors }));
+  tractorMachines.forEach((tractor, index) => tractor.classList.toggle('tractor-machine--active', index < state.tractors));
+
+  tractorBuyLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('buy');
+  tractorBuyPrice.hidden = isLocked || isFull;
+  tractorCost.textContent = formatNumber(cost);
+  tractorButton.disabled = isLocked || isFull || state.stones < cost;
+  tractorButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('tractorsLockedAria')
+      : isFull
+        ? t('tractorsFullAria')
+        : tf('tractorsBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderHoles() {
+  const isLocked = state.tractors < MAX_TRACTORS;
+  const isFull = state.holes >= MAX_HOLES;
+  const cost = nextHoleCost();
+
+  holesCard.classList.toggle('upgrade-card--locked', isLocked);
+  holesCount.textContent = state.holes;
+  holesRoster.setAttribute('aria-label', tf('holesRosterAria', { count: state.holes }));
+  stoneHoles.forEach((hole, index) => hole.classList.toggle('stone-hole--active', index < state.holes));
+
+  holeBuyLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('open');
+  holeBuyPrice.hidden = isLocked || isFull;
+  holeCost.textContent = formatNumber(cost);
+  holeButton.disabled = isLocked || isFull || state.stones < cost;
+  holeButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('holesLockedAria')
+      : isFull
+        ? t('holesFullAria')
+        : tf('holesBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderStorms() {
+  const isLocked = state.holes < MAX_HOLES;
+  const isFull = state.storms >= MAX_STORMS;
+  const cost = nextStormCost();
+
+  stormsCard.classList.toggle('upgrade-card--locked', isLocked);
+  stormsCount.textContent = state.storms;
+  stormsRoster.setAttribute('aria-label', tf('stormsRosterAria', { count: state.storms }));
+  sandstorms.forEach((storm, index) => storm.classList.toggle('sandstorm--active', index < state.storms));
+
+  stormBuyLabel.textContent = isLocked ? t('locked') : isFull ? t('teamFull') : t('summon');
+  stormBuyPrice.hidden = isLocked || isFull;
+  stormCost.textContent = formatNumber(cost);
+  stormButton.disabled = isLocked || isFull || state.stones < cost;
+  stormButton.setAttribute(
+    'aria-label',
+    isLocked
+      ? t('stormsLockedAria')
+      : isFull
+        ? t('stormsFullAria')
+        : tf('stormsBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderBiome() {
+  const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
+  const shouldRevealDesert = desertUnlocked && !state.desertIntroSeen;
+
+  if (!state.stoneSkin) state.stoneSkin = desertUnlocked ? 'desert' : 'classic';
+  if (shouldRevealDesert) state.stoneSkin = 'desert';
+
+  const usesDesertSkin = desertUnlocked && state.stoneSkin === 'desert';
+
+  game.classList.toggle('game--desert', usesDesertSkin);
+  stone.classList.toggle('stone--desert', usesDesertSkin);
+  biomeChip.hidden = !desertUnlocked;
+
+  skinOptions.forEach((option) => {
+    const skin = option.dataset.stoneSkin;
+    const isLocked = skin === 'desert' && !desertUnlocked;
+    const skinName = t(skin === 'desert' ? 'desertSkin' : 'classicSkin');
+    option.disabled = isLocked;
+    option.classList.toggle('skin-option--selected', state.stoneSkin === skin);
+    option.setAttribute('aria-pressed', String(state.stoneSkin === skin));
+    option.setAttribute('aria-label', tf(isLocked ? 'skinLockedAria' : 'skinOptionAria', { skin: skinName }));
   });
+  desertSkinLock.hidden = desertUnlocked;
+
+  if (!shouldRevealDesert) return;
+
+  state.desertIntroSeen = true;
+  biomeBanner.hidden = false;
+  biomeBanner.classList.remove('biome-banner--show');
+  void biomeBanner.offsetWidth;
+  biomeBanner.classList.add('biome-banner--show');
+  window.setTimeout(() => {
+    biomeBanner.classList.remove('biome-banner--show');
+    biomeBanner.hidden = true;
+  }, 3000);
+  saveState();
 }
 
-// Prizes: see prizes.js. Snapshot passed to each prize's check() function.
-function prizeSnapshot() {
-  return {
-    stones: state.stones,
-    totalStones: state.totalStones,
-    clicks: state.clicks,
-    perSecond: stonesPerSecond(),
-    perClick: stonesPerClick(),
-    buildings: { ...state.buildings },
-    upgrades: state.upgrades.length,
-  };
+function render() {
+  const stonesText = formatNumber(state.stones);
+  counter.setAttribute('aria-label', tf('stonesAria', { count: stonesText }));
+  renderStoneValue(stonesText);
+  rateValue.textContent = formatRate(stonesPerSecond());
+  totalValue.textContent = formatNumber(state.totalStones);
+  clicksValue.textContent = formatNumber(state.clicks);
+  renderCrew();
+  renderSales();
+  renderCreators();
+  renderWaterSources();
+  renderDiggers();
+  renderCacti();
+  renderTractors();
+  renderHoles();
+  renderStorms();
+  renderBiome();
+  document.title = `${stonesText} ${t('stonesUnit')} — ${t('appTitle')}`;
 }
 
-function checkPrizes() {
-  const snapshot = prizeSnapshot();
-  for (const prize of PRIZES) {
-    if (hasPrize(prize.id) || !prize.check(snapshot)) continue;
-    state.prizes.push(prize.id);
-    const bonusText = prize.bonus ? ` (+${Math.round(prize.bonus * 100)}% production)` : '';
-    showToast(prize.icon, `Prize won: ${prize.name}`, `${prize.description}${bonusText}`);
-    for (const theme of THEMES.filter((item) => item.unlockedBy === prize.id)) {
-      showToast(theme.icon, `Theme unlocked: ${theme.name}`, 'Pick it in the Themes panel.');
-    }
-  }
-}
+languageSelect.addEventListener('change', () => {
+  if (!['en', 'ru', 'de'].includes(languageSelect.value)) return;
+  state.language = languageSelect.value;
+  applyTranslations();
+  saveState();
+  render();
+});
 
-let renderedPrizeIds = null;
+skinOptions.forEach((option) => {
+  option.addEventListener('click', () => {
+    const skin = option.dataset.stoneSkin;
+    const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
+    if (skin === 'desert' && !desertUnlocked) return;
+    state.stoneSkin = skin;
+    saveState();
+    renderBiome();
+  });
+});
 
-function renderPrizes() {
-  const ids = state.prizes.join(',');
-  if (ids === renderedPrizeIds) return;
-  renderedPrizeIds = ids;
-
-  prizesCount.textContent = `${state.prizes.length}/${PRIZES.length}`;
-  prizesList.replaceChildren(
-    ...PRIZES.map((prize) => {
-      const earned = hasPrize(prize.id);
-      const badge = document.createElement('span');
-      badge.className = `prize${earned ? '' : ' prize--locked'}`;
-      badge.textContent = earned ? prize.icon : '❔';
-      const bonusText = prize.bonus ? `\nBonus: +${Math.round(prize.bonus * 100)}% production` : '';
-      const label = earned ? `${prize.name} — ${prize.description}${bonusText}` : `Locked — ${prize.description}`;
-      badge.title = label;
-      badge.setAttribute('role', 'img');
-      badge.setAttribute('aria-label', label);
-      return badge;
-    }),
-  );
-}
-
-// Themes: see themes.js. A theme is a set of CSS variables applied to the page root.
-function isThemeUnlocked(theme) {
-  return !theme.unlockedBy || hasPrize(theme.unlockedBy);
-}
-
-function currentTheme() {
-  const theme = THEMES.find((item) => item.id === state.theme);
-  return theme && isThemeUnlocked(theme) ? theme : THEMES[0];
-}
-
-let appliedThemeId = null;
-
-function applyTheme() {
-  const theme = currentTheme();
-  if (theme.id === appliedThemeId) return;
-  const root = document.documentElement;
-  const previous = THEMES.find((item) => item.id === appliedThemeId);
-  for (const name of Object.keys(previous?.vars || {})) root.style.removeProperty(name);
-  for (const [name, value] of Object.entries(theme.vars)) root.style.setProperty(name, value);
-  appliedThemeId = theme.id;
-}
-
-let renderedThemesKey = null;
-
-function renderThemes() {
-  const key = `${currentTheme().id}|${THEMES.map((theme) => isThemeUnlocked(theme)).join(',')}`;
-  if (key === renderedThemesKey) return;
-  renderedThemesKey = key;
-
-  themesList.replaceChildren(
-    ...THEMES.map((theme) => {
-      const unlocked = isThemeUnlocked(theme);
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'theme';
-      button.disabled = !unlocked;
-      button.setAttribute('aria-pressed', String(theme.id === currentTheme().id));
-      button.textContent = `${unlocked ? theme.icon : '🔒'} ${theme.name}`;
-      const prize = PRIZES.find((item) => item.id === theme.unlockedBy);
-      button.title = unlocked ? theme.name : `Win the “${prize?.name}” prize: ${prize?.description}`;
-      button.addEventListener('click', () => {
-        state.theme = theme.id;
-        saveState();
-        render();
-      });
-      return button;
-    }),
-  );
-}
-
-function spawnFloatingText(text, x, y) {
+function spawnFloatingText(x, y) {
   const label = document.createElement('span');
   label.className = 'floating-text';
-  label.textContent = text;
+  label.textContent = '+1';
   label.style.left = `${x}px`;
   label.style.top = `${y}px`;
   document.body.append(label);
   label.addEventListener('animationend', () => label.remove());
 }
 
-// Buildings: rendered once, then updated in place so buttons keep focus between ticks.
-const buildingRows = new Map();
-
-function createBuildingRows() {
-  for (const building of BUILDINGS) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'item';
-    button.innerHTML = `
-      <span class="item__icon" aria-hidden="true">${building.icon}</span>
-      <span class="item__body">
-        <span class="item__name">${building.name}</span>
-        <span class="item__cost"></span>
-        <span class="item__info"></span>
-      </span>
-      <span class="item__owned"></span>
-    `;
-    button.title = building.description;
-    button.addEventListener('click', () => buyBuilding(building));
-    buildingsList.append(button);
-    buildingRows.set(building.id, button);
-  }
-}
-
-function buyBuilding(building) {
-  const cost = buildingCost(building);
-  if (state.stones < cost) return;
-  state.stones -= cost;
-  state.buildings[building.id] += 1;
-  render();
-}
-
-function buyUpgrade(upgrade) {
-  if (hasUpgrade(upgrade.id) || state.stones < upgrade.cost) return;
-  state.stones -= upgrade.cost;
-  state.upgrades.push(upgrade.id);
-  render();
-}
-
-function renderBuildings() {
-  BUILDINGS.forEach((building, index) => {
-    const row = buildingRows.get(building.id);
-    const owned = state.buildings[building.id];
-    const previousOwned = index === 0 || state.buildings[BUILDINGS[index - 1].id] > 0;
-    // Reveal the next building once the previous one is owned or it is almost affordable.
-    const visible = owned > 0 || previousOwned || state.totalStones >= building.baseCost * 0.5;
-    row.hidden = !visible;
-    if (!visible) return;
-
-    const cost = buildingCost(building);
-    row.disabled = state.stones < cost;
-    row.querySelector('.item__cost').textContent = `🪨 ${formatNumber(cost)}`;
-    row.querySelector('.item__info').textContent = `+${formatNumber(buildingRate(building), 1)}/s each`;
-    row.querySelector('.item__owned').textContent = owned;
-  });
-}
-
-let renderedUpgradeIds = '';
-
-function renderUpgrades() {
-  const available = UPGRADES.filter((upgrade) => !hasUpgrade(upgrade.id) && isUpgradeUnlocked(upgrade)).sort(
-    (a, b) => a.cost - b.cost,
-  );
-  const ids = available.map((upgrade) => upgrade.id).join(',');
-
-  if (ids !== renderedUpgradeIds) {
-    renderedUpgradeIds = ids;
-    upgradesList.replaceChildren(
-      ...available.map((upgrade) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'upgrade';
-        button.dataset.id = upgrade.id;
-        button.textContent = upgrade.icon;
-        button.title = `${upgrade.name} — 🪨 ${formatNumber(upgrade.cost)}\n${upgrade.description}`;
-        button.setAttribute('aria-label', `${upgrade.name}, costs ${formatNumber(upgrade.cost)} stones. ${upgrade.description}`);
-        button.addEventListener('click', () => buyUpgrade(upgrade));
-        return button;
-      }),
-    );
-  }
-
-  for (const button of upgradesList.children) {
-    const upgrade = UPGRADES.find((item) => item.id === button.dataset.id);
-    button.disabled = state.stones < upgrade.cost;
-  }
-  upgradesEmpty.hidden = available.length > 0;
-}
-
-function render() {
-  checkPrizes();
-  applyTheme();
-  renderPrizes();
-  renderThemes();
-  const stonesText = formatNumber(Math.floor(state.stones));
-  counter.value = `Stones: ${stonesText}`;
-  counter.textContent = `Stones: ${stonesText}`;
-  rateLabel.textContent = `per second: ${formatNumber(stonesPerSecond(), 1)}`;
-  clickPowerLabel.textContent = `per click: ${formatNumber(stonesPerClick(), 1)}`;
-  totalStats.textContent = `Total mined: ${formatNumber(Math.floor(state.totalStones))} · Clicks: ${formatNumber(state.clicks)}`;
-  document.title = `${stonesText} stones — Stone Clicker`;
-  renderBuildings();
-  renderUpgrades();
-}
-
 stone.addEventListener('click', (event) => {
-  const amount = stonesPerClick();
+  gainStones(1);
   state.clicks += 1;
-  gainStones(amount);
 
-  // Keyboard activation has no pointer position, so fall back to the stone's center.
   const rect = stone.getBoundingClientRect();
   const x = event.clientX || rect.left + rect.width / 2;
   const y = event.clientY || rect.top + rect.height / 2;
-  spawnFloatingText(`+${formatNumber(amount, 1)}`, x, y);
+  spawnFloatingText(x, y);
   render();
 });
 
-resetButton.addEventListener('click', () => {
-  if (!window.confirm('Reset all progress? This cannot be undone.')) return;
-  state = createInitialState();
-  renderedUpgradeIds = '';
-  renderedPrizeIds = null;
+hireButton.addEventListener('click', () => {
+  if (state.people >= MAX_PEOPLE) return;
+
+  const cost = nextPersonCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  state.people += 1;
   saveState();
   render();
 });
 
-function applyOfflineProgress() {
-  const elapsed = Math.min((Date.now() - state.lastSaved) / 1000, MAX_OFFLINE_SECONDS);
-  const earned = stonesPerSecond() * elapsed;
-  if (earned >= 1) {
-    gainStones(earned);
-    spawnFloatingText(`Welcome back! +${formatNumber(earned)} stones`, window.innerWidth / 2, 120);
-  }
+salesButton.addEventListener('click', () => {
+  if (state.people < MAX_PEOPLE || state.sales >= MAX_SALES) return;
+
+  const cost = nextSalesCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.sales === 0) state.salesProgressMs = 0;
+  state.sales += 1;
+  saveState();
+  render();
+});
+
+creatorButton.addEventListener('click', () => {
+  if (state.sales < MAX_SALES || state.creators >= MAX_CREATORS) return;
+
+  const cost = nextCreatorCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.creators === 0) state.creatorProgressMs = 0;
+  state.creators += 1;
+  saveState();
+  render();
+});
+
+waterButton.addEventListener('click', () => {
+  if (state.creators < MAX_CREATORS || state.waterSources >= MAX_WATER_SOURCES) return;
+
+  const cost = nextWaterCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.waterSources === 0) state.waterProgressMs = 0;
+  state.waterSources += 1;
+  saveState();
+  render();
+});
+
+diggerButton.addEventListener('click', () => {
+  if (state.waterSources < MAX_WATER_SOURCES || state.diggers >= MAX_DIGGERS) return;
+
+  const cost = nextDiggerCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.diggers === 0) state.diggerProgressMs = 0;
+  state.diggers += 1;
+  saveState();
+  render();
+});
+
+cactusButton.addEventListener('click', () => {
+  if (state.diggers < MAX_DIGGERS || state.cacti >= MAX_CACTI) return;
+
+  const cost = nextCactusCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.cacti === 0) state.cactusProgressMs = 0;
+  state.cacti += 1;
+  saveState();
+  render();
+});
+
+tractorButton.addEventListener('click', () => {
+  if (state.cacti < MAX_CACTI || state.tractors >= MAX_TRACTORS) return;
+
+  const cost = nextTractorCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.tractors === 0) state.tractorProgressMs = 0;
+  state.tractors += 1;
+  saveState();
+  render();
+});
+
+holeButton.addEventListener('click', () => {
+  if (state.tractors < MAX_TRACTORS || state.holes >= MAX_HOLES) return;
+
+  const cost = nextHoleCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.holes === 0) state.holeProgressMs = 0;
+  state.holes += 1;
+  saveState();
+  render();
+});
+
+stormButton.addEventListener('click', () => {
+  if (state.holes < MAX_HOLES || state.storms >= MAX_STORMS) return;
+
+  const cost = nextStormCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.storms === 0) state.stormProgressMs = 0;
+  state.storms += 1;
+  saveState();
+  render();
+});
+
+function playCrewVolley() {
+  const cardRect = crewCard.getBoundingClientRect();
+  const targetRect = crewTargetPerson.getBoundingClientRect();
+  const targetX = targetRect.left - cardRect.left + targetRect.width / 2;
+  const targetY = targetRect.top - cardRect.top + targetRect.height * 0.42;
+
+  crewPeople.slice(0, state.people).forEach((person, index) => {
+    const sourceRect = person.getBoundingClientRect();
+    const sourceX = sourceRect.left - cardRect.left + sourceRect.width / 2;
+    const sourceY = sourceRect.top - cardRect.top + sourceRect.height / 2;
+    const flyingStone = document.createElement('span');
+    flyingStone.className = 'flying-stone';
+    flyingStone.style.left = `${sourceX}px`;
+    flyingStone.style.top = `${sourceY}px`;
+    flyingStone.style.setProperty('--travel-x', `${targetX - sourceX}px`);
+    flyingStone.style.setProperty('--travel-y', `${targetY - sourceY}px`);
+    flyingStone.style.setProperty('--travel-mid-x', `${(targetX - sourceX) * 0.52}px`);
+    flyingStone.style.setProperty('--travel-mid-y', `${(targetY - sourceY) * 0.52}px`);
+    flyingStone.style.animationDelay = `${index * 20}ms`;
+    crewCard.append(flyingStone);
+    flyingStone.addEventListener('animationend', () => flyingStone.remove());
+  });
+
+  window.setTimeout(() => {
+    crewTarget.classList.remove('crew-target--hit');
+    void crewTarget.offsetWidth;
+    crewTarget.classList.add('crew-target--hit');
+    window.setTimeout(() => crewTarget.classList.remove('crew-target--hit'), 440);
+  }, 470);
 }
 
-// setInterval keeps running (throttled) in background tabs, unlike requestAnimationFrame.
+function playSalesSwing() {
+  salesCard.classList.remove('sales-card--mining');
+  void salesCard.offsetWidth;
+  salesCard.classList.add('sales-card--mining');
+  window.setTimeout(() => salesCard.classList.remove('sales-card--mining'), 540);
+}
+
+function playCreatorSearch() {
+  creatorsCard.classList.remove('creators-card--searching');
+  void creatorsCard.offsetWidth;
+  creatorsCard.classList.add('creators-card--searching');
+  window.setTimeout(() => creatorsCard.classList.remove('creators-card--searching'), 680);
+}
+
+function playWaterFlow() {
+  waterCard.classList.remove('water-card--flowing');
+  void waterCard.offsetWidth;
+  waterCard.classList.add('water-card--flowing');
+  window.setTimeout(() => waterCard.classList.remove('water-card--flowing'), 700);
+}
+
+function playDiggerScoop() {
+  diggersCard.classList.remove('diggers-card--digging');
+  void diggersCard.offsetWidth;
+  diggersCard.classList.add('diggers-card--digging');
+  window.setTimeout(() => diggersCard.classList.remove('diggers-card--digging'), 700);
+}
+
+function playCactusGrowth() {
+  cactusCard.classList.remove('cactus-card--growing');
+  void cactusCard.offsetWidth;
+  cactusCard.classList.add('cactus-card--growing');
+  window.setTimeout(() => cactusCard.classList.remove('cactus-card--growing'), 720);
+}
+
+function playTractorScoop() {
+  tractorsCard.classList.remove('tractors-card--scooping');
+  void tractorsCard.offsetWidth;
+  tractorsCard.classList.add('tractors-card--scooping');
+  window.setTimeout(() => tractorsCard.classList.remove('tractors-card--scooping'), 760);
+}
+
+function playHoleDrop() {
+  holesCard.classList.remove('holes-card--dropping');
+  void holesCard.offsetWidth;
+  holesCard.classList.add('holes-card--dropping');
+  window.setTimeout(() => holesCard.classList.remove('holes-card--dropping'), 760);
+}
+
+function playStormSwirl() {
+  stormsCard.classList.remove('storms-card--swirling');
+  void stormsCard.offsetWidth;
+  stormsCard.classList.add('storms-card--swirling');
+  window.setTimeout(() => stormsCard.classList.remove('storms-card--swirling'), 820);
+}
+
+function applyOfflineProgress() {
+  const elapsedMs = Math.min(Math.max(0, Date.now() - state.lastSaved), MAX_OFFLINE_SECONDS * 1000);
+  const accumulatedMs = state.crewProgressMs + elapsedMs;
+  const completedDrops = Math.floor(accumulatedMs / CREW_DROP_INTERVAL);
+  state.crewProgressMs = accumulatedMs % CREW_DROP_INTERVAL;
+  gainStones(completedDrops * state.people);
+
+  if (state.sales > 0) {
+    const accumulatedSalesMs = state.salesProgressMs + elapsedMs;
+    const completedSalesSwings = Math.floor(accumulatedSalesMs / SALES_INTERVAL);
+    state.salesProgressMs = accumulatedSalesMs % SALES_INTERVAL;
+    gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
+  } else {
+    state.salesProgressMs = 0;
+  }
+
+  if (state.creators > 0) {
+    const accumulatedCreatorMs = state.creatorProgressMs + elapsedMs;
+    const completedCreatorSearches = Math.floor(accumulatedCreatorMs / CREATOR_INTERVAL);
+    state.creatorProgressMs = accumulatedCreatorMs % CREATOR_INTERVAL;
+    gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
+  } else {
+    state.creatorProgressMs = 0;
+  }
+
+  if (state.waterSources > 0) {
+    const accumulatedWaterMs = state.waterProgressMs + elapsedMs;
+    const completedWaterFlows = Math.floor(accumulatedWaterMs / WATER_INTERVAL);
+    state.waterProgressMs = accumulatedWaterMs % WATER_INTERVAL;
+    gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
+  } else {
+    state.waterProgressMs = 0;
+  }
+
+  if (state.diggers > 0) {
+    const accumulatedDiggerMs = state.diggerProgressMs + elapsedMs;
+    const completedDiggerScoops = Math.floor(accumulatedDiggerMs / DIGGER_INTERVAL);
+    state.diggerProgressMs = accumulatedDiggerMs % DIGGER_INTERVAL;
+    gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
+  } else {
+    state.diggerProgressMs = 0;
+  }
+
+  if (state.cacti > 0) {
+    const accumulatedCactusMs = state.cactusProgressMs + elapsedMs;
+    const completedCactusGrowths = Math.floor(accumulatedCactusMs / CACTUS_INTERVAL);
+    state.cactusProgressMs = accumulatedCactusMs % CACTUS_INTERVAL;
+    gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
+  } else {
+    state.cactusProgressMs = 0;
+  }
+
+  if (state.tractors > 0) {
+    const accumulatedTractorMs = state.tractorProgressMs + elapsedMs;
+    const completedTractorScoops = Math.floor(accumulatedTractorMs / TRACTOR_INTERVAL);
+    state.tractorProgressMs = accumulatedTractorMs % TRACTOR_INTERVAL;
+    gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
+  } else {
+    state.tractorProgressMs = 0;
+  }
+
+  if (state.holes > 0) {
+    const accumulatedHoleMs = state.holeProgressMs + elapsedMs;
+    const completedHoleDrops = Math.floor(accumulatedHoleMs / HOLE_INTERVAL);
+    state.holeProgressMs = accumulatedHoleMs % HOLE_INTERVAL;
+    gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
+  } else {
+    state.holeProgressMs = 0;
+  }
+
+  if (state.storms > 0) {
+    const accumulatedStormMs = state.stormProgressMs + elapsedMs;
+    const completedStormSwirls = Math.floor(accumulatedStormMs / STORM_INTERVAL);
+    state.stormProgressMs = accumulatedStormMs % STORM_INTERVAL;
+    gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
+  } else {
+    state.stormProgressMs = 0;
+  }
+  state.lastSaved = Date.now();
+}
+
 let lastTick = Date.now();
 
 function tick() {
   const now = Date.now();
-  gainStones(stonesPerSecond() * ((now - lastTick) / 1000));
+  const elapsedMs = now - lastTick;
+  state.crewProgressMs += elapsedMs;
+  if (state.sales > 0) state.salesProgressMs += elapsedMs;
+  if (state.creators > 0) state.creatorProgressMs += elapsedMs;
+  if (state.waterSources > 0) state.waterProgressMs += elapsedMs;
+  if (state.diggers > 0) state.diggerProgressMs += elapsedMs;
+  if (state.cacti > 0) state.cactusProgressMs += elapsedMs;
+  if (state.tractors > 0) state.tractorProgressMs += elapsedMs;
+  if (state.holes > 0) state.holeProgressMs += elapsedMs;
+  if (state.storms > 0) state.stormProgressMs += elapsedMs;
   lastTick = now;
+
+  const completedDrops = Math.floor(state.crewProgressMs / CREW_DROP_INTERVAL);
+  if (completedDrops > 0) {
+    state.crewProgressMs %= CREW_DROP_INTERVAL;
+    gainStones(completedDrops * state.people);
+    playCrewVolley();
+  }
+
+  const completedSalesSwings = Math.floor(state.salesProgressMs / SALES_INTERVAL);
+  if (completedSalesSwings > 0) {
+    state.salesProgressMs %= SALES_INTERVAL;
+    gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
+    playSalesSwing();
+  }
+
+  const completedCreatorSearches = Math.floor(state.creatorProgressMs / CREATOR_INTERVAL);
+  if (completedCreatorSearches > 0) {
+    state.creatorProgressMs %= CREATOR_INTERVAL;
+    gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
+    playCreatorSearch();
+  }
+
+  const completedWaterFlows = Math.floor(state.waterProgressMs / WATER_INTERVAL);
+  if (completedWaterFlows > 0) {
+    state.waterProgressMs %= WATER_INTERVAL;
+    gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
+    playWaterFlow();
+  }
+
+  const completedDiggerScoops = Math.floor(state.diggerProgressMs / DIGGER_INTERVAL);
+  if (completedDiggerScoops > 0) {
+    state.diggerProgressMs %= DIGGER_INTERVAL;
+    gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
+    playDiggerScoop();
+  }
+
+  const completedCactusGrowths = Math.floor(state.cactusProgressMs / CACTUS_INTERVAL);
+  if (completedCactusGrowths > 0) {
+    state.cactusProgressMs %= CACTUS_INTERVAL;
+    gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
+    playCactusGrowth();
+  }
+
+  const completedTractorScoops = Math.floor(state.tractorProgressMs / TRACTOR_INTERVAL);
+  if (completedTractorScoops > 0) {
+    state.tractorProgressMs %= TRACTOR_INTERVAL;
+    gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
+    playTractorScoop();
+  }
+
+  const completedHoleDrops = Math.floor(state.holeProgressMs / HOLE_INTERVAL);
+  if (completedHoleDrops > 0) {
+    state.holeProgressMs %= HOLE_INTERVAL;
+    gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
+    playHoleDrop();
+  }
+
+  const completedStormSwirls = Math.floor(state.stormProgressMs / STORM_INTERVAL);
+  if (completedStormSwirls > 0) {
+    state.stormProgressMs %= STORM_INTERVAL;
+    gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
+    playStormSwirl();
+  }
+
   render();
 }
 
-createBuildingRows();
+applyTranslations();
 applyOfflineProgress();
 render();
 setInterval(tick, 100);
