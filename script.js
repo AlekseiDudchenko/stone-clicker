@@ -918,24 +918,24 @@ function triggerSilverfishAttack(showVisual = true) {
 }
 
 function applyOfflineSilverfishTheft(elapsedMs) {
-  if (silverfishLevel() === 0 || state.stones <= 0 || elapsedMs <= 0) return;
-
-  const interval = silverfishInterval();
-  const accumulated = state.silverfishProgressMs + elapsedMs;
-
-  if (accumulated < interval) {
-    state.silverfishProgressMs = accumulated;
+  if (silverfishLevel() === 0 || state.stones <= 0 || elapsedMs <= 0) {
+    state.silverfishProgressMs = 0;
     return;
+  }
+
+  // Visible silverfish events should never be waiting at the door when the player opens the game.
+  // Offline time may cause at most one small missed-event penalty, then the visible timer starts fresh.
+  const missedEventThreshold = silverfishInterval();
+  if (elapsedMs >= missedEventThreshold) {
+    const { stolen } = calculateSilverfishTheft();
+    if (stolen > 0) {
+      const offlineCap = Math.max(1, Math.floor(state.stones * 0.08));
+      state.stones = Math.max(0, state.stones - Math.min(stolen, offlineCap));
+    }
   }
 
   state.silverfishProgressMs = 0;
   state.silverfishNextIntervalMs = chooseSilverfishInterval();
-
-  // Offline this behaves like one missed mini-event, not a chain of attacks.
-  const { stolen } = calculateSilverfishTheft();
-  if (stolen <= 0) return;
-  const offlineCap = Math.max(1, Math.floor(state.stones * 0.08));
-  state.stones = Math.max(0, state.stones - Math.min(stolen, offlineCap));
 }
 
 function render() {
