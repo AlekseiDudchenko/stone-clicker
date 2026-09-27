@@ -2523,37 +2523,38 @@ button {
 .silverfish {
   position: fixed;
   z-index: 90;
-  width: 23px;
-  height: 10px;
+  width: 74px;
+  height: 30px;
   pointer-events: none;
-  border-radius: 55% 42% 50% 45%;
+  border-radius: 60% 45% 55% 48%;
   background:
-    radial-gradient(circle at 16% 45%, #1f2428 0 10%, transparent 11%),
-    repeating-linear-gradient(90deg, #a7adb0 0 4px, #656c70 4px 7px);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 28%);
+    radial-gradient(circle at 13% 48%, #171b1e 0 8%, transparent 9%),
+    repeating-linear-gradient(90deg, #b7bec2 0 9px, #747c81 9px 15px);
+  box-shadow: 0 7px 12px rgb(0 0 0 / 26%);
   transform: translate(-50%, -50%);
-  animation: silverfish-scurry 1.35s cubic-bezier(.2,.7,.2,1) forwards;
+  animation: silverfish-raid 2.4s cubic-bezier(.22,.72,.2,1) forwards;
 }
 
 .silverfish::before,
 .silverfish::after {
   content: "";
   position: absolute;
-  left: 3px;
-  width: 18px;
-  height: 1px;
+  left: 8px;
+  width: 58px;
+  height: 3px;
   background: #555d61;
+  border-radius: 999px;
   transform-origin: center;
 }
 
 .silverfish::before {
-  top: 1px;
-  transform: rotate(-18deg);
+  top: 3px;
+  transform: rotate(-17deg);
 }
 
 .silverfish::after {
-  bottom: 1px;
-  transform: rotate(18deg);
+  bottom: 3px;
+  transform: rotate(17deg);
 }
 
 .silverfish-theft {
@@ -2561,50 +2562,67 @@ button {
   z-index: 95;
   pointer-events: none;
   color: #a3332d;
-  font: 900 clamp(1rem, 2vw, 1.45rem)/1 system-ui, sans-serif;
-  text-shadow: 0 2px 0 rgb(255 255 255 / 90%);
+  font: 900 clamp(1.15rem, 2.4vw, 1.75rem)/1 system-ui, sans-serif;
+  text-shadow: 0 2px 0 rgb(255 255 255 / 92%);
   transform: translate(-50%, -50%);
-  animation: silverfish-theft-float 1.35s ease-out forwards;
+  animation: silverfish-theft-float 1.7s ease-out forwards;
 }
 
 .stone--silverfish-hit {
-  animation: silverfish-stone-shake 0.46s ease-out;
+  animation: silverfish-stone-shake 0.9s ease-out;
 }
 
-@keyframes silverfish-scurry {
+@keyframes silverfish-raid {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+    transform: translate(-50%, -50%) scale(0.72) rotate(-7deg);
   }
-  14% {
+  12% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05) rotate(-8deg);
+  }
+  58% {
+    opacity: 1;
+    transform: translate(
+      calc(-50% + var(--to-stone-x)),
+      calc(-50% + var(--to-stone-y))
+    ) scale(1.08) rotate(4deg);
+  }
+  74% {
+    opacity: 1;
+    transform: translate(
+      calc(-50% + var(--to-stone-x)),
+      calc(-50% + var(--to-stone-y))
+    ) scale(1.12) rotate(-4deg);
   }
   100% {
     opacity: 0;
-    transform: translate(calc(-50% + var(--silverfish-x)), calc(-50% + var(--silverfish-y))) scale(0.9) rotate(14deg);
+    transform: translate(
+      calc(-50% + var(--to-stone-x) + var(--leave-x)),
+      calc(-50% + var(--to-stone-y) + var(--leave-y))
+    ) scale(0.96) rotate(10deg);
   }
 }
 
 @keyframes silverfish-theft-float {
   0% {
     opacity: 0;
-    transform: translate(-50%, -20%) scale(0.8);
+    transform: translate(-50%, -10%) scale(0.82);
   }
-  15% {
+  20% {
     opacity: 1;
-    transform: translate(-50%, -45%) scale(1);
+    transform: translate(-50%, -48%) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -150%) scale(1.08);
+    transform: translate(-50%, -165%) scale(1.1);
   }
 }
 
 @keyframes silverfish-stone-shake {
   0%, 100% { transform: translateX(0) rotate(0); }
-  20% { transform: translateX(-7px) rotate(-2deg); }
-  40% { transform: translateX(6px) rotate(2deg); }
-  60% { transform: translateX(-4px) rotate(-1deg); }
-  80% { transform: translateX(3px) rotate(1deg); }
+  18% { transform: translateX(-9px) rotate(-3deg); }
+  36% { transform: translateX(8px) rotate(3deg); }
+  54% { transform: translateX(-6px) rotate(-2deg); }
+  72% { transform: translateX(5px) rotate(2deg); }
+  88% { transform: translateX(-2px) rotate(-1deg); }
 }
