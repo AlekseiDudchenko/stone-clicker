@@ -91,6 +91,7 @@ const THEMES = [
       '--stone-middle': '#2e1c18',
       '--stone-bottom': '#170d0b',
       '--stone-crack': 'rgb(255 110 40 / 90%)',
+      '--stone-ink': '#ffb36b',
     },
   },
   {
