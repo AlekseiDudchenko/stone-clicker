@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stone Clicker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game" aria-label="Stone Clicker">
+      <output id="stone-count" class="counter" aria-live="polite">Stones: 0</output>
+
+      <button id="stone" class="stone" type="button" aria-label="Collect one stone">
+        <span class="stone__highlight"></span>
+        <span class="stone__crack stone__crack--one"></span>
+        <span class="stone__crack stone__crack--two"></span>
+        <span class="stone__crack stone__crack--three"></span>
+      </button>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
