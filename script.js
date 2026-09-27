@@ -41,6 +41,10 @@ const buildingsList = document.querySelector('#buildings');
 const upgradesList = document.querySelector('#upgrades');
 const upgradesEmpty = document.querySelector('#upgrades-empty');
 const resetButton = document.querySelector('#reset');
+const prizesList = document.querySelector('#prizes');
+const prizesCount = document.querySelector('#prizes-count');
+const themesList = document.querySelector('#themes');
+const toasts = document.querySelector('#toasts');
 
 function createInitialState() {
   return {
@@ -49,6 +53,8 @@ function createInitialState() {
     clicks: 0,
     buildings: Object.fromEntries(BUILDINGS.map((building) => [building.id, 0])),
     upgrades: [],
+    prizes: [],
+    theme: 'classic',
     lastSaved: Date.now(),
   };
 }
@@ -65,6 +71,7 @@ function loadState() {
       ...saved,
       buildings: { ...fresh.buildings, ...saved.buildings },
       upgrades: Array.isArray(saved.upgrades) ? saved.upgrades : [],
+      prizes: Array.isArray(saved.prizes) ? saved.prizes : [],
     };
   } catch {
     return fresh;
@@ -99,10 +106,19 @@ function ownedUpgrades() {
   return UPGRADES.filter((upgrade) => hasUpgrade(upgrade.id));
 }
 
+function hasPrize(id) {
+  return state.prizes.includes(id);
+}
+
+function prizeBonus() {
+  return PRIZES.filter((prize) => hasPrize(prize.id)).reduce((sum, prize) => sum + (prize.bonus || 0), 0);
+}
+
 function globalMultiplier() {
-  return ownedUpgrades()
+  const fromUpgrades = ownedUpgrades()
     .filter((upgrade) => upgrade.type === 'global')
     .reduce((product, upgrade) => product * upgrade.multiplier, 1);
+  return fromUpgrades * (1 + prizeBonus());
 }
 
 function buildingRate(building) {
@@ -141,6 +157,120 @@ function isUpgradeUnlocked(upgrade) {
 function gainStones(amount) {
   state.stones += amount;
   state.totalStones += amount;
+}
+
+function showToast(icon, title, text) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.setAttribute('role', 'status');
+  toast.innerHTML = `<span class="toast__icon" aria-hidden="true"></span><span><strong></strong><br /><span></span></span>`;
+  toast.querySelector('.toast__icon').textContent = icon;
+  toast.querySelector('strong').textContent = title;
+  toast.querySelector('span > span').textContent = text;
+  toasts.append(toast);
+  toast.addEventListener('animationend', (event) => {
+    if (event.animationName === 'toast-out') toast.remove();
+  });
+}
+
+// Prizes: see prizes.js. Snapshot passed to each prize's check() function.
+function prizeSnapshot() {
+  return {
+    stones: state.stones,
+    totalStones: state.totalStones,
+    clicks: state.clicks,
+    perSecond: stonesPerSecond(),
+    perClick: stonesPerClick(),
+    buildings: { ...state.buildings },
+    upgrades: state.upgrades.length,
+  };
+}
+
+function checkPrizes() {
+  const snapshot = prizeSnapshot();
+  for (const prize of PRIZES) {
+    if (hasPrize(prize.id) || !prize.check(snapshot)) continue;
+    state.prizes.push(prize.id);
+    const bonusText = prize.bonus ? ` (+${Math.round(prize.bonus * 100)}% production)` : '';
+    showToast(prize.icon, `Prize won: ${prize.name}`, `${prize.description}${bonusText}`);
+    for (const theme of THEMES.filter((item) => item.unlockedBy === prize.id)) {
+      showToast(theme.icon, `Theme unlocked: ${theme.name}`, 'Pick it in the Themes panel.');
+    }
+  }
+}
+
+let renderedPrizeIds = null;
+
+function renderPrizes() {
+  const ids = state.prizes.join(',');
+  if (ids === renderedPrizeIds) return;
+  renderedPrizeIds = ids;
+
+  prizesCount.textContent = `${state.prizes.length}/${PRIZES.length}`;
+  prizesList.replaceChildren(
+    ...PRIZES.map((prize) => {
+      const earned = hasPrize(prize.id);
+      const badge = document.createElement('span');
+      badge.className = `prize${earned ? '' : ' prize--locked'}`;
+      badge.textContent = earned ? prize.icon : '❔';
+      const bonusText = prize.bonus ? `\nBonus: +${Math.round(prize.bonus * 100)}% production` : '';
+      const label = earned ? `${prize.name} — ${prize.description}${bonusText}` : `Locked — ${prize.description}`;
+      badge.title = label;
+      badge.setAttribute('role', 'img');
+      badge.setAttribute('aria-label', label);
+      return badge;
+    }),
+  );
+}
+
+// Themes: see themes.js. A theme is a set of CSS variables applied to the page root.
+function isThemeUnlocked(theme) {
+  return !theme.unlockedBy || hasPrize(theme.unlockedBy);
+}
+
+function currentTheme() {
+  const theme = THEMES.find((item) => item.id === state.theme);
+  return theme && isThemeUnlocked(theme) ? theme : THEMES[0];
+}
+
+let appliedThemeId = null;
+
+function applyTheme() {
+  const theme = currentTheme();
+  if (theme.id === appliedThemeId) return;
+  const root = document.documentElement;
+  const previous = THEMES.find((item) => item.id === appliedThemeId);
+  for (const name of Object.keys(previous?.vars || {})) root.style.removeProperty(name);
+  for (const [name, value] of Object.entries(theme.vars)) root.style.setProperty(name, value);
+  appliedThemeId = theme.id;
+}
+
+let renderedThemesKey = null;
+
+function renderThemes() {
+  const key = `${currentTheme().id}|${THEMES.map((theme) => isThemeUnlocked(theme)).join(',')}`;
+  if (key === renderedThemesKey) return;
+  renderedThemesKey = key;
+
+  themesList.replaceChildren(
+    ...THEMES.map((theme) => {
+      const unlocked = isThemeUnlocked(theme);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'theme';
+      button.disabled = !unlocked;
+      button.setAttribute('aria-pressed', String(theme.id === currentTheme().id));
+      button.textContent = `${unlocked ? theme.icon : '🔒'} ${theme.name}`;
+      const prize = PRIZES.find((item) => item.id === theme.unlockedBy);
+      button.title = unlocked ? theme.name : `Win the “${prize?.name}” prize: ${prize?.description}`;
+      button.addEventListener('click', () => {
+        state.theme = theme.id;
+        saveState();
+        render();
+      });
+      return button;
+    }),
+  );
 }
 
 function spawnFloatingText(text, x, y) {
@@ -243,6 +373,10 @@ function renderUpgrades() {
 }
 
 function render() {
+  checkPrizes();
+  applyTheme();
+  renderPrizes();
+  renderThemes();
   const stonesText = formatNumber(Math.floor(state.stones));
   counter.value = `Stones: ${stonesText}`;
   counter.textContent = `Stones: ${stonesText}`;
@@ -271,6 +405,7 @@ resetButton.addEventListener('click', () => {
   if (!window.confirm('Reset all progress? This cannot be undone.')) return;
   state = createInitialState();
   renderedUpgradeIds = '';
+  renderedPrizeIds = null;
   saveState();
   render();
 });
