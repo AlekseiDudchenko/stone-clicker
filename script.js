@@ -780,13 +780,20 @@ function spawnSilverfishVisual(count, stolen) {
   for (let index = 0; index < count; index += 1) {
     const bug = document.createElement('span');
     bug.className = 'silverfish';
-    const angle = ((index / Math.max(1, count)) * Math.PI * 2) + (Math.random() - 0.5) * 0.7;
-    const distance = 95 + Math.random() * 85;
-    bug.style.left = `${centerX}px`;
-    bug.style.top = `${centerY}px`;
-    bug.style.setProperty('--silverfish-x', `${Math.cos(angle) * distance}px`);
-    bug.style.setProperty('--silverfish-y', `${Math.sin(angle) * distance}px`);
-    bug.style.animationDelay = `${index * 65}ms`;
+
+    const side = index % 2 === 0 ? -1 : 1;
+    const spread = 190 + Math.random() * 150;
+    const vertical = (Math.random() - 0.5) * 150;
+    const startX = centerX + side * spread;
+    const startY = centerY + vertical;
+
+    bug.style.left = `${startX}px`;
+    bug.style.top = `${startY}px`;
+    bug.style.setProperty('--to-stone-x', `${centerX - startX}px`);
+    bug.style.setProperty('--to-stone-y', `${centerY - startY}px`);
+    bug.style.setProperty('--leave-x', `${side * (90 + Math.random() * 90)}px`);
+    bug.style.setProperty('--leave-y', `${(Math.random() - 0.5) * 90}px`);
+    bug.style.animationDelay = `${index * 90}ms`;
     document.body.append(bug);
     bug.addEventListener('animationend', () => bug.remove());
   }
@@ -796,7 +803,7 @@ function spawnSilverfishVisual(count, stolen) {
     label.className = 'silverfish-theft';
     label.textContent = `-${formatNumber(stolen)} 🪨`;
     label.style.left = `${centerX}px`;
-    label.style.top = `${rect.top + rect.height * 0.28}px`;
+    label.style.top = `${rect.top + rect.height * 0.24}px`;
     document.body.append(label);
     label.addEventListener('animationend', () => label.remove());
   }
@@ -804,7 +811,7 @@ function spawnSilverfishVisual(count, stolen) {
   stone.classList.remove('stone--silverfish-hit');
   void stone.offsetWidth;
   stone.classList.add('stone--silverfish-hit');
-  window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 480);
+  window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 900);
 }
 
 function triggerSilverfishAttack(showVisual = true) {
