@@ -47,7 +47,7 @@ const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
 const SILVERFISH_UNLOCK_TOTAL = 20;
 const SILVERFISH_BASE_INTERVAL = 6500;
 const SILVERFISH_MIN_INTERVAL = 2800;
-const SILVERFISH_MAX_COUNT = 5;
+const SILVERFISH_MAX_COUNT = 10;
 
 const TRANSLATIONS = {
   en: {
@@ -753,14 +753,18 @@ function silverfishInterval() {
 function silverfishCount() {
   const level = silverfishLevel();
   if (level === 0) return 0;
-  return Math.min(SILVERFISH_MAX_COUNT, 1 + Math.floor((level - 1) / 2));
+  return Math.min(SILVERFISH_MAX_COUNT, 2 + Math.floor(level * 1.5));
 }
 
 function silverfishStealPerBug() {
   const level = silverfishLevel();
   if (level === 0 || state.stones <= 0) return 0;
-  const percentage = 0.006 + level * 0.002;
-  return Math.max(1, Math.floor(state.stones * percentage));
+
+  // About 50 stones per theft tick at a 20,000-stone balance,
+  // then progressively harsher as the run advances.
+  const percentage = 0.0025 + Math.max(0, level - 3) * 0.00045;
+  const progressionBonus = Math.max(0, Math.floor(Math.log10(Math.max(1, state.totalStones))) - 4) * 12;
+  return Math.max(2, Math.floor(state.stones * percentage) + progressionBonus);
 }
 
 function calculateSilverfishTheft() {
@@ -768,7 +772,7 @@ function calculateSilverfishTheft() {
   if (count === 0 || state.stones <= 0) return { count: 0, stolen: 0 };
 
   const wanted = count * silverfishStealPerBug();
-  const attackCap = Math.max(1, Math.floor(state.stones * 0.12));
+  const attackCap = Math.max(1, Math.floor(state.stones * 0.22));
   return { count, stolen: Math.min(state.stones, wanted, attackCap) };
 }
 
@@ -866,7 +870,7 @@ function spawnSilverfishVisual(count) {
       if (!bug.isConnected || bug.disabled) return;
       bug.classList.add('silverfish--at-stone');
       stealOnce();
-      stealTimer = window.setInterval(stealOnce, 2200);
+      stealTimer = window.setInterval(stealOnce, 1800);
     }, arrivalDelay);
   }
 }
@@ -893,7 +897,7 @@ function applyOfflineSilverfishTheft(elapsedMs) {
   if (attacks <= 0) return;
 
   const startingStones = state.stones;
-  const offlineCap = Math.floor(startingStones * Math.min(0.35, 0.08 + silverfishLevel() * 0.04));
+  const offlineCap = Math.floor(startingStones * Math.min(0.5, 0.12 + silverfishLevel() * 0.05));
   let stolenOffline = 0;
 
   for (let index = 0; index < attacks && state.stones > 0 && stolenOffline < offlineCap; index += 1) {
