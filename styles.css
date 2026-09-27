@@ -9,12 +9,8 @@
   --card-bg: #fff;
   --border: #dadce0;
   --accent: #3978d4;
-  --stone-light: #b5b5b1;
-  --stone-spot: #555753;
-  --stone-top: #92948f;
-  --stone-middle: #6f716d;
-  --stone-bottom: #4e504c;
-  --stone-crack: rgb(35 37 34 / 65%);
+  /* CSS filter applied to stone.png, so themes can recolour the stone. */
+  --stone-filter: brightness(1);
   --danger: #a50e0e;
 
   color: var(--text);
@@ -337,25 +333,18 @@ body {
 }
 
 .stone {
-  position: relative;
-  width: min(42vw, 330px);
-  aspect-ratio: 1.08;
+  width: min(42vw, 360px);
+  aspect-ratio: 600 / 544;
+  padding: 0;
   cursor: pointer;
   border: 0;
-  border-radius: 48% 54% 46% 52% / 51% 45% 55% 49%;
-  background:
-    radial-gradient(ellipse at 28% 22%, var(--stone-light) 0 8%, transparent 25%),
-    radial-gradient(ellipse at 70% 75%, var(--stone-spot) 0 9%, transparent 31%),
-    linear-gradient(145deg, var(--stone-top) 0%, var(--stone-middle) 53%, var(--stone-bottom) 100%);
-  box-shadow:
-    inset 22px 18px 28px rgb(255 255 255 / 18%),
-    inset -28px -26px 32px rgb(0 0 0 / 26%),
-    0 28px 28px rgb(0 0 0 / 22%);
+  background: url("stone.png") center / contain no-repeat;
+  filter: var(--stone-filter);
   transition: transform 110ms ease, filter 110ms ease;
 }
 
 .stone:hover {
-  filter: brightness(1.06);
+  filter: var(--stone-filter) brightness(1.06);
 }
 
 .stone:active {
@@ -365,53 +354,6 @@ body {
 .stone:focus-visible {
   outline: 4px solid var(--accent);
   outline-offset: 10px;
-}
-
-.stone__highlight,
-.stone__crack {
-  position: absolute;
-  display: block;
-  pointer-events: none;
-}
-
-.stone__highlight {
-  top: 15%;
-  left: 16%;
-  width: 23%;
-  height: 11%;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 18%);
-  filter: blur(5px);
-  transform: rotate(-27deg);
-}
-
-.stone__crack {
-  width: 3px;
-  border-radius: 999px;
-  background: var(--stone-crack);
-  box-shadow: 1px 1px 0 rgb(229 229 223 / 12%);
-  transform-origin: top;
-}
-
-.stone__crack--one {
-  top: 29%;
-  left: 57%;
-  height: 26%;
-  transform: rotate(26deg);
-}
-
-.stone__crack--two {
-  top: 46%;
-  left: 48%;
-  height: 18%;
-  transform: rotate(-51deg);
-}
-
-.stone__crack--three {
-  top: 58%;
-  left: 63%;
-  height: 16%;
-  transform: rotate(48deg);
 }
 
 @media (max-width: 760px) {
@@ -431,6 +373,6 @@ body {
   }
 
   .stone {
-    width: min(72vw, 330px);
+    width: min(72vw, 360px);
   }
 }
