@@ -66,7 +66,7 @@ const TRANSLATIONS = {
     tractors: 'tractors', buy: 'Buy', holesTitle: 'Stone Holes',
     holesDescription: 'Stones tumble into each hole, bringing 48 stones per second.', holes: 'holes', open: 'Open',
     stormsTitle: 'Sandstorms', stormsDescription: 'Each desert whirlwind carries 75 stones per second.',
-    storms: 'storms', summon: 'Summon',
+    storms: 'storms', summon: 'Summon', resetProgress: 'Reset progress', resetConfirm: 'Reset absolutely all progress? Stones, upgrades, biome unlocks and stone skins will be lost.',
     stonesAria: 'Stones: {count}', crewRosterAria: '{count} of 8 people hired', targetAria: 'Stone collector',
     hirePersonAria: 'Hire another person for {cost} stones', crewFullAria: 'Maximum crew size reached',
     salesRosterAria: '{count} of 8 Sales recruited', salesLockedAria: 'Hire all 8 Stone Crew people to unlock Sales',
@@ -109,7 +109,7 @@ const TRANSLATIONS = {
     tractors: 'тракторов', buy: 'Купить', holesTitle: 'Каменные ямы',
     holesDescription: 'В каждую яму сыпятся камни. Она приносит 48 камней в секунду.', holes: 'ям', open: 'Открыть',
     stormsTitle: 'Песчаные бури', stormsDescription: 'Каждый пустынный вихрь приносит 75 камней в секунду.',
-    storms: 'бурь', summon: 'Призвать',
+    storms: 'бурь', summon: 'Призвать', resetProgress: 'Сбросить прогресс', resetConfirm: 'Сбросить абсолютно весь прогресс? Камни, улучшения, открытые биомы и скины будут потеряны.',
     stonesAria: 'Камни: {count}', crewRosterAria: 'Нанято людей: {count} из 8', targetAria: 'Сборщик камней',
     hirePersonAria: 'Нанять ещё одного человека за {cost} камней', crewFullAria: 'Достигнут максимум команды',
     salesRosterAria: 'Нанято работников: {count} из 8', salesLockedAria: 'Найми всю команду из 8 человек, чтобы открыть Продажи',
@@ -152,7 +152,7 @@ const TRANSLATIONS = {
     tractors: 'Traktoren', buy: 'Kaufen', holesTitle: 'Steinlöcher',
     holesDescription: 'In jedes Loch fallen Steine. Es bringt 48 Steine pro Sekunde.', holes: 'Löcher', open: 'Öffnen',
     stormsTitle: 'Sandstürme', stormsDescription: 'Jeder Wüstenwirbel bringt 75 Steine pro Sekunde.',
-    storms: 'Stürme', summon: 'Beschwören',
+    storms: 'Stürme', summon: 'Beschwören', resetProgress: 'Fortschritt zurücksetzen', resetConfirm: 'Wirklich den gesamten Fortschritt zurücksetzen? Steine, Upgrades, freigeschaltete Biome und Stein-Skins gehen verloren.',
     stonesAria: 'Steine: {count}', crewRosterAria: '{count} von 8 Personen angeheuert', targetAria: 'Steinsammler',
     hirePersonAria: 'Eine weitere Person für {cost} Steine anheuern', crewFullAria: 'Maximale Truppgröße erreicht',
     salesRosterAria: '{count} von 8 Arbeitern angeworben', salesLockedAria: 'Heuere alle 8 Personen an, um Verkauf freizuschalten',
@@ -264,6 +264,7 @@ const stormButton = document.querySelector('#summon-storm');
 const stormBuyLabel = document.querySelector('#storm-buy-label');
 const stormBuyPrice = document.querySelector('#storm-buy-price');
 const stormCost = document.querySelector('#storm-cost');
+const resetProgressButton = document.querySelector('#reset-progress');
 
 function createInitialState() {
   return {
@@ -1154,6 +1155,31 @@ function tick() {
 
   render();
 }
+
+
+resetProgressButton.addEventListener('click', () => {
+  if (!window.confirm(t('resetConfirm'))) return;
+
+  const language = state.language;
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch {
+    // If storage is unavailable, resetting the in-memory state is still enough for this session.
+  }
+
+  state = createInitialState();
+  state.language = language;
+  state.lastSaved = Date.now();
+  lastTick = Date.now();
+
+  biomeBanner.classList.remove('biome-banner--show');
+  biomeBanner.hidden = true;
+  document.querySelectorAll('.flying-stone').forEach((element) => element.remove());
+
+  applyTranslations();
+  saveState();
+  render();
+});
 
 applyTranslations();
 applyOfflineProgress();

@@ -9,14 +9,17 @@
   <body>
     <div class="layout">
       <main class="game" aria-label="Stone Clicker">
-        <label class="language-switcher" for="language-select">
-          <span aria-hidden="true">&#127760;</span>
-          <select id="language-select" aria-label="Language">
-            <option value="en">English</option>
-            <option value="ru">Русский</option>
-            <option value="de">Deutsch</option>
-          </select>
-        </label>
+        <div class="game-controls">
+          <button id="reset-progress" class="reset-progress" type="button" data-i18n="resetProgress">Reset progress</button>
+          <label class="language-switcher" for="language-select">
+            <span aria-hidden="true">&#127760;</span>
+            <select id="language-select" aria-label="Language">
+              <option value="en">English</option>
+              <option value="ru">Русский</option>
+              <option value="de">Deutsch</option>
+            </select>
+          </label>
+        </div>
         <header class="stats">
           <p id="biome-chip" class="biome-chip" hidden><span data-i18n="unlockedBiome">Unlocked biome</span> · <strong data-i18n="desert">Desert</strong></p>
           <output id="stone-count" class="counter" aria-live="polite">

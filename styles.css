@@ -49,11 +49,17 @@ button {
     linear-gradient(180deg, #fffaf0 0%, #f7edda 100%);
 }
 
-.language-switcher {
+.game-controls {
   position: absolute;
   top: 18px;
   right: 20px;
   z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.language-switcher {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -78,6 +84,27 @@ button {
 
 .language-switcher:focus-within {
   outline: 3px solid #6f91bd;
+  outline-offset: 2px;
+}
+
+.reset-progress {
+  padding: 6px 10px;
+  color: #8e3b32;
+  font: 800 0.74rem/1.2 system-ui, sans-serif;
+  border: 1px solid rgb(142 59 50 / 28%);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 82%);
+  box-shadow: 0 2px 8px rgb(30 30 30 / 5%);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.reset-progress:hover {
+  background: #fff5f3;
+}
+
+.reset-progress:focus-visible {
+  outline: 3px solid #a95a50;
   outline-offset: 2px;
 }
 
