@@ -2517,3 +2517,94 @@ button {
     animation-duration: 1ms;
   }
 }
+
+
+/* Silverfish thieves */
+.silverfish {
+  position: fixed;
+  z-index: 90;
+  width: 23px;
+  height: 10px;
+  pointer-events: none;
+  border-radius: 55% 42% 50% 45%;
+  background:
+    radial-gradient(circle at 16% 45%, #1f2428 0 10%, transparent 11%),
+    repeating-linear-gradient(90deg, #a7adb0 0 4px, #656c70 4px 7px);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 28%);
+  transform: translate(-50%, -50%);
+  animation: silverfish-scurry 1.35s cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+.silverfish::before,
+.silverfish::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  width: 18px;
+  height: 1px;
+  background: #555d61;
+  transform-origin: center;
+}
+
+.silverfish::before {
+  top: 1px;
+  transform: rotate(-18deg);
+}
+
+.silverfish::after {
+  bottom: 1px;
+  transform: rotate(18deg);
+}
+
+.silverfish-theft {
+  position: fixed;
+  z-index: 95;
+  pointer-events: none;
+  color: #a3332d;
+  font: 900 clamp(1rem, 2vw, 1.45rem)/1 system-ui, sans-serif;
+  text-shadow: 0 2px 0 rgb(255 255 255 / 90%);
+  transform: translate(-50%, -50%);
+  animation: silverfish-theft-float 1.35s ease-out forwards;
+}
+
+.stone--silverfish-hit {
+  animation: silverfish-stone-shake 0.46s ease-out;
+}
+
+@keyframes silverfish-scurry {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05) rotate(-8deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--silverfish-x)), calc(-50% + var(--silverfish-y))) scale(0.9) rotate(14deg);
+  }
+}
+
+@keyframes silverfish-theft-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20%) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -45%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150%) scale(1.08);
+  }
+}
+
+@keyframes silverfish-stone-shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-7px) rotate(-2deg); }
+  40% { transform: translateX(6px) rotate(2deg); }
+  60% { transform: translateX(-4px) rotate(-1deg); }
+  80% { transform: translateX(3px) rotate(1deg); }
+}
