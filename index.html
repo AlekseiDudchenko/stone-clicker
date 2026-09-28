@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
-    <link rel="stylesheet" href="styles.css?v=16" />
+    <link rel="stylesheet" href="styles.css?v=17" />
   </head>
   <body>
     <div class="layout">
@@ -327,6 +327,52 @@
               </button>
             </div>
           </section>
+          <section class="future-strip city-card" aria-labelledby="city-title">
+            <div class="city-card__heading">
+              <span class="city-card__hero" aria-hidden="true">🏙️</span>
+              <div>
+                <h2 id="city-title" class="city-card__title" data-i18n="cityTitle">City</h2>
+                <p class="city-card__description" data-i18n="cityDescription">The city opens after all 8 Sandstorms.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="future-strip jackhammers-card" aria-labelledby="jackhammers-title">
+            <div class="jackhammers-card__heading">
+              <span class="jackhammers-card__hero" aria-hidden="true">
+                <span class="jackhammer-icon">
+                  <span class="jackhammer-icon__left-handle"></span>
+                  <span class="jackhammer-icon__right-handle"></span>
+                  <span class="jackhammer-icon__body"></span>
+                  <span class="jackhammer-icon__bit"></span>
+                  <span class="jackhammer-icon__road"></span>
+                </span>
+              </span>
+              <div>
+                <h2 id="jackhammers-title" class="jackhammers-card__title" data-i18n="jackhammersTitle">Jackhammers</h2>
+                <p class="jackhammers-card__description" data-i18n="jackhammersDescription">A handheld jackhammer rapidly breaks asphalt and produces 120 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="jackhammers-roster" class="jackhammers-roster" aria-label="0 of 8 Jackhammers bought">
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+              <span class="jackhammer-worker" aria-hidden="true"></span>
+            </div>
+
+            <div class="jackhammers-card__footer">
+              <p class="jackhammers-card__count"><span id="jackhammers-count" class="number">0</span> / 8 <span data-i18n="jackhammers">jackhammers</span></p>
+              <button id="buy-jackhammer" class="hire-button" type="button">
+                <span id="jackhammer-buy-label">Buy</span>
+                <span id="jackhammer-buy-price"><span id="jackhammer-cost" class="number">22000</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
           <div class="future-strip" aria-hidden="true"></div>
           <div class="future-strip" aria-hidden="true"></div>
           <div class="future-strip" aria-hidden="true"></div>
@@ -337,6 +383,6 @@
       </aside>
     </div>
 
-    <script src="script.js?v=16"></script>
+    <script src="script.js?v=17"></script>
   </body>
 </html>
