@@ -2714,3 +2714,204 @@ button {
     bottom: 14%;
   }
 }
+
+.city-card,
+.jackhammers-card {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  min-height: 224px;
+  padding: clamp(18px, 2.2vw, 26px);
+  overflow: hidden;
+}
+
+.city-card__heading,
+.jackhammers-card__heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.city-card__hero,
+.jackhammers-card__hero {
+  display: grid;
+  flex: 0 0 58px;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: #e7eaed;
+}
+
+.city-card__title,
+.jackhammers-card__title {
+  margin: 0;
+}
+
+.city-card__description,
+.jackhammers-card__description {
+  margin: 4px 0 0;
+  color: #73777d;
+  font-size: 0.88rem;
+}
+
+.jackhammer-icon {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 52px;
+}
+
+.jackhammer-icon__body {
+  position: absolute;
+  top: 9px;
+  left: 14px;
+  width: 16px;
+  height: 25px;
+  border-radius: 6px 6px 4px 4px;
+  background: linear-gradient(90deg, #626a72 0 34%, #aeb4ba 35% 64%, #4e555c 65% 100%);
+  box-shadow: inset 0 -4px 0 rgb(0 0 0 / 12%);
+}
+
+.jackhammer-icon__left-handle,
+.jackhammer-icon__right-handle {
+  position: absolute;
+  top: 7px;
+  width: 15px;
+  height: 4px;
+  border-radius: 3px;
+  background: #3d4349;
+}
+
+.jackhammer-icon__left-handle {
+  left: 4px;
+  transform: rotate(-15deg);
+}
+
+.jackhammer-icon__right-handle {
+  right: 4px;
+  transform: rotate(15deg);
+}
+
+.jackhammer-icon__bit {
+  position: absolute;
+  top: 31px;
+  left: 20px;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(#555c63, #23272b);
+}
+
+.jackhammer-icon__road {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  left: 3px;
+  height: 7px;
+  border-radius: 50% 45% 44% 48%;
+  background: #25282b;
+  box-shadow: 0 3px 0 #8b6546;
+}
+
+.jackhammers-roster {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(42px, 1fr));
+  align-items: end;
+  gap: clamp(3px, 0.55vw, 8px);
+}
+
+.jackhammer-worker {
+  position: relative;
+  display: block;
+  justify-self: center;
+  width: 46px;
+  height: 72px;
+  opacity: 0.2;
+  filter: grayscale(1);
+  transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
+}
+
+.jackhammer-worker::before {
+  position: absolute;
+  top: 7px;
+  left: 14px;
+  width: 18px;
+  height: 38px;
+  content: "";
+  border-radius: 7px 7px 5px 5px;
+  background:
+    linear-gradient(90deg, #5f676f 0 35%, #adb4ba 36% 64%, #4d555c 65% 100%);
+  box-shadow:
+    -11px 1px 0 -7px #3e454b,
+    11px 1px 0 -7px #3e454b,
+    inset 0 -5px 0 rgb(0 0 0 / 12%);
+}
+
+.jackhammer-worker::after {
+  position: absolute;
+  top: 42px;
+  left: 21px;
+  width: 4px;
+  height: 24px;
+  content: "";
+  border-radius: 2px;
+  background: linear-gradient(#60676e, #202428);
+  box-shadow: 0 6px 0 7px #292c2f;
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 380% 78%, 380% 100%, -280% 100%, -280% 78%, 0 78%);
+}
+
+.jackhammer-worker--active {
+  opacity: 1;
+  filter: none;
+}
+
+.jackhammers-card--hammering .jackhammer-worker--active::before {
+  animation: jackhammer-body-hit 110ms linear 3;
+}
+
+.jackhammers-card--hammering .jackhammer-worker--active::after {
+  animation: jackhammer-bit-hit 110ms linear 3;
+}
+
+@keyframes jackhammer-body-hit {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+@keyframes jackhammer-bit-hit {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+.jackhammers-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.jackhammers-card__count {
+  margin: 0;
+  color: #646a72;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.upgrade-card--locked.city-card,
+.upgrade-card--locked.jackhammers-card {
+  opacity: 0.58;
+}
+
+@media (max-width: 700px) {
+  .jackhammers-roster {
+    grid-template-columns: repeat(4, minmax(42px, 1fr));
+    row-gap: 10px;
+  }
+
+  .jackhammers-card__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
