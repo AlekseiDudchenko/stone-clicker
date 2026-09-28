@@ -43,6 +43,11 @@ const STORM_INTERVAL = 1000;
 const STORM_STONES_PER_SWIRL = 75;
 const BASE_STORM_COST = 12000;
 const STORM_COST_GROWTH = 1.4;
+const MAX_JACKHAMMERS = 8;
+const JACKHAMMER_INTERVAL = 1000;
+const JACKHAMMER_STONES_PER_HIT = 120;
+const BASE_JACKHAMMER_COST = 22000;
+const JACKHAMMER_COST_GROWTH = 1.45;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
 const SILVERFISH_UNLOCK_TOTAL = 5000;
 const SILVERFISH_EVENT_VERSION = 2;
@@ -71,7 +76,14 @@ const TRANSLATIONS = {
     tractors: 'tractors', buy: 'Buy', holesTitle: 'Stone Holes',
     holesDescription: 'Stones tumble into each hole, bringing 48 stones per second.', holes: 'holes', open: 'Open',
     stormsTitle: 'Sandstorms', stormsDescription: 'Each desert whirlwind carries 75 stones per second.',
-    storms: 'storms', summon: 'Summon', resetProgress: 'Reset progress', resetConfirm: 'Reset absolutely all progress? Stones, upgrades, biome unlocks and stone skins will be lost.',
+    storms: 'storms', summon: 'Summon',
+    cityTitle: 'City', cityDescription: 'The city opens after all 8 Sandstorms.',
+    jackhammersTitle: 'Jackhammers', jackhammersDescription: 'A handheld jackhammer rapidly breaks asphalt and produces 120 stones per second.',
+    jackhammers: 'jackhammers', jackhammersRosterAria: '{count} of 8 Jackhammers bought',
+    jackhammersLockedAria: 'Summon all 8 Sandstorms to unlock Jackhammers',
+    jackhammersFullAria: 'Maximum number of Jackhammers reached',
+    jackhammersBuyAria: 'Buy a Jackhammer for {cost} stones',
+    resetProgress: 'Reset progress', resetConfirm: 'Reset absolutely all progress? Stones, upgrades, biome unlocks and stone skins will be lost.',
     stonesAria: 'Stones: {count}', crewRosterAria: '{count} of 8 people hired', targetAria: 'Stone collector',
     hirePersonAria: 'Hire another person for {cost} stones', crewFullAria: 'Maximum crew size reached',
     salesRosterAria: '{count} of 8 Sales recruited', salesLockedAria: 'Hire all 8 Stone Crew people to unlock Sales',
@@ -114,7 +126,14 @@ const TRANSLATIONS = {
     tractors: 'тракторов', buy: 'Купить', holesTitle: 'Каменные ямы',
     holesDescription: 'В каждую яму сыпятся камни. Она приносит 48 камней в секунду.', holes: 'ям', open: 'Открыть',
     stormsTitle: 'Песчаные бури', stormsDescription: 'Каждый пустынный вихрь приносит 75 камней в секунду.',
-    storms: 'бурь', summon: 'Призвать', resetProgress: 'Сбросить прогресс', resetConfirm: 'Сбросить абсолютно весь прогресс? Камни, улучшения, открытые биомы и скины будут потеряны.',
+    storms: 'бурь', summon: 'Призвать',
+    cityTitle: 'Город', cityDescription: 'Город открывается после всех 8 песчаных бурь.',
+    jackhammersTitle: 'Отбойные молотки', jackhammersDescription: 'Ручной отбойный молоток очень часто бьёт по асфальту и приносит 120 камней в секунду.',
+    jackhammers: 'молотков', jackhammersRosterAria: 'Куплено отбойных молотков: {count} из 8',
+    jackhammersLockedAria: 'Призови все 8 песчаных бурь, чтобы открыть отбойные молотки',
+    jackhammersFullAria: 'Достигнут максимум отбойных молотков',
+    jackhammersBuyAria: 'Купить отбойный молоток за {cost} камней',
+    resetProgress: 'Сбросить прогресс', resetConfirm: 'Сбросить абсолютно весь прогресс? Камни, улучшения, открытые биомы и скины будут потеряны.',
     stonesAria: 'Камни: {count}', crewRosterAria: 'Нанято людей: {count} из 8', targetAria: 'Сборщик камней',
     hirePersonAria: 'Нанять ещё одного человека за {cost} камней', crewFullAria: 'Достигнут максимум команды',
     salesRosterAria: 'Нанято работников: {count} из 8', salesLockedAria: 'Найми всю команду из 8 человек, чтобы открыть Продажи',
@@ -157,7 +176,14 @@ const TRANSLATIONS = {
     tractors: 'Traktoren', buy: 'Kaufen', holesTitle: 'Steinlöcher',
     holesDescription: 'In jedes Loch fallen Steine. Es bringt 48 Steine pro Sekunde.', holes: 'Löcher', open: 'Öffnen',
     stormsTitle: 'Sandstürme', stormsDescription: 'Jeder Wüstenwirbel bringt 75 Steine pro Sekunde.',
-    storms: 'Stürme', summon: 'Beschwören', resetProgress: 'Fortschritt zurücksetzen', resetConfirm: 'Wirklich den gesamten Fortschritt zurücksetzen? Steine, Upgrades, freigeschaltete Biome und Stein-Skins gehen verloren.',
+    storms: 'Stürme', summon: 'Beschwören',
+    cityTitle: 'Stadt', cityDescription: 'Die Stadt wird nach allen 8 Sandstürmen freigeschaltet.',
+    jackhammersTitle: 'Presslufthämmer', jackhammersDescription: 'Ein handgeführter Presslufthammer schlägt schnell auf Asphalt und bringt 120 Steine pro Sekunde.',
+    jackhammers: 'Presslufthämmer', jackhammersRosterAria: '{count} von 8 Presslufthämmern gekauft',
+    jackhammersLockedAria: 'Beschwöre alle 8 Sandstürme, um Presslufthämmer freizuschalten',
+    jackhammersFullAria: 'Maximale Anzahl an Presslufthämmern erreicht',
+    jackhammersBuyAria: 'Presslufthammer für {cost} Steine kaufen',
+    resetProgress: 'Fortschritt zurücksetzen', resetConfirm: 'Wirklich den gesamten Fortschritt zurücksetzen? Steine, Upgrades, freigeschaltete Biome und Stein-Skins gehen verloren.',
     stonesAria: 'Steine: {count}', crewRosterAria: '{count} von 8 Personen angeheuert', targetAria: 'Steinsammler',
     hirePersonAria: 'Eine weitere Person für {cost} Steine anheuern', crewFullAria: 'Maximale Truppgröße erreicht',
     salesRosterAria: '{count} von 8 Arbeitern angeworben', salesLockedAria: 'Heuere alle 8 Personen an, um Verkauf freizuschalten',
@@ -269,6 +295,15 @@ const stormButton = document.querySelector('#summon-storm');
 const stormBuyLabel = document.querySelector('#storm-buy-label');
 const stormBuyPrice = document.querySelector('#storm-buy-price');
 const stormCost = document.querySelector('#storm-cost');
+const cityCard = document.querySelector('.city-card');
+const jackhammersCard = document.querySelector('.jackhammers-card');
+const jackhammersRoster = document.querySelector('#jackhammers-roster');
+const jackhammerWorkers = [...document.querySelectorAll('.jackhammer-worker')];
+const jackhammersCount = document.querySelector('#jackhammers-count');
+const jackhammerButton = document.querySelector('#buy-jackhammer');
+const jackhammerBuyLabel = document.querySelector('#jackhammer-buy-label');
+const jackhammerBuyPrice = document.querySelector('#jackhammer-buy-price');
+const jackhammerCost = document.querySelector('#jackhammer-cost');
 const resetProgressButton = document.querySelector('#reset-progress');
 
 function createInitialState() {
@@ -294,6 +329,8 @@ function createInitialState() {
     holeProgressMs: 0,
     storms: 0,
     stormProgressMs: 0,
+    jackhammers: 0,
+    jackhammerProgressMs: 0,
     silverfishProgressMs: 0,
     silverfishNextIntervalMs: 0,
     silverfishEventVersion: SILVERFISH_EVENT_VERSION,
@@ -357,6 +394,12 @@ function loadState() {
       stormProgressMs: Number.isFinite(saved.stormProgressMs)
         ? Math.min(STORM_INTERVAL - 1, Math.max(0, saved.stormProgressMs))
         : 0,
+      jackhammers: Number.isFinite(saved.jackhammers)
+        ? Math.min(MAX_JACKHAMMERS, Math.max(0, Math.floor(saved.jackhammers)))
+        : 0,
+      jackhammerProgressMs: Number.isFinite(saved.jackhammerProgressMs)
+        ? Math.min(JACKHAMMER_INTERVAL - 1, Math.max(0, saved.jackhammerProgressMs))
+        : 0,
       silverfishProgressMs:
         saved.silverfishEventVersion === SILVERFISH_EVENT_VERSION && Number.isFinite(saved.silverfishProgressMs)
           ? Math.max(0, saved.silverfishProgressMs)
@@ -408,6 +451,8 @@ function applyTranslations() {
   tractorsCard.dataset.lockLabel = t('locked').toUpperCase();
   holesCard.dataset.lockLabel = t('locked').toUpperCase();
   stormsCard.dataset.lockLabel = t('locked').toUpperCase();
+  cityCard.dataset.lockLabel = t('locked').toUpperCase();
+  jackhammersCard.dataset.lockLabel = t('locked').toUpperCase();
 }
 
 function saveState() {
@@ -451,7 +496,8 @@ function stonesPerSecond() {
   const tractorRate = (state.tractors * TRACTOR_STONES_PER_SCOOP) / (TRACTOR_INTERVAL / 1000);
   const holeRate = (state.holes * HOLE_STONES_PER_DROP) / (HOLE_INTERVAL / 1000);
   const stormRate = (state.storms * STORM_STONES_PER_SWIRL) / (STORM_INTERVAL / 1000);
-  return crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate;
+  const jackhammerRate = (state.jackhammers * JACKHAMMER_STONES_PER_HIT) / (JACKHAMMER_INTERVAL / 1000);
+  return crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate + jackhammerRate;
 }
 
 function nextPersonCost() {
@@ -488,6 +534,10 @@ function nextHoleCost() {
 
 function nextStormCost() {
   return Math.ceil(BASE_STORM_COST * STORM_COST_GROWTH ** state.storms);
+}
+
+function nextJackhammerCost() {
+  return Math.ceil(BASE_JACKHAMMER_COST * JACKHAMMER_COST_GROWTH ** state.jackhammers);
 }
 
 function formatRate(value) {
@@ -706,6 +756,32 @@ function renderStorms() {
       : isFull
         ? t('stormsFullAria')
         : tf('stormsBuyAria', { cost: formatNumber(cost) }),
+  );
+}
+
+function renderCity() {
+  const cityUnlocked = state.storms >= MAX_STORMS;
+  cityCard.classList.toggle('upgrade-card--locked', !cityUnlocked);
+  jackhammersCard.classList.toggle('upgrade-card--locked', !cityUnlocked);
+
+  const isFull = state.jackhammers >= MAX_JACKHAMMERS;
+  const cost = nextJackhammerCost();
+
+  jackhammersCount.textContent = state.jackhammers;
+  jackhammersRoster.setAttribute('aria-label', tf('jackhammersRosterAria', { count: state.jackhammers }));
+  jackhammerWorkers.forEach((worker, index) => worker.classList.toggle('jackhammer-worker--active', index < state.jackhammers));
+
+  jackhammerBuyLabel.textContent = !cityUnlocked ? t('locked') : isFull ? t('teamFull') : t('buy');
+  jackhammerBuyPrice.hidden = !cityUnlocked || isFull;
+  jackhammerCost.textContent = formatNumber(cost);
+  jackhammerButton.disabled = !cityUnlocked || isFull || state.stones < cost;
+  jackhammerButton.setAttribute(
+    'aria-label',
+    !cityUnlocked
+      ? t('jackhammersLockedAria')
+      : isFull
+        ? t('jackhammersFullAria')
+        : tf('jackhammersBuyAria', { cost: formatNumber(cost) }),
   );
 }
 
@@ -954,6 +1030,7 @@ function render() {
   renderTractors();
   renderHoles();
   renderStorms();
+  renderCity();
   renderBiome();
   document.title = `${stonesText} ${t('stonesUnit')} — ${t('appTitle')}`;
 }
@@ -1114,6 +1191,19 @@ stormButton.addEventListener('click', () => {
   render();
 });
 
+jackhammerButton.addEventListener('click', () => {
+  if (state.storms < MAX_STORMS || state.jackhammers >= MAX_JACKHAMMERS) return;
+
+  const cost = nextJackhammerCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.jackhammers === 0) state.jackhammerProgressMs = 0;
+  state.jackhammers += 1;
+  saveState();
+  render();
+});
+
 function playCrewVolley() {
   const cardRect = crewCard.getBoundingClientRect();
   const targetRect = crewTargetPerson.getBoundingClientRect();
@@ -1201,6 +1291,13 @@ function playStormSwirl() {
   window.setTimeout(() => stormsCard.classList.remove('storms-card--swirling'), 820);
 }
 
+function playJackhammerHit() {
+  jackhammersCard.classList.remove('jackhammers-card--hammering');
+  void jackhammersCard.offsetWidth;
+  jackhammersCard.classList.add('jackhammers-card--hammering');
+  window.setTimeout(() => jackhammersCard.classList.remove('jackhammers-card--hammering'), 320);
+}
+
 function applyOfflineProgress() {
   const elapsedMs = Math.min(Math.max(0, Date.now() - state.lastSaved), MAX_OFFLINE_SECONDS * 1000);
   const accumulatedMs = state.crewProgressMs + elapsedMs;
@@ -1279,6 +1376,15 @@ function applyOfflineProgress() {
   } else {
     state.stormProgressMs = 0;
   }
+
+  if (state.jackhammers > 0) {
+    const accumulatedJackhammerMs = state.jackhammerProgressMs + elapsedMs;
+    const completedJackhammerHits = Math.floor(accumulatedJackhammerMs / JACKHAMMER_INTERVAL);
+    state.jackhammerProgressMs = accumulatedJackhammerMs % JACKHAMMER_INTERVAL;
+    gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
+  } else {
+    state.jackhammerProgressMs = 0;
+  }
   applyOfflineSilverfishTheft(elapsedMs);
   state.lastSaved = Date.now();
 }
@@ -1297,6 +1403,7 @@ function tick() {
   if (state.tractors > 0) state.tractorProgressMs += elapsedMs;
   if (state.holes > 0) state.holeProgressMs += elapsedMs;
   if (state.storms > 0) state.stormProgressMs += elapsedMs;
+  if (state.jackhammers > 0) state.jackhammerProgressMs += elapsedMs;
   if (silverfishLevel() > 0) state.silverfishProgressMs += elapsedMs;
   lastTick = now;
 
@@ -1361,6 +1468,13 @@ function tick() {
     state.stormProgressMs %= STORM_INTERVAL;
     gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
     playStormSwirl();
+  }
+
+  const completedJackhammerHits = Math.floor(state.jackhammerProgressMs / JACKHAMMER_INTERVAL);
+  if (completedJackhammerHits > 0) {
+    state.jackhammerProgressMs %= JACKHAMMER_INTERVAL;
+    gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
+    playJackhammerHit();
   }
 
   const currentSilverfishInterval = silverfishInterval();
