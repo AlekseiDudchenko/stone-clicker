@@ -452,7 +452,7 @@ function applyTranslations() {
   tractorsCard.dataset.lockLabel = t('locked').toUpperCase();
   holesCard.dataset.lockLabel = t('locked').toUpperCase();
   stormsCard.dataset.lockLabel = t('locked').toUpperCase();
-  jackhammersCard.dataset.lockLabel = t('locked').toUpperCase();
+  if (jackhammersCard) jackhammersCard.dataset.lockLabel = t('locked').toUpperCase();
 }
 
 function saveState() {
@@ -760,6 +760,16 @@ function renderStorms() {
 }
 
 function renderJackhammers() {
+  if (
+    !jackhammersCard
+    || !jackhammersRoster
+    || !jackhammersCount
+    || !jackhammerButton
+    || !jackhammerBuyLabel
+    || !jackhammerBuyPrice
+    || !jackhammerCost
+  ) return;
+
   const isLocked = state.storms < MAX_STORMS;
   const isFull = state.jackhammers >= MAX_JACKHAMMERS;
   const cost = nextJackhammerCost();
@@ -821,8 +831,8 @@ function renderBiome() {
     option.setAttribute('aria-label', tf(isLocked ? 'skinLockedAria' : 'skinOptionAria', { skin: skinName }));
   });
 
-  desertSkinLock.hidden = desertUnlocked;
-  citySkinLock.hidden = cityUnlocked;
+  if (desertSkinLock) desertSkinLock.hidden = desertUnlocked;
+  if (citySkinLock) citySkinLock.hidden = cityUnlocked;
 
   if (!shouldRevealDesert && !shouldRevealCity) return;
 
@@ -1024,18 +1034,20 @@ stormButton.addEventListener('click', () => {
   render();
 });
 
-jackhammerButton.addEventListener('click', () => {
-  if (state.storms < MAX_STORMS || state.jackhammers >= MAX_JACKHAMMERS) return;
+if (jackhammerButton) {
+  jackhammerButton.addEventListener('click', () => {
+    if (state.storms < MAX_STORMS || state.jackhammers >= MAX_JACKHAMMERS) return;
 
-  const cost = nextJackhammerCost();
-  if (state.stones < cost) return;
+    const cost = nextJackhammerCost();
+    if (state.stones < cost) return;
 
-  state.stones -= cost;
-  if (state.jackhammers === 0) state.jackhammerProgressMs = 0;
-  state.jackhammers += 1;
-  saveState();
-  render();
-});
+    state.stones -= cost;
+    if (state.jackhammers === 0) state.jackhammerProgressMs = 0;
+    state.jackhammers += 1;
+    saveState();
+    render();
+  });
+}
 
 function playCrewVolley() {
   const cardRect = crewCard.getBoundingClientRect();
@@ -1125,6 +1137,7 @@ function playStormSwirl() {
 }
 
 function playJackhammerHit() {
+  if (!jackhammersCard) return;
   jackhammersCard.classList.remove('jackhammers-card--hammering');
   void jackhammersCard.offsetWidth;
   jackhammersCard.classList.add('jackhammers-card--hammering');
@@ -1349,6 +1362,21 @@ resetProgressButton.addEventListener('click', () => {
   saveState();
   render();
 });
+
+const markupIsCurrent = Boolean(jackhammersCard && citySkinLock);
+if (!markupIsCurrent) {
+  try {
+    const reloadKey = 'stone-clicker-markup-v11-reload';
+    if (!sessionStorage.getItem(reloadKey)) {
+      sessionStorage.setItem(reloadKey, '1');
+      const url = new URL(window.location.href);
+      url.searchParams.set('app', '11');
+      window.location.replace(url.toString());
+    }
+  } catch {
+    // The game still works because all new-city DOM access is guarded.
+  }
+}
 
 applyTranslations();
 applyOfflineProgress();
