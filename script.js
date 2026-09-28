@@ -1,6 +1,6 @@
 const SAVE_KEY = 'stone-clicker-save-v1';
 const BASE_CLICK_X2_COST = 100;
-const CLICK_X2_COST_GROWTH = 4.5;
+const CLICK_X2_COST_GROWTH = 3.5;
 const MAX_PEOPLE = 8;
 const CREW_DROP_INTERVAL = 1000;
 const BASE_PERSON_COST = 10;
