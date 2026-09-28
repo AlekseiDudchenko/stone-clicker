@@ -2915,3 +2915,111 @@ button {
     flex-direction: column;
   }
 }
+
+.desert-world-card {
+  position: relative;
+  display: grid;
+  min-height: 178px;
+  padding: clamp(18px, 2.2vw, 26px);
+  overflow: hidden;
+}
+
+.desert-world-card__heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.desert-world-card__title {
+  margin: 0;
+}
+
+.desert-world-card__description {
+  margin: 4px 0 0;
+  color: #73777d;
+  font-size: 0.88rem;
+}
+
+.desert-world-picture {
+  position: relative;
+  display: block;
+  flex: 0 0 132px;
+  width: 132px;
+  height: 86px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(#82c9ed 0 54%, #efc36f 54% 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 8%),
+    0 5px 12px rgb(0 0 0 / 8%);
+  transition: filter 220ms ease, opacity 220ms ease, transform 220ms ease;
+}
+
+.desert-world-picture__sun {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffd45a;
+  box-shadow: 0 0 0 5px rgb(255 212 90 / 18%);
+}
+
+.desert-world-picture__dune {
+  position: absolute;
+  border-radius: 50% 50% 0 0;
+  transform: rotate(-4deg);
+}
+
+.desert-world-picture__dune--back {
+  right: -14px;
+  bottom: 14px;
+  width: 118px;
+  height: 42px;
+  background: #ddb060;
+}
+
+.desert-world-picture__dune--front {
+  left: -18px;
+  bottom: -10px;
+  width: 152px;
+  height: 58px;
+  background: #efc36f;
+}
+
+.desert-world-picture__cactus {
+  position: absolute;
+  bottom: 16px;
+  left: 30px;
+  width: 9px;
+  height: 30px;
+  border-radius: 5px 5px 2px 2px;
+  background: #3b8d55;
+  box-shadow:
+    -7px 9px 0 -2px #3b8d55,
+    7px 5px 0 -2px #3b8d55;
+}
+
+.desert-world-card.upgrade-card--locked .desert-world-picture {
+  filter: grayscale(1) saturate(0.2);
+  opacity: 0.42;
+}
+
+.desert-world-card:not(.upgrade-card--locked) .desert-world-picture {
+  filter: none;
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  .desert-world-card__heading {
+    align-items: flex-start;
+  }
+
+  .desert-world-picture {
+    flex-basis: 106px;
+    width: 106px;
+    height: 72px;
+  }
+}
