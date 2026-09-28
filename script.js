@@ -48,6 +48,11 @@ const JACKHAMMER_INTERVAL = 1000;
 const JACKHAMMER_STONES_PER_HIT = 120;
 const BASE_JACKHAMMER_COST = 22000;
 const JACKHAMMER_COST_GROWTH = 1.45;
+const MAX_CEMENT_MIXERS = 8;
+const CEMENT_MIXER_INTERVAL = 1000;
+const CEMENT_MIXER_STONES_PER_SPIN = 240;
+const BASE_CEMENT_MIXER_COST = 42000;
+const CEMENT_MIXER_COST_GROWTH = 1.45;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
 const SILVERFISH_UNLOCK_TOTAL = 5000;
 const SILVERFISH_EVENT_VERSION = 2;
@@ -83,6 +88,11 @@ const TRANSLATIONS = {
     jackhammersLockedAria: 'Summon all 8 Sandstorms to unlock Jackhammers',
     jackhammersFullAria: 'Maximum number of Jackhammers reached',
     jackhammersBuyAria: 'Buy a Jackhammer for {cost} stones',
+    cementMixersTitle: 'Cement Mixers', cementMixersDescription: 'Each cement mixer spins continuously and produces 240 stones per second.',
+    cementMixers: 'mixers', cementMixersRosterAria: '{count} of 8 Cement Mixers bought',
+    cementMixersLockedAria: 'Buy all 8 Jackhammers to unlock Cement Mixers',
+    cementMixersFullAria: 'Maximum number of Cement Mixers reached',
+    cementMixersBuyAria: 'Buy a Cement Mixer for {cost} stones',
     resetProgress: 'Reset progress', resetConfirm: 'Reset absolutely all progress? Stones, upgrades, biome unlocks and stone skins will be lost.',
     stonesAria: 'Stones: {count}', crewRosterAria: '{count} of 8 people hired', targetAria: 'Stone collector',
     hirePersonAria: 'Hire another person for {cost} stones', crewFullAria: 'Maximum crew size reached',
@@ -133,6 +143,11 @@ const TRANSLATIONS = {
     jackhammersLockedAria: 'Призови все 8 песчаных бурь, чтобы открыть отбойные молотки',
     jackhammersFullAria: 'Достигнут максимум отбойных молотков',
     jackhammersBuyAria: 'Купить отбойный молоток за {cost} камней',
+    cementMixersTitle: 'Бетономешалки', cementMixersDescription: 'Каждая бетономешалка постоянно вращает барабан и приносит 240 камней в секунду.',
+    cementMixers: 'бетономешалок', cementMixersRosterAria: 'Куплено бетономешалок: {count} из 8',
+    cementMixersLockedAria: 'Купи все 8 отбойных молотков, чтобы открыть бетономешалки',
+    cementMixersFullAria: 'Достигнут максимум бетономешалок',
+    cementMixersBuyAria: 'Купить бетономешалку за {cost} камней',
     resetProgress: 'Сбросить прогресс', resetConfirm: 'Сбросить абсолютно весь прогресс? Камни, улучшения, открытые биомы и скины будут потеряны.',
     stonesAria: 'Камни: {count}', crewRosterAria: 'Нанято людей: {count} из 8', targetAria: 'Сборщик камней',
     hirePersonAria: 'Нанять ещё одного человека за {cost} камней', crewFullAria: 'Достигнут максимум команды',
@@ -183,6 +198,11 @@ const TRANSLATIONS = {
     jackhammersLockedAria: 'Beschwöre alle 8 Sandstürme, um Presslufthämmer freizuschalten',
     jackhammersFullAria: 'Maximale Anzahl an Presslufthämmern erreicht',
     jackhammersBuyAria: 'Presslufthammer für {cost} Steine kaufen',
+    cementMixersTitle: 'Betonmischer', cementMixersDescription: 'Jeder Betonmischer dreht sich ständig und bringt 240 Steine pro Sekunde.',
+    cementMixers: 'Betonmischer', cementMixersRosterAria: '{count} von 8 Betonmischern gekauft',
+    cementMixersLockedAria: 'Kaufe alle 8 Presslufthämmer, um Betonmischer freizuschalten',
+    cementMixersFullAria: 'Maximale Anzahl an Betonmischern erreicht',
+    cementMixersBuyAria: 'Betonmischer für {cost} Steine kaufen',
     resetProgress: 'Fortschritt zurücksetzen', resetConfirm: 'Wirklich den gesamten Fortschritt zurücksetzen? Steine, Upgrades, freigeschaltete Biome und Stein-Skins gehen verloren.',
     stonesAria: 'Steine: {count}', crewRosterAria: '{count} von 8 Personen angeheuert', targetAria: 'Steinsammler',
     hirePersonAria: 'Eine weitere Person für {cost} Steine anheuern', crewFullAria: 'Maximale Truppgröße erreicht',
@@ -305,6 +325,14 @@ const jackhammerButton = document.querySelector('#buy-jackhammer');
 const jackhammerBuyLabel = document.querySelector('#jackhammer-buy-label');
 const jackhammerBuyPrice = document.querySelector('#jackhammer-buy-price');
 const jackhammerCost = document.querySelector('#jackhammer-cost');
+const cementMixersCard = document.querySelector('.cement-mixers-card');
+const cementMixersRoster = document.querySelector('#cement-mixers-roster');
+const cementMixerMachines = [...document.querySelectorAll('.cement-mixer-machine')];
+const cementMixersCount = document.querySelector('#cement-mixers-count');
+const cementMixerButton = document.querySelector('#buy-cement-mixer');
+const cementMixerBuyLabel = document.querySelector('#cement-mixer-buy-label');
+const cementMixerBuyPrice = document.querySelector('#cement-mixer-buy-price');
+const cementMixerCost = document.querySelector('#cement-mixer-cost');
 const resetProgressButton = document.querySelector('#reset-progress');
 
 function createInitialState() {
@@ -332,6 +360,8 @@ function createInitialState() {
     stormProgressMs: 0,
     jackhammers: 0,
     jackhammerProgressMs: 0,
+    cementMixers: 0,
+    cementMixerProgressMs: 0,
     silverfishProgressMs: 0,
     silverfishNextIntervalMs: 0,
     silverfishEventVersion: SILVERFISH_EVENT_VERSION,
@@ -401,6 +431,12 @@ function loadState() {
       jackhammerProgressMs: Number.isFinite(saved.jackhammerProgressMs)
         ? Math.min(JACKHAMMER_INTERVAL - 1, Math.max(0, saved.jackhammerProgressMs))
         : 0,
+      cementMixers: Number.isFinite(saved.cementMixers)
+        ? Math.min(MAX_CEMENT_MIXERS, Math.max(0, Math.floor(saved.cementMixers)))
+        : 0,
+      cementMixerProgressMs: Number.isFinite(saved.cementMixerProgressMs)
+        ? Math.min(CEMENT_MIXER_INTERVAL - 1, Math.max(0, saved.cementMixerProgressMs))
+        : 0,
       silverfishProgressMs:
         saved.silverfishEventVersion === SILVERFISH_EVENT_VERSION && Number.isFinite(saved.silverfishProgressMs)
           ? Math.max(0, saved.silverfishProgressMs)
@@ -455,6 +491,7 @@ function applyTranslations() {
   stormsCard.dataset.lockLabel = t('locked').toUpperCase();
   cityCard.dataset.lockLabel = t('locked').toUpperCase();
   jackhammersCard.dataset.lockLabel = t('locked').toUpperCase();
+  cementMixersCard.dataset.lockLabel = t('locked').toUpperCase();
 }
 
 function saveState() {
@@ -499,7 +536,8 @@ function stonesPerSecond() {
   const holeRate = (state.holes * HOLE_STONES_PER_DROP) / (HOLE_INTERVAL / 1000);
   const stormRate = (state.storms * STORM_STONES_PER_SWIRL) / (STORM_INTERVAL / 1000);
   const jackhammerRate = (state.jackhammers * JACKHAMMER_STONES_PER_HIT) / (JACKHAMMER_INTERVAL / 1000);
-  return crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate + jackhammerRate;
+  const cementMixerRate = (state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN) / (CEMENT_MIXER_INTERVAL / 1000);
+  return crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate + jackhammerRate + cementMixerRate;
 }
 
 function nextPersonCost() {
@@ -540,6 +578,10 @@ function nextStormCost() {
 
 function nextJackhammerCost() {
   return Math.ceil(BASE_JACKHAMMER_COST * JACKHAMMER_COST_GROWTH ** state.jackhammers);
+}
+
+function nextCementMixerCost() {
+  return Math.ceil(BASE_CEMENT_MIXER_COST * CEMENT_MIXER_COST_GROWTH ** state.cementMixers);
 }
 
 function formatRate(value) {
@@ -789,6 +831,28 @@ function renderCity() {
       : isFull
         ? t('jackhammersFullAria')
         : tf('jackhammersBuyAria', { cost: formatNumber(cost) }),
+  );
+
+  const cementMixersUnlocked = state.jackhammers >= MAX_JACKHAMMERS;
+  const cementMixersFull = state.cementMixers >= MAX_CEMENT_MIXERS;
+  const cementMixerNextCost = nextCementMixerCost();
+
+  cementMixersCard.classList.toggle('upgrade-card--locked', !cementMixersUnlocked);
+  cementMixersCount.textContent = state.cementMixers;
+  cementMixersRoster.setAttribute('aria-label', tf('cementMixersRosterAria', { count: state.cementMixers }));
+  cementMixerMachines.forEach((machine, index) => machine.classList.toggle('cement-mixer-machine--active', index < state.cementMixers));
+
+  cementMixerBuyLabel.textContent = !cementMixersUnlocked ? t('locked') : cementMixersFull ? t('teamFull') : t('buy');
+  cementMixerBuyPrice.hidden = !cementMixersUnlocked || cementMixersFull;
+  cementMixerCost.textContent = formatNumber(cementMixerNextCost);
+  cementMixerButton.disabled = !cementMixersUnlocked || cementMixersFull || state.stones < cementMixerNextCost;
+  cementMixerButton.setAttribute(
+    'aria-label',
+    !cementMixersUnlocked
+      ? t('cementMixersLockedAria')
+      : cementMixersFull
+        ? t('cementMixersFullAria')
+        : tf('cementMixersBuyAria', { cost: formatNumber(cementMixerNextCost) }),
   );
 }
 
@@ -1227,6 +1291,19 @@ jackhammerButton.addEventListener('click', () => {
   render();
 });
 
+cementMixerButton.addEventListener('click', () => {
+  if (state.jackhammers < MAX_JACKHAMMERS || state.cementMixers >= MAX_CEMENT_MIXERS) return;
+
+  const cost = nextCementMixerCost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  if (state.cementMixers === 0) state.cementMixerProgressMs = 0;
+  state.cementMixers += 1;
+  saveState();
+  render();
+});
+
 function playCrewVolley() {
   const cardRect = crewCard.getBoundingClientRect();
   const targetRect = crewTargetPerson.getBoundingClientRect();
@@ -1321,6 +1398,13 @@ function playJackhammerHit() {
   window.setTimeout(() => jackhammersCard.classList.remove('jackhammers-card--hammering'), 320);
 }
 
+function playCementMixerSpin() {
+  cementMixersCard.classList.remove('cement-mixers-card--spinning');
+  void cementMixersCard.offsetWidth;
+  cementMixersCard.classList.add('cement-mixers-card--spinning');
+  window.setTimeout(() => cementMixersCard.classList.remove('cement-mixers-card--spinning'), 760);
+}
+
 function applyOfflineProgress() {
   const elapsedMs = Math.min(Math.max(0, Date.now() - state.lastSaved), MAX_OFFLINE_SECONDS * 1000);
   const accumulatedMs = state.crewProgressMs + elapsedMs;
@@ -1408,6 +1492,15 @@ function applyOfflineProgress() {
   } else {
     state.jackhammerProgressMs = 0;
   }
+
+  if (state.cementMixers > 0) {
+    const accumulatedCementMixerMs = state.cementMixerProgressMs + elapsedMs;
+    const completedCementMixerSpins = Math.floor(accumulatedCementMixerMs / CEMENT_MIXER_INTERVAL);
+    state.cementMixerProgressMs = accumulatedCementMixerMs % CEMENT_MIXER_INTERVAL;
+    gainStones(completedCementMixerSpins * state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN);
+  } else {
+    state.cementMixerProgressMs = 0;
+  }
   applyOfflineSilverfishTheft(elapsedMs);
   state.lastSaved = Date.now();
 }
@@ -1427,6 +1520,7 @@ function tick() {
   if (state.holes > 0) state.holeProgressMs += elapsedMs;
   if (state.storms > 0) state.stormProgressMs += elapsedMs;
   if (state.jackhammers > 0) state.jackhammerProgressMs += elapsedMs;
+  if (state.cementMixers > 0) state.cementMixerProgressMs += elapsedMs;
   if (silverfishLevel() > 0) state.silverfishProgressMs += elapsedMs;
   lastTick = now;
 
@@ -1498,6 +1592,13 @@ function tick() {
     state.jackhammerProgressMs %= JACKHAMMER_INTERVAL;
     gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
     playJackhammerHit();
+  }
+
+  const completedCementMixerSpins = Math.floor(state.cementMixerProgressMs / CEMENT_MIXER_INTERVAL);
+  if (completedCementMixerSpins > 0) {
+    state.cementMixerProgressMs %= CEMENT_MIXER_INTERVAL;
+    gainStones(completedCementMixerSpins * state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN);
+    playCementMixerSpin();
   }
 
   const currentSilverfishInterval = silverfishInterval();
