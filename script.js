@@ -63,7 +63,7 @@ const SILVERFISH_MAX_COUNT = 3;
 const TRANSLATIONS = {
   en: {
     appTitle: 'Stone Clicker', language: 'Language', mainAria: 'Stone Clicker game', futureAria: 'Upgrades',
-    stoneAria: 'Collect a stone', stoneSkins: 'Stone skins', classicSkin: 'Classic', desertSkin: 'Desert', citySkin: 'City',
+    stoneAria: 'Collect a stone', stoneSkins: 'Stone skins', classicSkin: 'Classic', desertSkin: 'Desert', citySkin: 'City', cityUpper: 'CITY',
     lockedShort: '🔒', skinOptionAria: 'Use the {skin} stone skin', skinLockedAria: 'The {skin} stone skin is locked',
     stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click',
     totalMined: 'Total mined', clicks: 'Clicks', unlockedBiome: 'Unlocked biome', newBiome: 'New biome',
@@ -367,6 +367,7 @@ function createInitialState() {
     silverfishNextIntervalMs: 0,
     silverfishEventVersion: SILVERFISH_EVENT_VERSION,
     desertIntroSeen: false,
+    cityIntroSeen: false,
     stoneSkin: 'classic',
     language: 'en',
     lastSaved: Date.now(),
@@ -448,6 +449,7 @@ function loadState() {
           : 0,
       silverfishEventVersion: SILVERFISH_EVENT_VERSION,
       desertIntroSeen: saved.desertIntroSeen === true,
+      cityIntroSeen: saved.cityIntroSeen === true,
       stoneSkin: ['classic', 'desert', 'city'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
       language: ['en', 'ru', 'de'].includes(saved.language) ? saved.language : 'en',
       lastSaved: Number.isFinite(saved.lastSaved) ? saved.lastSaved : Date.now(),
@@ -861,9 +863,11 @@ function renderBiome() {
   const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
   const cityUnlocked = state.storms >= MAX_STORMS;
   const shouldRevealDesert = desertUnlocked && !state.desertIntroSeen;
+  const shouldRevealCity = cityUnlocked && !state.cityIntroSeen;
 
   if (!state.stoneSkin) state.stoneSkin = desertUnlocked ? 'desert' : 'classic';
   if (shouldRevealDesert) state.stoneSkin = 'desert';
+  if (shouldRevealCity) state.stoneSkin = 'city';
 
   const usesDesertSkin = desertUnlocked && state.stoneSkin === 'desert';
   const usesCitySkin = cityUnlocked && state.stoneSkin === 'city';
@@ -886,20 +890,32 @@ function renderBiome() {
     option.setAttribute('aria-pressed', String(state.stoneSkin === skin));
     option.setAttribute('aria-label', tf(isLocked ? 'skinLockedAria' : 'skinOptionAria', { skin: skinName }));
   });
+
   desertSkinLock.hidden = desertUnlocked;
   citySkinLock.hidden = cityUnlocked;
 
-  if (!shouldRevealDesert) return;
+  if (!shouldRevealDesert && !shouldRevealCity) return;
 
-  state.desertIntroSeen = true;
+  if (shouldRevealDesert) state.desertIntroSeen = true;
+  if (shouldRevealCity) state.cityIntroSeen = true;
+
+  const bannerTitle = biomeBanner.querySelector('.biome-banner__title');
+  if (bannerTitle) {
+    const key = shouldRevealCity ? 'cityUpper' : 'desertUpper';
+    bannerTitle.dataset.i18n = key;
+    bannerTitle.textContent = t(key);
+  }
+
   biomeBanner.hidden = false;
   biomeBanner.classList.remove('biome-banner--show');
   void biomeBanner.offsetWidth;
   biomeBanner.classList.add('biome-banner--show');
+
   window.setTimeout(() => {
     biomeBanner.classList.remove('biome-banner--show');
     biomeBanner.hidden = true;
   }, 3000);
+
   saveState();
 }
 
