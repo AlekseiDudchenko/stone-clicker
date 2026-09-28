@@ -63,7 +63,7 @@ const SILVERFISH_MAX_COUNT = 3;
 const TRANSLATIONS = {
   en: {
     appTitle: 'Stone Clicker', language: 'Language', mainAria: 'Stone Clicker game', futureAria: 'Upgrades',
-    stoneAria: 'Collect a stone', stoneSkins: 'Stone skins', classicSkin: 'Classic', desertSkin: 'Desert',
+    stoneAria: 'Collect a stone', stoneSkins: 'Stone skins', classicSkin: 'Classic', desertSkin: 'Desert', citySkin: 'City',
     lockedShort: '🔒', skinOptionAria: 'Use the {skin} stone skin', skinLockedAria: 'The {skin} stone skin is locked',
     stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click',
     totalMined: 'Total mined', clicks: 'Clicks', unlockedBiome: 'Unlocked biome', newBiome: 'New biome',
@@ -239,6 +239,7 @@ const clicksValue = document.querySelector('#clicks-value');
 const stone = document.querySelector('#stone');
 const skinOptions = [...document.querySelectorAll('[data-stone-skin]')];
 const desertSkinLock = document.querySelector('.skin-option--desert .skin-option__lock');
+const citySkinLock = document.querySelector('.skin-option--city .skin-option__lock');
 const biomeChip = document.querySelector('#biome-chip');
 const biomeBanner = document.querySelector('#biome-banner');
 const crewCount = document.querySelector('#crew-count');
@@ -447,7 +448,7 @@ function loadState() {
           : 0,
       silverfishEventVersion: SILVERFISH_EVENT_VERSION,
       desertIntroSeen: saved.desertIntroSeen === true,
-      stoneSkin: ['classic', 'desert'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
+      stoneSkin: ['classic', 'desert', 'city'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
       language: ['en', 'ru', 'de'].includes(saved.language) ? saved.language : 'en',
       lastSaved: Number.isFinite(saved.lastSaved) ? saved.lastSaved : Date.now(),
     };
@@ -858,27 +859,35 @@ function renderCity() {
 
 function renderBiome() {
   const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
+  const cityUnlocked = state.storms >= MAX_STORMS;
   const shouldRevealDesert = desertUnlocked && !state.desertIntroSeen;
 
   if (!state.stoneSkin) state.stoneSkin = desertUnlocked ? 'desert' : 'classic';
   if (shouldRevealDesert) state.stoneSkin = 'desert';
 
   const usesDesertSkin = desertUnlocked && state.stoneSkin === 'desert';
+  const usesCitySkin = cityUnlocked && state.stoneSkin === 'city';
 
   game.classList.toggle('game--desert', usesDesertSkin);
   stone.classList.toggle('stone--desert', usesDesertSkin);
+  stone.classList.toggle('stone--city', usesCitySkin);
   biomeChip.hidden = !desertUnlocked;
 
   skinOptions.forEach((option) => {
     const skin = option.dataset.stoneSkin;
-    const isLocked = skin === 'desert' && !desertUnlocked;
-    const skinName = t(skin === 'desert' ? 'desertSkin' : 'classicSkin');
+    const isLocked =
+      (skin === 'desert' && !desertUnlocked)
+      || (skin === 'city' && !cityUnlocked);
+    const skinName = t(
+      skin === 'city' ? 'citySkin' : skin === 'desert' ? 'desertSkin' : 'classicSkin',
+    );
     option.disabled = isLocked;
     option.classList.toggle('skin-option--selected', state.stoneSkin === skin);
     option.setAttribute('aria-pressed', String(state.stoneSkin === skin));
     option.setAttribute('aria-label', tf(isLocked ? 'skinLockedAria' : 'skinOptionAria', { skin: skinName }));
   });
   desertSkinLock.hidden = desertUnlocked;
+  citySkinLock.hidden = cityUnlocked;
 
   if (!shouldRevealDesert) return;
 
@@ -893,7 +902,6 @@ function renderBiome() {
   }, 3000);
   saveState();
 }
-
 
 function silverfishLevel() {
   if (state.totalStones < SILVERFISH_UNLOCK_TOTAL) return 0;
@@ -1119,7 +1127,9 @@ skinOptions.forEach((option) => {
   option.addEventListener('click', () => {
     const skin = option.dataset.stoneSkin;
     const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
+    const cityUnlocked = state.storms >= MAX_STORMS;
     if (skin === 'desert' && !desertUnlocked) return;
+    if (skin === 'city' && !cityUnlocked) return;
     state.stoneSkin = skin;
     saveState();
     renderBiome();
