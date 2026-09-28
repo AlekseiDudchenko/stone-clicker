@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
-    <link rel="stylesheet" href="styles.css?v=24" />
+    <link rel="stylesheet" href="styles.css?v=25" />
   </head>
   <body>
     <div class="layout">
@@ -27,7 +27,11 @@
             <span data-i18n="stonesLabel">Stones</span>: <span id="stone-value" class="number stone-number" aria-hidden="true"><span class="stone-digit">0</span></span>
           </output>
           <p class="stat-line"><span data-i18n="perSecond">per second</span>: <span id="rate-value" class="number">1</span></p>
-          <p class="stat-line"><span data-i18n="perClick">per click</span>: <span class="number">1</span></p>
+          <p class="stat-line"><span data-i18n="perClick">per click</span>: <span id="per-click-value" class="number">1</span></p>
+          <button id="buy-click-x2" class="click-x2-upgrade" type="button">
+            <span class="click-x2-upgrade__label" data-i18n="clickX2">Clicks ×2</span>
+            <span class="click-x2-upgrade__price"><span id="click-x2-cost" class="number">100</span> <span data-i18n="stonesUnit">stones</span></span>
+          </button>
         </header>
 
         <div id="biome-banner" class="biome-banner" role="status" aria-live="polite" hidden>
@@ -437,6 +441,6 @@
       </aside>
     </div>
 
-    <script src="script.js?v=24"></script>
+    <script src="script.js?v=25"></script>
   </body>
 </html>

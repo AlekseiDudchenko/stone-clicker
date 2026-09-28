@@ -1,4 +1,6 @@
 const SAVE_KEY = 'stone-clicker-save-v1';
+const BASE_CLICK_X2_COST = 100;
+const CLICK_X2_COST_GROWTH = 3.5;
 const MAX_PEOPLE = 8;
 const CREW_DROP_INTERVAL = 1000;
 const BASE_PERSON_COST = 10;
@@ -65,7 +67,7 @@ const TRANSLATIONS = {
     appTitle: 'Stone Clicker', language: 'Language', mainAria: 'Stone Clicker game', futureAria: 'Upgrades',
     stoneAria: 'Collect a stone', stoneSkins: 'Stone skins', classicSkin: 'Classic', desertSkin: 'Desert', citySkin: 'City', cityUpper: 'CITY',
     lockedShort: '🔒', skinOptionAria: 'Use the {skin} stone skin', skinLockedAria: 'The {skin} stone skin is locked',
-    stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click',
+    stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click', clickX2: 'Clicks ×2', clickX2Aria: 'Double click power for {cost} stones',
     totalMined: 'Total mined', clicks: 'Clicks', unlockedBiome: 'Unlocked biome', newBiome: 'New biome',
     desert: 'Desert', desertUpper: 'DESERT', desertWorldTitle: 'Desert', desertWorldDescription: 'Unlocks after all 8 Diamond Creators.', crewTitle: 'Stone Crew',
     crewDescription: 'Every second, the crew throws stones at the poor guy. You keep them.', poorGuy: 'Poor guy',
@@ -120,7 +122,7 @@ const TRANSLATIONS = {
     appTitle: 'Кликер камней', language: 'Язык', mainAria: 'Игра «Кликер камней»', futureAria: 'Улучшения',
     stoneAria: 'Добыть камень', stoneSkins: 'Скины камня', classicSkin: 'Обычный', desertSkin: 'Пустынный',
     lockedShort: '🔒', skinOptionAria: 'Выбрать скин камня «{skin}»', skinLockedAria: 'Скин камня «{skin}» пока закрыт',
-    stonesLabel: 'Камни', perSecond: 'в секунду', perClick: 'за клик',
+    stonesLabel: 'Камни', perSecond: 'в секунду', perClick: 'за клик', clickX2: 'Клики ×2', clickX2Aria: 'Удвоить силу клика за {cost} камней',
     totalMined: 'Всего добыто', clicks: 'Клики', unlockedBiome: 'Открытый биом', newBiome: 'Новый биом',
     desert: 'Пустыня', desertUpper: 'ПУСТЫНЯ', desertWorldTitle: 'Пустыня', desertWorldDescription: 'Открывается после всех 8 Diamond Creators.', crewTitle: 'Каменная команда',
     crewDescription: 'Каждую секунду команда бросает камни в беднягу. Камни достаются тебе.', poorGuy: 'Бедняга',
@@ -175,7 +177,7 @@ const TRANSLATIONS = {
     appTitle: 'Stein-Klicker', language: 'Sprache', mainAria: 'Stein-Klicker-Spiel', futureAria: 'Verbesserungen',
     stoneAria: 'Einen Stein sammeln', stoneSkins: 'Stein-Skins', classicSkin: 'Klassisch', desertSkin: 'Wüste',
     lockedShort: '🔒', skinOptionAria: 'Stein-Skin „{skin}“ verwenden', skinLockedAria: 'Stein-Skin „{skin}“ ist gesperrt',
-    stonesLabel: 'Steine', perSecond: 'pro Sekunde', perClick: 'pro Klick',
+    stonesLabel: 'Steine', perSecond: 'pro Sekunde', perClick: 'pro Klick', clickX2: 'Klicks ×2', clickX2Aria: 'Klickstärke für {cost} Steine verdoppeln',
     totalMined: 'Insgesamt abgebaut', clicks: 'Klicks', unlockedBiome: 'Freigeschaltetes Biom', newBiome: 'Neues Biom',
     desert: 'Wüste', desertUpper: 'WÜSTE', desertWorldTitle: 'Wüste', desertWorldDescription: 'Wird nach allen 8 Diamond Creators freigeschaltet.', crewTitle: 'Steintrupp',
     crewDescription: 'Jede Sekunde wirft der Trupp Steine auf den armen Kerl. Du behältst sie.', poorGuy: 'Armer Kerl',
@@ -234,6 +236,9 @@ const futurePanel = document.querySelector('.future-panel');
 const languageSelect = document.querySelector('#language-select');
 const stoneValue = document.querySelector('#stone-value');
 const rateValue = document.querySelector('#rate-value');
+const perClickValue = document.querySelector('#per-click-value');
+const clickX2Button = document.querySelector('#buy-click-x2');
+const clickX2Cost = document.querySelector('#click-x2-cost');
 const totalValue = document.querySelector('#total-value');
 const clicksValue = document.querySelector('#clicks-value');
 const stone = document.querySelector('#stone');
@@ -341,6 +346,7 @@ function createInitialState() {
     stones: 0,
     totalStones: 0,
     clicks: 0,
+    clickX2Level: 0,
     people: 1,
     crewProgressMs: 0,
     sales: 0,
@@ -385,6 +391,7 @@ function loadState() {
       stones: Number.isFinite(saved.stones) ? Math.max(0, saved.stones) : 0,
       totalStones: Number.isFinite(saved.totalStones) ? Math.max(0, saved.totalStones) : 0,
       clicks: Number.isFinite(saved.clicks) ? Math.max(0, saved.clicks) : 0,
+      clickX2Level: Number.isFinite(saved.clickX2Level) ? Math.max(0, Math.floor(saved.clickX2Level)) : 0,
       people: Number.isFinite(saved.people) ? Math.min(MAX_PEOPLE, Math.max(1, Math.floor(saved.people))) : 1,
       crewProgressMs: Number.isFinite(saved.crewProgressMs)
         ? Math.min(CREW_DROP_INTERVAL - 1, Math.max(0, saved.crewProgressMs))
@@ -585,6 +592,14 @@ function nextJackhammerCost() {
 
 function nextCementMixerCost() {
   return Math.ceil(BASE_CEMENT_MIXER_COST * CEMENT_MIXER_COST_GROWTH ** state.cementMixers);
+}
+
+function clickPower() {
+  return 2 ** state.clickX2Level;
+}
+
+function nextClickX2Cost() {
+  return Math.ceil(BASE_CLICK_X2_COST * CLICK_X2_COST_GROWTH ** state.clickX2Level);
 }
 
 function formatRate(value) {
@@ -1114,6 +1129,11 @@ function render() {
   counter.setAttribute('aria-label', tf('stonesAria', { count: stonesText }));
   renderStoneValue(stonesText);
   rateValue.textContent = formatRate(stonesPerSecond());
+  perClickValue.textContent = formatNumber(clickPower());
+  const clickUpgradeCost = nextClickX2Cost();
+  clickX2Cost.textContent = formatNumber(clickUpgradeCost);
+  clickX2Button.disabled = state.stones < clickUpgradeCost;
+  clickX2Button.setAttribute('aria-label', tf('clickX2Aria', { cost: formatNumber(clickUpgradeCost) }));
   totalValue.textContent = formatNumber(state.totalStones);
   clicksValue.textContent = formatNumber(state.clicks);
   renderCrew();
@@ -1152,10 +1172,10 @@ skinOptions.forEach((option) => {
   });
 });
 
-function spawnFloatingText(x, y) {
+function spawnFloatingText(x, y, amount = 1) {
   const label = document.createElement('span');
   label.className = 'floating-text';
-  label.textContent = '+1';
+  label.textContent = `+${formatNumber(amount)}`;
   label.style.left = `${x}px`;
   label.style.top = `${y}px`;
   document.body.append(label);
@@ -1177,14 +1197,25 @@ document.addEventListener('keydown', (event) => {
   render();
 });
 
+clickX2Button.addEventListener('click', () => {
+  const cost = nextClickX2Cost();
+  if (state.stones < cost) return;
+
+  state.stones -= cost;
+  state.clickX2Level += 1;
+  saveState();
+  render();
+});
+
 stone.addEventListener('click', (event) => {
-  gainStones(1);
+  const amount = clickPower();
+  gainStones(amount);
   state.clicks += 1;
 
   const rect = stone.getBoundingClientRect();
   const x = event.clientX || rect.left + rect.width / 2;
   const y = event.clientY || rect.top + rect.height / 2;
-  spawnFloatingText(x, y);
+  spawnFloatingText(x, y, amount);
   render();
 });
 
