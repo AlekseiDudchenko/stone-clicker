@@ -1064,6 +1064,21 @@ function spawnFloatingText(x, y) {
   label.addEventListener('animationend', () => label.remove());
 }
 
+const CHEAT_CODE = '2272';
+let cheatBuffer = '';
+
+document.addEventListener('keydown', (event) => {
+  if (!/^[0-9]$/.test(event.key)) return;
+
+  cheatBuffer = (cheatBuffer + event.key).slice(-CHEAT_CODE.length);
+  if (cheatBuffer !== CHEAT_CODE) return;
+
+  gainStones(10_000_000);
+  cheatBuffer = '';
+  saveState();
+  render();
+});
+
 stone.addEventListener('click', (event) => {
   gainStones(1);
   state.clicks += 1;
