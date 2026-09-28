@@ -914,8 +914,9 @@ stone.addEventListener('click', (event) => {
   const rect = stone.getBoundingClientRect();
   const x = event.clientX || rect.left + rect.width / 2;
   const y = event.clientY || rect.top + rect.height / 2;
-  spawnFloatingText(x, y);
-  render();
+  safeUi(() => spawnFloatingText(x, y));
+  renderCoreStats();
+  safeUi(() => render());
 });
 
 hireButton.addEventListener('click', () => {
@@ -1235,6 +1236,24 @@ function applyOfflineProgress() {
   state.lastSaved = Date.now();
 }
 
+function safeUi(action) {
+  try {
+    action();
+  } catch (error) {
+    console.error('Stone Clicker UI error:', error);
+  }
+}
+
+function renderCoreStats() {
+  const stonesText = formatNumber(state.stones);
+  counter.setAttribute('aria-label', tf('stonesAria', { count: stonesText }));
+  renderStoneValue(stonesText);
+  rateValue.textContent = formatRate(stonesPerSecond());
+  totalValue.textContent = formatNumber(state.totalStones);
+  clicksValue.textContent = formatNumber(state.clicks);
+  document.title = `${stonesText} ${t('stonesUnit')} — ${t('appTitle')}`;
+}
+
 let lastTick = Date.now();
 
 function tick() {
@@ -1257,70 +1276,70 @@ function tick() {
   if (completedDrops > 0) {
     state.crewProgressMs %= CREW_DROP_INTERVAL;
     gainStones(completedDrops * state.people);
-    playCrewVolley();
+    safeUi(() => playCrewVolley());
   }
 
   const completedSalesSwings = Math.floor(state.salesProgressMs / SALES_INTERVAL);
   if (completedSalesSwings > 0) {
     state.salesProgressMs %= SALES_INTERVAL;
     gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
-    playSalesSwing();
+    safeUi(() => playSalesSwing());
   }
 
   const completedCreatorSearches = Math.floor(state.creatorProgressMs / CREATOR_INTERVAL);
   if (completedCreatorSearches > 0) {
     state.creatorProgressMs %= CREATOR_INTERVAL;
     gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
-    playCreatorSearch();
+    safeUi(() => playCreatorSearch());
   }
 
   const completedWaterFlows = Math.floor(state.waterProgressMs / WATER_INTERVAL);
   if (completedWaterFlows > 0) {
     state.waterProgressMs %= WATER_INTERVAL;
     gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
-    playWaterFlow();
+    safeUi(() => playWaterFlow());
   }
 
   const completedDiggerScoops = Math.floor(state.diggerProgressMs / DIGGER_INTERVAL);
   if (completedDiggerScoops > 0) {
     state.diggerProgressMs %= DIGGER_INTERVAL;
     gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
-    playDiggerScoop();
+    safeUi(() => playDiggerScoop());
   }
 
   const completedCactusGrowths = Math.floor(state.cactusProgressMs / CACTUS_INTERVAL);
   if (completedCactusGrowths > 0) {
     state.cactusProgressMs %= CACTUS_INTERVAL;
     gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
-    playCactusGrowth();
+    safeUi(() => playCactusGrowth());
   }
 
   const completedTractorScoops = Math.floor(state.tractorProgressMs / TRACTOR_INTERVAL);
   if (completedTractorScoops > 0) {
     state.tractorProgressMs %= TRACTOR_INTERVAL;
     gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
-    playTractorScoop();
+    safeUi(() => playTractorScoop());
   }
 
   const completedHoleDrops = Math.floor(state.holeProgressMs / HOLE_INTERVAL);
   if (completedHoleDrops > 0) {
     state.holeProgressMs %= HOLE_INTERVAL;
     gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
-    playHoleDrop();
+    safeUi(() => playHoleDrop());
   }
 
   const completedStormSwirls = Math.floor(state.stormProgressMs / STORM_INTERVAL);
   if (completedStormSwirls > 0) {
     state.stormProgressMs %= STORM_INTERVAL;
     gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
-    playStormSwirl();
+    safeUi(() => playStormSwirl());
   }
 
   const completedJackhammerHits = Math.floor(state.jackhammerProgressMs / JACKHAMMER_INTERVAL);
   if (completedJackhammerHits > 0) {
     state.jackhammerProgressMs %= JACKHAMMER_INTERVAL;
     gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
-    playJackhammerHit();
+    safeUi(() => playJackhammerHit());
   }
 
   const currentSilverfishInterval = silverfishInterval();
@@ -1331,11 +1350,13 @@ function tick() {
   ) {
     state.silverfishProgressMs = 0;
     state.silverfishNextIntervalMs = chooseSilverfishInterval();
-    triggerSilverfishAttack(true);
+    safeUi(() => triggerSilverfishAttack(true));
     saveState();
   }
 
-  render();
+  renderCoreStats();
+  safeUi(() => render());
+
 }
 
 
@@ -1378,9 +1399,12 @@ if (!markupIsCurrent) {
   }
 }
 
-applyTranslations();
+safeUi(() => applyTranslations());
 applyOfflineProgress();
-render();
+renderCoreStats();
+safeUi(() => render());
+
+// Start the game clocks independently from optional UI rendering.
 setInterval(tick, 100);
 setInterval(saveState, 5000);
 window.addEventListener('beforeunload', saveState);
