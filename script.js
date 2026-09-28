@@ -1147,199 +1147,52 @@ function playJackhammerHit() {
 
 function applyOfflineProgress() {
   const elapsedMs = Math.min(Math.max(0, Date.now() - state.lastSaved), MAX_OFFLINE_SECONDS * 1000);
-  const accumulatedMs = state.crewProgressMs + elapsedMs;
-  const completedDrops = Math.floor(accumulatedMs / CREW_DROP_INTERVAL);
-  state.crewProgressMs = accumulatedMs % CREW_DROP_INTERVAL;
-  gainStones(completedDrops * state.people);
-
-  if (state.sales > 0) {
-    const accumulatedSalesMs = state.salesProgressMs + elapsedMs;
-    const completedSalesSwings = Math.floor(accumulatedSalesMs / SALES_INTERVAL);
-    state.salesProgressMs = accumulatedSalesMs % SALES_INTERVAL;
-    gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
-  } else {
-    state.salesProgressMs = 0;
+  if (elapsedMs > 0) {
+    gainStones(stonesPerSecond() * (elapsedMs / 1000));
+    applyOfflineSilverfishTheft(elapsedMs);
   }
 
-  if (state.creators > 0) {
-    const accumulatedCreatorMs = state.creatorProgressMs + elapsedMs;
-    const completedCreatorSearches = Math.floor(accumulatedCreatorMs / CREATOR_INTERVAL);
-    state.creatorProgressMs = accumulatedCreatorMs % CREATOR_INTERVAL;
-    gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
-  } else {
-    state.creatorProgressMs = 0;
-  }
-
-  if (state.waterSources > 0) {
-    const accumulatedWaterMs = state.waterProgressMs + elapsedMs;
-    const completedWaterFlows = Math.floor(accumulatedWaterMs / WATER_INTERVAL);
-    state.waterProgressMs = accumulatedWaterMs % WATER_INTERVAL;
-    gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
-  } else {
-    state.waterProgressMs = 0;
-  }
-
-  if (state.diggers > 0) {
-    const accumulatedDiggerMs = state.diggerProgressMs + elapsedMs;
-    const completedDiggerScoops = Math.floor(accumulatedDiggerMs / DIGGER_INTERVAL);
-    state.diggerProgressMs = accumulatedDiggerMs % DIGGER_INTERVAL;
-    gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
-  } else {
-    state.diggerProgressMs = 0;
-  }
-
-  if (state.cacti > 0) {
-    const accumulatedCactusMs = state.cactusProgressMs + elapsedMs;
-    const completedCactusGrowths = Math.floor(accumulatedCactusMs / CACTUS_INTERVAL);
-    state.cactusProgressMs = accumulatedCactusMs % CACTUS_INTERVAL;
-    gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
-  } else {
-    state.cactusProgressMs = 0;
-  }
-
-  if (state.tractors > 0) {
-    const accumulatedTractorMs = state.tractorProgressMs + elapsedMs;
-    const completedTractorScoops = Math.floor(accumulatedTractorMs / TRACTOR_INTERVAL);
-    state.tractorProgressMs = accumulatedTractorMs % TRACTOR_INTERVAL;
-    gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
-  } else {
-    state.tractorProgressMs = 0;
-  }
-
-  if (state.holes > 0) {
-    const accumulatedHoleMs = state.holeProgressMs + elapsedMs;
-    const completedHoleDrops = Math.floor(accumulatedHoleMs / HOLE_INTERVAL);
-    state.holeProgressMs = accumulatedHoleMs % HOLE_INTERVAL;
-    gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
-  } else {
-    state.holeProgressMs = 0;
-  }
-
-  if (state.storms > 0) {
-    const accumulatedStormMs = state.stormProgressMs + elapsedMs;
-    const completedStormSwirls = Math.floor(accumulatedStormMs / STORM_INTERVAL);
-    state.stormProgressMs = accumulatedStormMs % STORM_INTERVAL;
-    gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
-  } else {
-    state.stormProgressMs = 0;
-  }
-
-  if (state.jackhammers > 0) {
-    const accumulatedJackhammerMs = state.jackhammerProgressMs + elapsedMs;
-    const completedJackhammerHits = Math.floor(accumulatedJackhammerMs / JACKHAMMER_INTERVAL);
-    state.jackhammerProgressMs = accumulatedJackhammerMs % JACKHAMMER_INTERVAL;
-    gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
-  } else {
-    state.jackhammerProgressMs = 0;
-  }
-  applyOfflineSilverfishTheft(elapsedMs);
+  state.crewProgressMs = 0;
+  state.salesProgressMs = 0;
+  state.creatorProgressMs = 0;
+  state.waterProgressMs = 0;
+  state.diggerProgressMs = 0;
+  state.cactusProgressMs = 0;
+  state.tractorProgressMs = 0;
+  state.holeProgressMs = 0;
+  state.stormProgressMs = 0;
+  state.jackhammerProgressMs = 0;
   state.lastSaved = Date.now();
 }
 
-function safeUi(action) {
-  try {
-    action();
-  } catch (error) {
-    console.error('Stone Clicker UI error:', error);
-  }
-}
-
-function renderCoreStats() {
-  const stonesText = formatNumber(state.stones);
-  counter.setAttribute('aria-label', tf('stonesAria', { count: stonesText }));
-  renderStoneValue(stonesText);
-  rateValue.textContent = formatRate(stonesPerSecond());
-  totalValue.textContent = formatNumber(state.totalStones);
-  clicksValue.textContent = formatNumber(state.clicks);
-  document.title = `${stonesText} ${t('stonesUnit')} — ${t('appTitle')}`;
-}
-
 let lastTick = Date.now();
+let lastAnimationSecond = Math.floor(lastTick / 1000);
 
 function tick() {
   const now = Date.now();
-  const elapsedMs = now - lastTick;
-  state.crewProgressMs += elapsedMs;
-  if (state.sales > 0) state.salesProgressMs += elapsedMs;
-  if (state.creators > 0) state.creatorProgressMs += elapsedMs;
-  if (state.waterSources > 0) state.waterProgressMs += elapsedMs;
-  if (state.diggers > 0) state.diggerProgressMs += elapsedMs;
-  if (state.cacti > 0) state.cactusProgressMs += elapsedMs;
-  if (state.tractors > 0) state.tractorProgressMs += elapsedMs;
-  if (state.holes > 0) state.holeProgressMs += elapsedMs;
-  if (state.storms > 0) state.stormProgressMs += elapsedMs;
-  if (state.jackhammers > 0) state.jackhammerProgressMs += elapsedMs;
-  if (silverfishLevel() > 0) state.silverfishProgressMs += elapsedMs;
+  const elapsedMs = Math.max(0, now - lastTick);
   lastTick = now;
 
-  const completedDrops = Math.floor(state.crewProgressMs / CREW_DROP_INTERVAL);
-  if (completedDrops > 0) {
-    state.crewProgressMs %= CREW_DROP_INTERVAL;
-    gainStones(completedDrops * state.people);
-    safeUi(() => playCrewVolley());
-  }
+  // Production is calculated directly from the total rate.
+  // UI/animation failures cannot stop passive income anymore.
+  const passiveGain = stonesPerSecond() * (elapsedMs / 1000);
+  if (passiveGain > 0) gainStones(passiveGain);
 
-  const completedSalesSwings = Math.floor(state.salesProgressMs / SALES_INTERVAL);
-  if (completedSalesSwings > 0) {
-    state.salesProgressMs %= SALES_INTERVAL;
-    gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
-    safeUi(() => playSalesSwing());
-  }
+  if (silverfishLevel() > 0) state.silverfishProgressMs += elapsedMs;
 
-  const completedCreatorSearches = Math.floor(state.creatorProgressMs / CREATOR_INTERVAL);
-  if (completedCreatorSearches > 0) {
-    state.creatorProgressMs %= CREATOR_INTERVAL;
-    gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
-    safeUi(() => playCreatorSearch());
-  }
-
-  const completedWaterFlows = Math.floor(state.waterProgressMs / WATER_INTERVAL);
-  if (completedWaterFlows > 0) {
-    state.waterProgressMs %= WATER_INTERVAL;
-    gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
-    safeUi(() => playWaterFlow());
-  }
-
-  const completedDiggerScoops = Math.floor(state.diggerProgressMs / DIGGER_INTERVAL);
-  if (completedDiggerScoops > 0) {
-    state.diggerProgressMs %= DIGGER_INTERVAL;
-    gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
-    safeUi(() => playDiggerScoop());
-  }
-
-  const completedCactusGrowths = Math.floor(state.cactusProgressMs / CACTUS_INTERVAL);
-  if (completedCactusGrowths > 0) {
-    state.cactusProgressMs %= CACTUS_INTERVAL;
-    gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
-    safeUi(() => playCactusGrowth());
-  }
-
-  const completedTractorScoops = Math.floor(state.tractorProgressMs / TRACTOR_INTERVAL);
-  if (completedTractorScoops > 0) {
-    state.tractorProgressMs %= TRACTOR_INTERVAL;
-    gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
-    safeUi(() => playTractorScoop());
-  }
-
-  const completedHoleDrops = Math.floor(state.holeProgressMs / HOLE_INTERVAL);
-  if (completedHoleDrops > 0) {
-    state.holeProgressMs %= HOLE_INTERVAL;
-    gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
-    safeUi(() => playHoleDrop());
-  }
-
-  const completedStormSwirls = Math.floor(state.stormProgressMs / STORM_INTERVAL);
-  if (completedStormSwirls > 0) {
-    state.stormProgressMs %= STORM_INTERVAL;
-    gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
-    safeUi(() => playStormSwirl());
-  }
-
-  const completedJackhammerHits = Math.floor(state.jackhammerProgressMs / JACKHAMMER_INTERVAL);
-  if (completedJackhammerHits > 0) {
-    state.jackhammerProgressMs %= JACKHAMMER_INTERVAL;
-    gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
-    safeUi(() => playJackhammerHit());
+  const currentSecond = Math.floor(now / 1000);
+  if (currentSecond !== lastAnimationSecond) {
+    lastAnimationSecond = currentSecond;
+    if (state.people > 0) safeUi(() => playCrewVolley());
+    if (state.sales > 0) safeUi(() => playSalesSwing());
+    if (state.creators > 0) safeUi(() => playCreatorSearch());
+    if (state.waterSources > 0) safeUi(() => playWaterFlow());
+    if (state.diggers > 0) safeUi(() => playDiggerScoop());
+    if (state.cacti > 0) safeUi(() => playCactusGrowth());
+    if (state.tractors > 0) safeUi(() => playTractorScoop());
+    if (state.holes > 0) safeUi(() => playHoleDrop());
+    if (state.storms > 0) safeUi(() => playStormSwirl());
+    if (state.jackhammers > 0) safeUi(() => playJackhammerHit());
   }
 
   const currentSilverfishInterval = silverfishInterval();
@@ -1356,7 +1209,6 @@ function tick() {
 
   renderCoreStats();
   safeUi(() => render());
-
 }
 
 
