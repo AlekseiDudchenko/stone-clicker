@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
-    <link rel="stylesheet" href="styles.css?v=9" />
+    <link rel="stylesheet" href="styles.css?v=15" />
   </head>
   <body>
     <div class="layout">
@@ -35,7 +35,10 @@
         </div>
 
         <div class="stone-stage">
-          <button id="stone" class="stone" type="button" aria-label="Collect a stone"></button>
+          <div class="stone-wrap">
+            <button id="stone" class="stone" type="button" aria-label="Collect a stone"></button>
+            <span class="update-check" aria-label="Updated version loaded" title="Updated version loaded">✓</span>
+          </div>
           <div class="skin-picker" role="group" aria-labelledby="skin-picker-label">
             <span id="skin-picker-label" class="skin-picker__label" data-i18n="stoneSkins">Stone skins</span>
             <button class="skin-option skin-option--classic" type="button" data-stone-skin="classic" aria-pressed="true">
@@ -333,6 +336,6 @@
       </aside>
     </div>
 
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=15"></script>
   </body>
 </html>
