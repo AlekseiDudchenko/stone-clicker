@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
-    <link rel="stylesheet" href="styles.css?v=13" />
+    <link rel="stylesheet" href="styles.css?v=9" />
   </head>
   <body>
     <div class="layout">
@@ -21,7 +21,7 @@
           </label>
         </div>
         <header class="stats">
-          <p id="biome-chip" class="biome-chip" hidden><span data-i18n="unlockedBiome">Unlocked biome</span> · <strong id="biome-name" data-i18n="desert">Desert</strong></p>
+          <p id="biome-chip" class="biome-chip" hidden><span data-i18n="unlockedBiome">Unlocked biome</span> · <strong data-i18n="desert">Desert</strong></p>
           <output id="stone-count" class="counter" aria-live="polite">
             <span data-i18n="stonesLabel">Stones</span>: <span id="stone-value" class="number stone-number" aria-hidden="true"><span class="stone-digit">0</span></span>
           </output>
@@ -31,7 +31,7 @@
 
         <div id="biome-banner" class="biome-banner" role="status" aria-live="polite" hidden>
           <span class="biome-banner__eyebrow" data-i18n="newBiome">New biome</span>
-          <strong id="biome-banner-title" class="biome-banner__title" data-i18n="desertUpper">DESERT</strong>
+          <strong class="biome-banner__title" data-i18n="desertUpper">DESERT</strong>
         </div>
 
         <div class="stone-stage">
@@ -45,11 +45,6 @@
             <button class="skin-option skin-option--desert" type="button" data-stone-skin="desert" aria-pressed="false">
               <span class="skin-option__preview" aria-hidden="true"></span>
               <span data-i18n="desertSkin">Desert</span>
-              <span class="skin-option__lock" data-i18n="lockedShort">🔒</span>
-            </button>
-            <button class="skin-option skin-option--city" type="button" data-stone-skin="city" aria-pressed="false">
-              <span class="skin-option__preview" aria-hidden="true"></span>
-              <span data-i18n="citySkin">City</span>
               <span class="skin-option__lock" data-i18n="lockedShort">🔒</span>
             </button>
           </div>
@@ -328,34 +323,6 @@
               </button>
             </div>
           </section>
-          <section class="future-strip jackhammers-card" aria-labelledby="jackhammers-title">
-            <div class="jackhammers-card__heading">
-              <span class="jackhammers-card__hero" aria-hidden="true">⚒</span>
-              <div>
-                <h2 id="jackhammers-title" class="jackhammers-card__title" data-i18n="jackhammersTitle">Jackhammers</h2>
-                <p class="jackhammers-card__description" data-i18n="jackhammersDescription">Each jackhammer breaks up the city road for 120 stones per second.</p>
-              </div>
-            </div>
-
-            <div id="jackhammers-roster" class="jackhammers-roster" aria-label="0 of 8 Jackhammers bought">
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-              <span class="jackhammer-machine" aria-hidden="true"></span>
-            </div>
-
-            <div class="jackhammers-card__footer">
-              <p class="jackhammers-card__count"><span id="jackhammers-count" class="number">0</span> / 8 <span data-i18n="jackhammers">jackhammers</span></p>
-              <button id="buy-jackhammer" class="hire-button" type="button">
-                <span id="jackhammer-buy-label">Buy</span>
-                <span id="jackhammer-buy-price"><span id="jackhammer-cost" class="number">22000</span> <span data-i18n="stonesUnit">stones</span></span>
-              </button>
-            </div>
-          </section>
           <div class="future-strip" aria-hidden="true"></div>
           <div class="future-strip" aria-hidden="true"></div>
           <div class="future-strip" aria-hidden="true"></div>
@@ -366,6 +333,6 @@
       </aside>
     </div>
 
-    <script src="script.js?v=13"></script>
+    <script src="script.js?v=9"></script>
   </body>
 </html>
