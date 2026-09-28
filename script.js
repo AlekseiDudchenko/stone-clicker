@@ -62,7 +62,7 @@ const TRANSLATIONS = {
     lockedShort: '🔒', skinOptionAria: 'Use the {skin} stone skin', skinLockedAria: 'The {skin} stone skin is locked',
     stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click',
     totalMined: 'Total mined', clicks: 'Clicks', unlockedBiome: 'Unlocked biome', newBiome: 'New biome',
-    desert: 'Desert', desertUpper: 'DESERT', crewTitle: 'Stone Crew',
+    desert: 'Desert', desertUpper: 'DESERT', desertWorldTitle: 'Desert', desertWorldDescription: 'Unlocks after all 8 Diamond Creators.', crewTitle: 'Stone Crew',
     crewDescription: 'Every second, the crew throws stones at the poor guy. You keep them.', poorGuy: 'Poor guy',
     people: 'people', hire: 'Hire', crewFull: 'Crew full', stonesUnit: 'stones', salesTitle: 'Sales',
     salesDescription: 'Each recruit mines 1.5 stones per second with a pickaxe.', salesPeople: 'Sales',
@@ -112,7 +112,7 @@ const TRANSLATIONS = {
     lockedShort: '🔒', skinOptionAria: 'Выбрать скин камня «{skin}»', skinLockedAria: 'Скин камня «{skin}» пока закрыт',
     stonesLabel: 'Камни', perSecond: 'в секунду', perClick: 'за клик',
     totalMined: 'Всего добыто', clicks: 'Клики', unlockedBiome: 'Открытый биом', newBiome: 'Новый биом',
-    desert: 'Пустыня', desertUpper: 'ПУСТЫНЯ', crewTitle: 'Каменная команда',
+    desert: 'Пустыня', desertUpper: 'ПУСТЫНЯ', desertWorldTitle: 'Пустыня', desertWorldDescription: 'Открывается после всех 8 Diamond Creators.', crewTitle: 'Каменная команда',
     crewDescription: 'Каждую секунду команда бросает камни в беднягу. Камни достаются тебе.', poorGuy: 'Бедняга',
     people: 'людей', hire: 'Нанять', crewFull: 'Команда полна', stonesUnit: 'камней', salesTitle: 'Продажи',
     salesDescription: 'Каждый работник добывает киркой 1,5 камня в секунду.', salesPeople: 'работников',
@@ -162,7 +162,7 @@ const TRANSLATIONS = {
     lockedShort: '🔒', skinOptionAria: 'Stein-Skin „{skin}“ verwenden', skinLockedAria: 'Stein-Skin „{skin}“ ist gesperrt',
     stonesLabel: 'Steine', perSecond: 'pro Sekunde', perClick: 'pro Klick',
     totalMined: 'Insgesamt abgebaut', clicks: 'Klicks', unlockedBiome: 'Freigeschaltetes Biom', newBiome: 'Neues Biom',
-    desert: 'Wüste', desertUpper: 'WÜSTE', crewTitle: 'Steintrupp',
+    desert: 'Wüste', desertUpper: 'WÜSTE', desertWorldTitle: 'Wüste', desertWorldDescription: 'Wird nach allen 8 Diamond Creators freigeschaltet.', crewTitle: 'Steintrupp',
     crewDescription: 'Jede Sekunde wirft der Trupp Steine auf den armen Kerl. Du behältst sie.', poorGuy: 'Armer Kerl',
     people: 'Personen', hire: 'Anheuern', crewFull: 'Trupp voll', stonesUnit: 'Steine', salesTitle: 'Verkauf',
     salesDescription: 'Jeder Arbeiter baut mit einer Spitzhacke 1,5 Steine pro Sekunde ab.', salesPeople: 'Arbeiter',
@@ -240,6 +240,7 @@ const salesHireLabel = document.querySelector('#sales-hire-label');
 const salesHirePrice = document.querySelector('#sales-hire-price');
 const salesCost = document.querySelector('#sales-cost');
 const creatorsCard = document.querySelector('.creators-card');
+const desertWorldCard = document.querySelector('.desert-world-card');
 const creatorsRoster = document.querySelector('#creators-roster');
 const creatorPeople = [...document.querySelectorAll('.creator-person')];
 const creatorsCount = document.querySelector('#creators-count');
@@ -445,6 +446,7 @@ function applyTranslations() {
   });
   salesCard.dataset.lockLabel = t('locked').toUpperCase();
   creatorsCard.dataset.lockLabel = t('locked').toUpperCase();
+  desertWorldCard.dataset.lockLabel = t('locked').toUpperCase();
   waterCard.dataset.lockLabel = t('locked').toUpperCase();
   diggersCard.dataset.lockLabel = t('locked').toUpperCase();
   cactusCard.dataset.lockLabel = t('locked').toUpperCase();
@@ -613,6 +615,11 @@ function renderCreators() {
         ? t('creatorsFullAria')
         : tf('creatorsBuyAria', { cost: formatNumber(cost) }),
   );
+}
+
+function renderDesertWorld() {
+  const unlocked = state.creators >= MAX_CREATORS;
+  desertWorldCard.classList.toggle('upgrade-card--locked', !unlocked);
 }
 
 function renderWaterSources() {
@@ -1024,6 +1031,7 @@ function render() {
   renderCrew();
   renderSales();
   renderCreators();
+  renderDesertWorld();
   renderWaterSources();
   renderDiggers();
   renderCacti();
