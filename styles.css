@@ -3062,48 +3062,72 @@ button {
 .cement-mixer-icon {
   position: relative;
   display: block;
-  width: 50px;
-  height: 46px;
+  width: 64px;
+  height: 48px;
 }
 
 .cement-mixer-icon__drum {
   position: absolute;
   top: 5px;
   left: 10px;
-  width: 30px;
-  height: 24px;
-  border-radius: 48% 42% 45% 50%;
+  width: 36px;
+  height: 28px;
+  border: 3px solid #4f565c;
+  border-radius: 52% 44% 46% 54%;
   background:
-    radial-gradient(circle at 50% 50%, #d6d9dc 0 18%, transparent 19%),
-    conic-gradient(#767d83 0 25%, #b7bcc0 25% 50%, #6f767c 50% 75%, #c6cacf 75% 100%);
-  border: 2px solid #555c61;
+    radial-gradient(circle at 51% 50%, #d9dde0 0 12%, #8b9298 13% 18%, transparent 19%),
+    linear-gradient(135deg, #c3c8cc 0 18%, #777f86 19% 36%, #b8bec2 37% 55%, #6d757b 56% 72%, #c8cdd0 73% 100%);
+  box-shadow: inset -5px -4px 0 rgb(0 0 0 / 12%);
   transform: rotate(-12deg);
+  transform-origin: 53% 50%;
 }
 
 .cement-mixer-icon__stand {
   position: absolute;
-  left: 14px;
-  bottom: 10px;
-  width: 26px;
-  height: 4px;
-  background: #535a60;
-  box-shadow: 4px 6px 0 -1px #535a60, 16px 6px 0 -1px #535a60;
+  left: 16px;
+  bottom: 9px;
+  width: 32px;
+  height: 5px;
+  border-radius: 2px;
+  background: #50575d;
+}
+
+.cement-mixer-icon__stand::before,
+.cement-mixer-icon__stand::after {
+  position: absolute;
+  top: -3px;
+  width: 4px;
+  height: 18px;
+  content: "";
+  border-radius: 2px;
+  background: #555c62;
+}
+
+.cement-mixer-icon__stand::before {
+  left: 5px;
+  transform: rotate(13deg);
+}
+
+.cement-mixer-icon__stand::after {
+  right: 7px;
+  transform: rotate(-13deg);
 }
 
 .cement-mixer-icon__wheel {
   position: absolute;
   right: 4px;
-  bottom: 2px;
-  width: 10px;
-  height: 10px;
-  border: 3px solid #34383b;
+  bottom: 0;
+  width: 13px;
+  height: 13px;
+  border: 3px solid #2f3336;
   border-radius: 50%;
-  background: #787e83;
+  background: #858c91;
+  box-shadow: -29px 0 0 -3px #858c91, -29px 0 0 0 #2f3336;
 }
 
 .cement-mixers-roster {
   display: grid;
-  grid-template-columns: repeat(8, minmax(44px, 1fr));
+  grid-template-columns: repeat(8, minmax(58px, 1fr));
   align-items: end;
   gap: clamp(4px, 0.6vw, 9px);
 }
@@ -3112,8 +3136,8 @@ button {
   position: relative;
   display: block;
   justify-self: center;
-  width: 50px;
-  height: 68px;
+  width: 62px;
+  height: 74px;
   opacity: 0.2;
   filter: grayscale(1);
   transition: opacity 180ms ease, filter 180ms ease;
@@ -3122,33 +3146,36 @@ button {
 .cement-mixer-machine::before {
   position: absolute;
   top: 8px;
-  left: 7px;
-  width: 34px;
-  height: 27px;
+  left: 9px;
+  width: 39px;
+  height: 30px;
   content: "";
-  border: 2px solid #555c61;
-  border-radius: 48% 42% 45% 50%;
+  border: 3px solid #4f565c;
+  border-radius: 52% 44% 46% 54%;
   background:
-    radial-gradient(circle at 50% 50%, #d6d9dc 0 18%, transparent 19%),
-    conic-gradient(#767d83 0 25%, #b7bcc0 25% 50%, #6f767c 50% 75%, #c6cacf 75% 100%);
+    radial-gradient(circle at 51% 50%, #d9dde0 0 12%, #8b9298 13% 18%, transparent 19%),
+    linear-gradient(135deg, #c3c8cc 0 18%, #777f86 19% 36%, #b8bec2 37% 55%, #6d757b 56% 72%, #c8cdd0 73% 100%);
+  box-shadow: inset -5px -4px 0 rgb(0 0 0 / 12%);
   transform: rotate(-12deg);
-  transform-origin: center;
+  transform-origin: 53% 50%;
 }
 
 .cement-mixer-machine::after {
   position: absolute;
-  right: 5px;
-  bottom: 7px;
-  width: 12px;
-  height: 12px;
+  left: 15px;
+  bottom: 9px;
+  width: 34px;
+  height: 5px;
   content: "";
-  border: 3px solid #34383b;
-  border-radius: 50%;
-  background: #7e8489;
+  border-radius: 2px;
+  background: #50575d;
   box-shadow:
-    -24px -7px 0 -4px #565d62,
-    -12px -7px 0 -4px #565d62,
-    -16px -20px 0 -5px #565d62;
+    5px -10px 0 -1px #555c62,
+    24px -10px 0 -1px #555c62,
+    2px 6px 0 3px #2f3336,
+    27px 6px 0 3px #2f3336,
+    2px 6px 0 0 #858c91,
+    27px 6px 0 0 #858c91;
 }
 
 .cement-mixer-machine--active {
@@ -3157,10 +3184,10 @@ button {
 }
 
 .cement-mixers-card--spinning .cement-mixer-machine--active::before {
-  animation: cement-mixer-spin 720ms linear;
+  animation: cement-mixer-drum-spin 720ms linear;
 }
 
-@keyframes cement-mixer-spin {
+@keyframes cement-mixer-drum-spin {
   from { transform: rotate(-12deg); }
   to { transform: rotate(348deg); }
 }
