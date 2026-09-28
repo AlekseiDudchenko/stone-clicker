@@ -57,10 +57,15 @@ const BASE_CEMENT_MIXER_COST = 42000;
 const CEMENT_MIXER_COST_GROWTH = 1.45;
 const MAX_OFFLINE_SECONDS = 8 * 60 * 60;
 const SILVERFISH_UNLOCK_TOTAL = 5000;
-const SILVERFISH_EVENT_VERSION = 2;
+const SILVERFISH_EVENT_VERSION = 3;
 const SILVERFISH_MIN_INTERVAL = 60 * 1000;
-const SILVERFISH_MAX_INTERVAL = 20 * 60 * 1000;
+const SILVERFISH_MAX_INTERVAL = 2 * 60 * 1000;
+const SILVERFISH_MIN_COUNT = 2;
 const SILVERFISH_MAX_COUNT = 3;
+const SILVERFISH_MIN_STEAL_FRACTION = 0.05;
+const SILVERFISH_MAX_STEAL_FRACTION = 0.10;
+const SILVERFISH_DEFAULT_MAX_CPS = 5;
+const SILVERFISH_HP_SECONDS_AT_MAX_CPS = 1.5;
 
 const TRANSLATIONS = {
   en: {
@@ -372,6 +377,7 @@ function createInitialState() {
     silverfishProgressMs: 0,
     silverfishNextIntervalMs: 0,
     silverfishEventVersion: SILVERFISH_EVENT_VERSION,
+    maxClickCps: SILVERFISH_DEFAULT_MAX_CPS,
     desertIntroSeen: false,
     cityIntroSeen: false,
     stoneSkin: 'classic',
@@ -455,6 +461,9 @@ function loadState() {
           ? Math.min(SILVERFISH_MAX_INTERVAL, Math.max(SILVERFISH_MIN_INTERVAL, saved.silverfishNextIntervalMs))
           : 0,
       silverfishEventVersion: SILVERFISH_EVENT_VERSION,
+      maxClickCps: Number.isFinite(saved.maxClickCps)
+        ? Math.max(1, Math.min(20, saved.maxClickCps))
+        : SILVERFISH_DEFAULT_MAX_CPS,
       desertIntroSeen: saved.desertIntroSeen === true,
       cityIntroSeen: saved.cityIntroSeen === true,
       stoneSkin: ['classic', 'desert', 'city'].includes(saved.stoneSkin) ? saved.stoneSkin : null,
@@ -955,34 +964,26 @@ function silverfishInterval() {
 }
 
 function silverfishCount() {
-  const level = silverfishLevel();
-  if (level === 0) return 0;
-  return Math.min(SILVERFISH_MAX_COUNT, 1 + Math.floor(level / 2));
+  if (silverfishLevel() === 0) return 0;
+  return SILVERFISH_MIN_COUNT + Math.floor(Math.random() * (SILVERFISH_MAX_COUNT - SILVERFISH_MIN_COUNT + 1));
 }
 
-function silverfishStealPerBug() {
-  const level = silverfishLevel();
-  if (level === 0 || state.stones <= 0) return 0;
-
-  // About 50 stones per theft tick at a 20,000-stone balance,
-  // then progressively harsher as the run advances.
-  const percentage = 0.0025 + Math.max(0, level - 3) * 0.00045;
-  const progressionBonus = Math.max(0, Math.floor(Math.log10(Math.max(1, state.totalStones))) - 4) * 12;
-  return Math.max(2, Math.floor(state.stones * percentage) + progressionBonus);
+function silverfishRaidFraction() {
+  return SILVERFISH_MIN_STEAL_FRACTION
+    + Math.random() * (SILVERFISH_MAX_STEAL_FRACTION - SILVERFISH_MIN_STEAL_FRACTION);
 }
 
 function calculateSilverfishTheft() {
   const count = silverfishCount();
   if (count === 0 || state.stones <= 0) return { count: 0, stolen: 0 };
 
-  const wanted = count * silverfishStealPerBug();
-  const attackCap = Math.max(1, Math.floor(state.stones * 0.22));
-  return { count, stolen: Math.min(state.stones, wanted, attackCap) };
+  const stolen = Math.max(1, Math.floor(state.stones * silverfishRaidFraction()));
+  return { count, stolen: Math.min(state.stones, stolen) };
 }
 
 function silverfishHitPoints() {
-  const level = silverfishLevel();
-  return Math.min(10, 4 + level);
+  const measuredCps = Math.max(1, state.maxClickCps || SILVERFISH_DEFAULT_MAX_CPS);
+  return Math.max(4, Math.min(30, Math.round(measuredCps * SILVERFISH_HP_SECONDS_AT_MAX_CPS)));
 }
 
 function showSilverfishHit(bug, remaining) {
@@ -994,11 +995,15 @@ function showSilverfishHit(bug, remaining) {
   bug.classList.add('silverfish--hit');
 }
 
-function spawnSilverfishVisual(count) {
+function spawnSilverfishVisual(count, raidStolen) {
   const rect = stone.getBoundingClientRect();
   const centerX = rect.left + rect.width * 0.5;
   const centerY = rect.top + rect.height * 0.56;
   const hpPerBug = silverfishHitPoints();
+  const stealShares = Array.from({ length: count }, (_, index) => {
+    const base = Math.floor(raidStolen / count);
+    return base + (index < raidStolen % count ? 1 : 0);
+  });
 
   for (let index = 0; index < count; index += 1) {
     const bug = document.createElement('button');
@@ -1024,6 +1029,8 @@ function spawnSilverfishVisual(count) {
     let hp = hpPerBug;
     let stealTimer = null;
     let stealCount = 0;
+    let stolenByBug = 0;
+    const stealTarget = stealShares[index];
 
     const hpLabel = document.createElement('span');
     hpLabel.className = 'silverfish__hp';
@@ -1042,11 +1049,19 @@ function spawnSilverfishVisual(count) {
     };
 
     const stealOnce = () => {
-      if (!bug.isConnected || bug.disabled || state.stones <= 0) return;
-      const stolen = Math.min(state.stones, silverfishStealPerBug());
-      if (stolen <= 0) return;
-      stealCount += 1;
+      if (!bug.isConnected || bug.disabled || state.stones <= 0 || stolenByBug >= stealTarget) {
+        if (stolenByBug >= stealTarget) finishEventForBug();
+        return;
+      }
 
+      const remaining = stealTarget - stolenByBug;
+      const ticksLeft = Math.max(1, 3 - stealCount);
+      const wanted = Math.ceil(remaining / ticksLeft);
+      const stolen = Math.min(state.stones, wanted);
+      if (stolen <= 0) return;
+
+      stealCount += 1;
+      stolenByBug += stolen;
       state.stones = Math.max(0, state.stones - stolen);
 
       const bugRect = bug.getBoundingClientRect();
@@ -1064,7 +1079,7 @@ function spawnSilverfishVisual(count) {
       window.setTimeout(() => stone.classList.remove('stone--silverfish-hit'), 900);
       render();
 
-      if (stealCount >= 3) finishEventForBug();
+      if (stolenByBug >= stealTarget || stealCount >= 3) finishEventForBug();
     };
 
     bug.addEventListener('click', (event) => {
@@ -1086,7 +1101,7 @@ function spawnSilverfishVisual(count) {
       if (!bug.isConnected || bug.disabled) return;
       bug.classList.add('silverfish--at-stone');
       stealOnce();
-      if (!bug.disabled) stealTimer = window.setInterval(stealOnce, 3200);
+      if (!bug.disabled) stealTimer = window.setInterval(stealOnce, 2400);
     }, arrivalDelay);
   }
 }
@@ -1096,7 +1111,7 @@ function triggerSilverfishAttack(showVisual = true) {
   if (count === 0 || stolen === 0) return 0;
 
   if (showVisual) {
-    spawnSilverfishVisual(count);
+    spawnSilverfishVisual(count, stolen);
   } else {
     state.stones = Math.max(0, state.stones - stolen);
   }
@@ -1207,7 +1222,21 @@ clickX2Button.addEventListener('click', () => {
   render();
 });
 
+const recentStoneClicks = [];
+
+function recordStoneClickSpeed() {
+  const now = performance.now();
+  recentStoneClicks.push(now);
+  while (recentStoneClicks.length && recentStoneClicks[0] < now - 1500) recentStoneClicks.shift();
+
+  if (recentStoneClicks.length < 2) return;
+  const elapsed = Math.max(250, now - recentStoneClicks[0]);
+  const cps = ((recentStoneClicks.length - 1) * 1000) / elapsed;
+  if (cps > state.maxClickCps) state.maxClickCps = Math.min(20, cps);
+}
+
 stone.addEventListener('click', (event) => {
+  recordStoneClickSpeed();
   const amount = clickPower();
   gainStones(amount);
   state.clicks += 1;
