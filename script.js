@@ -1239,11 +1239,11 @@ resetProgressButton.addEventListener('click', () => {
 const markupIsCurrent = Boolean(jackhammersCard && citySkinLock);
 if (!markupIsCurrent) {
   try {
-    const reloadKey = 'stone-clicker-markup-v12-reload';
+    const reloadKey = 'stone-clicker-markup-v13-reload';
     if (!sessionStorage.getItem(reloadKey)) {
       sessionStorage.setItem(reloadKey, '1');
       const url = new URL(window.location.href);
-      url.searchParams.set('app', '12');
+      url.searchParams.set('app', '13');
       window.location.replace(url.toString());
     }
   } catch {
