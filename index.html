@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
-    <link rel="stylesheet" href="styles.css?v=19" />
+    <link rel="stylesheet" href="styles.css?v=20" />
   </head>
   <body>
     <div class="layout">
@@ -387,6 +387,41 @@
               </button>
             </div>
           </section>
+
+          <section class="future-strip cement-mixers-card" aria-labelledby="cement-mixers-title">
+            <div class="cement-mixers-card__heading">
+              <span class="cement-mixers-card__hero" aria-hidden="true">
+                <span class="cement-mixer-icon">
+                  <span class="cement-mixer-icon__drum"></span>
+                  <span class="cement-mixer-icon__stand"></span>
+                  <span class="cement-mixer-icon__wheel"></span>
+                </span>
+              </span>
+              <div>
+                <h2 id="cement-mixers-title" class="cement-mixers-card__title" data-i18n="cementMixersTitle">Cement Mixers</h2>
+                <p class="cement-mixers-card__description" data-i18n="cementMixersDescription">Each cement mixer spins continuously and produces 240 stones per second.</p>
+              </div>
+            </div>
+
+            <div id="cement-mixers-roster" class="cement-mixers-roster" aria-label="0 of 8 Cement Mixers bought">
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+              <span class="cement-mixer-machine" aria-hidden="true"></span>
+            </div>
+
+            <div class="cement-mixers-card__footer">
+              <p class="cement-mixers-card__count"><span id="cement-mixers-count" class="number">0</span> / 8 <span data-i18n="cementMixers">mixers</span></p>
+              <button id="buy-cement-mixer" class="hire-button" type="button">
+                <span id="cement-mixer-buy-label">Buy</span>
+                <span id="cement-mixer-buy-price"><span id="cement-mixer-cost" class="number">42000</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
+            </div>
+          </section>
           <div class="future-strip" aria-hidden="true"></div>
           <div class="future-strip" aria-hidden="true"></div>
           <div class="future-strip" aria-hidden="true"></div>
@@ -397,6 +432,6 @@
       </aside>
     </div>
 
-    <script src="script.js?v=19"></script>
+    <script src="script.js?v=20"></script>
   </body>
 </html>

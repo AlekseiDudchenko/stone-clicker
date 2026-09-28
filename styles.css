@@ -3023,3 +3023,175 @@ button {
     height: 72px;
   }
 }
+
+.cement-mixers-card {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  min-height: 230px;
+  padding: clamp(18px, 2.2vw, 26px);
+  overflow: hidden;
+}
+
+.cement-mixers-card__heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cement-mixers-card__hero {
+  display: grid;
+  flex: 0 0 62px;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 14px;
+  background: #e8ebed;
+}
+
+.cement-mixers-card__title {
+  margin: 0;
+}
+
+.cement-mixers-card__description {
+  margin: 4px 0 0;
+  color: #73777d;
+  font-size: 0.88rem;
+}
+
+.cement-mixer-icon {
+  position: relative;
+  display: block;
+  width: 50px;
+  height: 46px;
+}
+
+.cement-mixer-icon__drum {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  width: 30px;
+  height: 24px;
+  border-radius: 48% 42% 45% 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #d6d9dc 0 18%, transparent 19%),
+    conic-gradient(#767d83 0 25%, #b7bcc0 25% 50%, #6f767c 50% 75%, #c6cacf 75% 100%);
+  border: 2px solid #555c61;
+  transform: rotate(-12deg);
+}
+
+.cement-mixer-icon__stand {
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  width: 26px;
+  height: 4px;
+  background: #535a60;
+  box-shadow: 4px 6px 0 -1px #535a60, 16px 6px 0 -1px #535a60;
+}
+
+.cement-mixer-icon__wheel {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  width: 10px;
+  height: 10px;
+  border: 3px solid #34383b;
+  border-radius: 50%;
+  background: #787e83;
+}
+
+.cement-mixers-roster {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(44px, 1fr));
+  align-items: end;
+  gap: clamp(4px, 0.6vw, 9px);
+}
+
+.cement-mixer-machine {
+  position: relative;
+  display: block;
+  justify-self: center;
+  width: 50px;
+  height: 68px;
+  opacity: 0.2;
+  filter: grayscale(1);
+  transition: opacity 180ms ease, filter 180ms ease;
+}
+
+.cement-mixer-machine::before {
+  position: absolute;
+  top: 8px;
+  left: 7px;
+  width: 34px;
+  height: 27px;
+  content: "";
+  border: 2px solid #555c61;
+  border-radius: 48% 42% 45% 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #d6d9dc 0 18%, transparent 19%),
+    conic-gradient(#767d83 0 25%, #b7bcc0 25% 50%, #6f767c 50% 75%, #c6cacf 75% 100%);
+  transform: rotate(-12deg);
+  transform-origin: center;
+}
+
+.cement-mixer-machine::after {
+  position: absolute;
+  right: 5px;
+  bottom: 7px;
+  width: 12px;
+  height: 12px;
+  content: "";
+  border: 3px solid #34383b;
+  border-radius: 50%;
+  background: #7e8489;
+  box-shadow:
+    -24px -7px 0 -4px #565d62,
+    -12px -7px 0 -4px #565d62,
+    -16px -20px 0 -5px #565d62;
+}
+
+.cement-mixer-machine--active {
+  opacity: 1;
+  filter: none;
+}
+
+.cement-mixers-card--spinning .cement-mixer-machine--active::before {
+  animation: cement-mixer-spin 720ms linear;
+}
+
+@keyframes cement-mixer-spin {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(348deg); }
+}
+
+.cement-mixers-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.cement-mixers-card__count {
+  margin: 0;
+  color: #646a72;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.upgrade-card--locked.cement-mixers-card {
+  opacity: 0.58;
+}
+
+@media (max-width: 700px) {
+  .cement-mixers-roster {
+    grid-template-columns: repeat(4, minmax(44px, 1fr));
+    row-gap: 10px;
+  }
+
+  .cement-mixers-card__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
