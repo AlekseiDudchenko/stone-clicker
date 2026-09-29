@@ -14,10 +14,16 @@
 .oasis-maze{display:grid;width:min(900px,88vw);aspect-ratio:1;margin:auto;background:#2e2419;touch-action:none}
 .oasis-cell{min-width:0;min-height:0;background:#f1d083;position:relative;transition:background .12s ease,opacity .12s ease}.oasis-cell--wall{background:#8d5a24}.oasis-cell--hidden{background:#2e2419;box-shadow:inset 0 0 0 1px rgba(255,255,255,.015)}
 .oasis-cell--goal::after{content:"🌴";position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(8px,1.8vw,18px)}
-.oasis-cell--player{z-index:2}
-.oasis-cell--player::before{content:"";position:absolute;left:50%;top:14%;width:38%;height:38%;transform:translateX(-50%);border-radius:50%;background:#f0b77a;box-shadow:0 0 0 1px rgba(60,35,15,.25),0 1px 2px rgba(0,0,0,.25)}
-.oasis-cell--player::after{content:"";position:absolute;left:50%;bottom:8%;width:58%;height:48%;transform:translateX(-50%);border-radius:45% 45% 28% 28%;background:linear-gradient(#d65f32 0 38%,#4b78a8 38% 100%);box-shadow:0 1px 2px rgba(0,0,0,.28)}
-.oasis-cell--player{box-shadow:inset 0 0 0 2px rgba(255,244,184,.8)}
+.oasis-cell--player{z-index:2;box-shadow:inset 0 0 0 2px rgba(255,244,184,.8)}
+.oasis-cell--player::before{content:"";position:absolute;left:50%;top:8%;width:46%;height:46%;transform:translateX(-50%);border-radius:48% 48% 44% 44%;background:
+  radial-gradient(circle at 38% 46%,#3c2618 0 5%,transparent 6%),
+  radial-gradient(circle at 62% 46%,#3c2618 0 5%,transparent 6%),
+  linear-gradient(to bottom,#6b4b27 0 18%,#d3a15f 19% 27%,#e7b77b 28% 100%);
+  box-shadow:0 0 0 1px rgba(60,35,15,.28),0 1px 2px rgba(0,0,0,.28)}
+.oasis-cell--player::after{content:"";position:absolute;left:50%;bottom:5%;width:66%;height:50%;transform:translateX(-50%);border-radius:38% 38% 22% 22%;background:
+  linear-gradient(90deg,#6a4c2f 0 16%,transparent 16% 84%,#6a4c2f 84% 100%),
+  linear-gradient(to bottom,#a64f2d 0 24%,#d9874b 24% 42%,#496d8e 42% 100%);
+  box-shadow:0 1px 2px rgba(0,0,0,.3),inset -2px 0 0 rgba(73,48,28,.35)}
 .oasis-controls{margin-top:14px;display:grid;justify-content:center;gap:5px}.oasis-controls>button{justify-self:center}.oasis-controls div{display:flex;gap:5px}
 .oasis-controls button{width:58px;height:46px;border:0;border-radius:11px;background:#c98a31;color:#fff;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #87551c}
 .oasis-controls button:active{transform:translateY(2px);box-shadow:0 1px 0 #87551c}
