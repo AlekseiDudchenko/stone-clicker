@@ -79,7 +79,10 @@
     if(!modal.hidden&&k==='escape') modal.hidden=true;
   });
   document.querySelector('#language-select')?.addEventListener('change',()=>setTimeout(updateText,0));
-  document.querySelector('#reset-progress')?.addEventListener('click',()=>localStorage.removeItem(PURCHASE_KEY));
+  document.querySelector('#reset-progress')?.addEventListener('click',()=>setTimeout(()=>{
+    if(state.totalStones===0&&state.clicks===0&&state.creators===0&&state.waterSources===0) localStorage.removeItem(PURCHASE_KEY);
+    updateText();
+  },0));
   const originalRender=render;
   render=function(){ originalRender(); updateText(); };
   updateText();
