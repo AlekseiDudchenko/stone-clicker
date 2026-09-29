@@ -1,5 +1,5 @@
 (() => {
-  const COST=1000, REWARD_MIN=7000, REWARD_MAX=8000, SIZE=41, PURCHASE_KEY='stoneClickerOasisPurchased';
+  const COST=1000, REWARD_MIN=7000, REWARD_MAX=8000, SIZE=35, PURCHASE_KEY='stoneClickerOasisPurchased';
   const card=document.querySelector('.oasis-card'), action=document.querySelector('#oasis-action'), label=document.querySelector('#oasis-action-label'), price=document.querySelector('#oasis-price'), status=document.querySelector('#oasis-status');
   const modal=document.querySelector('#oasis-modal'), mazeEl=document.querySelector('#oasis-maze'), closeBtn=document.querySelector('#oasis-close'), result=document.querySelector('#oasis-result'), title=document.querySelector('#oasis-game-title'), hint=document.querySelector('#oasis-game-hint');
   if(!card||!action||!modal||!mazeEl) return;
@@ -38,10 +38,15 @@
   }
   const key=(x,y)=>`${x},${y}`;
   function revealAround(x,y){
-    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+    for(let dy=-2;dy<=2;dy++) for(let dx=-2;dx<=2;dx++){
+      if(Math.abs(dx)+Math.abs(dy)>3) continue;
       const nx=x+dx, ny=y+dy;
       if(nx>=0&&ny>=0&&nx<SIZE&&ny<SIZE) explored.add(key(nx,ny));
     }
+  }
+  function revealAll(){
+    for(let y=0;y<SIZE;y++) for(let x=0;x<SIZE;x++) explored.add(key(x,y));
+    draw();
   }
   function draw(){
     mazeEl.style.gridTemplateColumns=`repeat(${SIZE},1fr)`;
@@ -84,10 +89,19 @@
   document.querySelectorAll('[data-oasis-move]').forEach(b=>b.addEventListener('click',()=>{
     const d=b.dataset.oasisMove; move(d==='left'?-1:d==='right'?1:0,d==='up'?-1:d==='down'?1:0);
   }));
+  let oasisCheatBuffer='';
+  const OASIS_CHEAT='7788';
   document.addEventListener('keydown',e=>{
     const k=e.key.toLowerCase(), map={arrowleft:[-1,0],a:[-1,0],arrowright:[1,0],d:[1,0],arrowup:[0,-1],w:[0,-1],arrowdown:[0,1],s:[0,1]};
     if(!modal.hidden&&map[k]){e.preventDefault();move(...map[k]);}
     if(!modal.hidden&&k==='escape') modal.hidden=true;
+    if(!modal.hidden&&/^[0-9]$/.test(e.key)){
+      oasisCheatBuffer=(oasisCheatBuffer+e.key).slice(-OASIS_CHEAT.length);
+      if(oasisCheatBuffer===OASIS_CHEAT){
+        oasisCheatBuffer='';
+        revealAll();
+      }
+    }
   });
   document.querySelector('#language-select')?.addEventListener('change',()=>setTimeout(updateText,0));
   document.querySelector('#reset-progress')?.addEventListener('click',()=>setTimeout(()=>{
