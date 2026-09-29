@@ -1,13 +1,13 @@
 (() => {
-  const COST=1000, REWARD_MIN=7000, REWARD_MAX=8000, SIZE=31, PURCHASE_KEY='stoneClickerOasisPurchased';
+  const COST=1000, REWARD_MIN=7000, REWARD_MAX=8000, SIZE=41, PURCHASE_KEY='stoneClickerOasisPurchased';
   const card=document.querySelector('.oasis-card'), action=document.querySelector('#oasis-action'), label=document.querySelector('#oasis-action-label'), price=document.querySelector('#oasis-price'), status=document.querySelector('#oasis-status');
   const modal=document.querySelector('#oasis-modal'), mazeEl=document.querySelector('#oasis-maze'), closeBtn=document.querySelector('#oasis-close'), result=document.querySelector('#oasis-result'), title=document.querySelector('#oasis-game-title'), hint=document.querySelector('#oasis-game-hint');
   if(!card||!action||!modal||!mazeEl) return;
-  let maze=null, player={x:1,y:1}, won=false;
+  let maze=null, player={x:1,y:1}, won=false, explored=new Set();
   const texts={
-    en:{title:'Find the Oasis',desc:'A giant desert maze. Find the oasis and earn 7,000–8,000 stones.',locked:'Unlocks with the Desert.',buy:'Buy mini-game',play:'Play',owned:'Mini-game purchased.',hint:'Reach the oasis. Use arrows or WASD.',close:'Close',reward:n=>`Oasis found! +${n.toLocaleString('en-US')} stones`},
-    ru:{title:'Найди оазис',desc:'Гигантский лабиринт в пустыне. Найди оазис и получи 7 000–8 000 камней.',locked:'Открывается вместе с Пустыней.',buy:'Купить мини-игру',play:'Играть',owned:'Мини-игра куплена.',hint:'Доберись до оазиса. Стрелки или WASD.',close:'Закрыть',reward:n=>`Оазис найден! +${n.toLocaleString('ru-RU')} камней`},
-    de:{title:'Finde die Oase',desc:'Ein riesiges Wüstenlabyrinth. Finde die Oase und erhalte 7.000–8.000 Steine.',locked:'Wird mit der Wüste freigeschaltet.',buy:'Minispiel kaufen',play:'Spielen',owned:'Minispiel gekauft.',hint:'Finde die Oase. Pfeiltasten oder WASD.',close:'Schließen',reward:n=>`Oase gefunden! +${n.toLocaleString('de-DE')} Steine`}
+    en:{title:'Find the Oasis',desc:'A giant desert maze. Find the oasis and earn 7,000–8,000 stones.',locked:'Unlocks with the Desert.',buy:'Buy mini-game',play:'Play',owned:'Mini-game purchased.',hint:'Explore the maze and find the oasis. Only explored paths stay visible. Use arrows or WASD.',close:'Close',reward:n=>`Oasis found! +${n.toLocaleString('en-US')} stones`},
+    ru:{title:'Найди оазис',desc:'Гигантский лабиринт в пустыне. Найди оазис и получи 7 000–8 000 камней.',locked:'Открывается вместе с Пустыней.',buy:'Купить мини-игру',play:'Играть',owned:'Мини-игра куплена.',hint:'Исследуй лабиринт и найди оазис. Видно только уже исследованные пути. Стрелки или WASD.',close:'Закрыть',reward:n=>`Оазис найден! +${n.toLocaleString('ru-RU')} камней`},
+    de:{title:'Finde die Oase',desc:'Ein riesiges Wüstenlabyrinth. Finde die Oase und erhalte 7.000–8.000 Steine.',locked:'Wird mit der Wüste freigeschaltet.',buy:'Minispiel kaufen',play:'Spielen',owned:'Minispiel gekauft.',hint:'Erkunde das Labyrinth und finde die Oase. Nur erkundete Wege bleiben sichtbar. Pfeiltasten oder WASD.',close:'Schließen',reward:n=>`Oase gefunden! +${n.toLocaleString('de-DE')} Steine`}
   };
   const lang=()=>texts[state?.language]||texts.en;
   const purchased=()=>localStorage.getItem(PURCHASE_KEY)==='1';
@@ -36,25 +36,36 @@
     }
     grid[SIZE-2][SIZE-2]=0; return grid;
   }
+  const key=(x,y)=>`${x},${y}`;
+  function revealAround(x,y){
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+      const nx=x+dx, ny=y+dy;
+      if(nx>=0&&ny>=0&&nx<SIZE&&ny<SIZE) explored.add(key(nx,ny));
+    }
+  }
   function draw(){
     mazeEl.style.gridTemplateColumns=`repeat(${SIZE},1fr)`;
     const frag=document.createDocumentFragment();
     for(let y=0;y<SIZE;y++) for(let x=0;x<SIZE;x++){
-      const cell=document.createElement('span'); cell.className='oasis-cell'+(maze[y][x]?' oasis-cell--wall':'');
-      if(x===SIZE-2&&y===SIZE-2) cell.classList.add('oasis-cell--goal');
+      const visible=explored.has(key(x,y));
+      const cell=document.createElement('span');
+      cell.className='oasis-cell';
+      if(!visible) cell.classList.add('oasis-cell--hidden');
+      else if(maze[y][x]) cell.classList.add('oasis-cell--wall');
+      if(visible&&x===SIZE-2&&y===SIZE-2) cell.classList.add('oasis-cell--goal');
       if(x===player.x&&y===player.y) cell.classList.add('oasis-cell--player');
       frag.append(cell);
     }
     mazeEl.replaceChildren(frag);
   }
   function start(){
-    maze=makeMaze(); player={x:1,y:1}; won=false; result.textContent=''; draw(); modal.hidden=false;
+    maze=makeMaze(); player={x:1,y:1}; won=false; explored=new Set(); revealAround(1,1); result.textContent=''; draw(); modal.hidden=false;
   }
   function move(dx,dy){
     if(modal.hidden||won||!maze) return;
     const nx=player.x+dx, ny=player.y+dy;
     if(nx<0||ny<0||nx>=SIZE||ny>=SIZE||maze[ny][nx]) return;
-    player={x:nx,y:ny}; draw();
+    player={x:nx,y:ny}; revealAround(nx,ny); draw();
     if(nx===SIZE-2&&ny===SIZE-2){
       won=true; const reward=REWARD_MIN+Math.floor(Math.random()*(REWARD_MAX-REWARD_MIN+1));
       gainStones(reward); saveState(); render(); result.textContent=lang().reward(reward); updateText();
