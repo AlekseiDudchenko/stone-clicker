@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
     <link rel="stylesheet" href="styles.css?v=26" />
+    <link rel="stylesheet" href="oasis.css?v=1" />
   </head>
   <body>
     <div class="layout">
@@ -180,6 +181,22 @@
                 <h2 id="desert-world-title" class="desert-world-card__title" data-i18n="desertWorldTitle">Desert</h2>
                 <p class="desert-world-card__description" data-i18n="desertWorldDescription">Unlocks after all 8 Diamond Creators.</p>
               </div>
+            </div>
+          </section>
+          <section class="future-strip oasis-card upgrade-card--locked" aria-labelledby="oasis-title">
+            <div class="oasis-card__heading">
+              <span class="oasis-card__hero" aria-hidden="true">🌴</span>
+              <div>
+                <h2 id="oasis-title" class="oasis-card__title">Find the Oasis</h2>
+                <p class="oasis-card__description">A giant desert maze. Find the oasis and earn 7,000–8,000 stones.</p>
+              </div>
+            </div>
+            <div class="oasis-card__footer">
+              <span id="oasis-status" class="oasis-card__status">Unlocks with the Desert.</span>
+              <button id="oasis-action" class="hire-button" type="button">
+                <span id="oasis-action-label">Buy mini-game</span>
+                <span id="oasis-price"><span class="number">1000</span> <span data-i18n="stonesUnit">stones</span></span>
+              </button>
             </div>
           </section>
           <section class="future-strip water-card" aria-labelledby="water-title">
@@ -441,6 +458,31 @@
       </aside>
     </div>
 
+    <div id="oasis-modal" class="oasis-modal" hidden>
+      <div class="oasis-dialog" role="dialog" aria-modal="true" aria-labelledby="oasis-game-title">
+        <div class="oasis-dialog__header">
+          <div>
+            <h2 id="oasis-game-title">Find the Oasis</h2>
+            <p id="oasis-game-hint">Reach the oasis. Use arrows or WASD.</p>
+          </div>
+          <button id="oasis-close" class="oasis-close" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="oasis-maze-wrap">
+          <div id="oasis-maze" class="oasis-maze" role="grid" aria-label="Find the Oasis maze"></div>
+        </div>
+        <div class="oasis-controls" aria-label="Maze controls">
+          <button type="button" data-oasis-move="up">▲</button>
+          <div>
+            <button type="button" data-oasis-move="left">◀</button>
+            <button type="button" data-oasis-move="down">▼</button>
+            <button type="button" data-oasis-move="right">▶</button>
+          </div>
+        </div>
+        <p id="oasis-result" class="oasis-result" aria-live="polite"></p>
+      </div>
+    </div>
+
     <script src="script.js?v=26"></script>
+    <script src="oasis.js?v=1"></script>
   </body>
 </html>
