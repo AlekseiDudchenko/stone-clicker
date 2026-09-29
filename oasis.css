@@ -1,0 +1,22 @@
+/* Find the Oasis mini-game */
+.oasis-card__heading{display:flex;align-items:center;gap:14px}
+.oasis-card__hero{width:58px;height:58px;display:grid;place-items:center;flex:0 0 auto;border-radius:16px;font-size:36px;background:linear-gradient(145deg,#ffe59a,#dca744);box-shadow:inset 0 0 0 2px rgba(96,60,16,.15)}
+.oasis-card__title{margin:0}.oasis-card__description{margin:.35rem 0 0}
+.oasis-card__footer{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.oasis-card__status{font-weight:700;opacity:.8}
+.oasis-modal{position:fixed;inset:0;z-index:10000;background:rgba(35,22,8,.72);display:grid;place-items:center;padding:16px}
+.oasis-modal[hidden]{display:none}
+.oasis-dialog{width:min(94vw,900px);max-height:94vh;overflow:auto;border-radius:22px;padding:18px;background:#f7e4ad;color:#38260f;box-shadow:0 24px 70px rgba(0,0,0,.38);border:3px solid #c8943e}
+.oasis-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.oasis-dialog__header h2{margin:0;font-size:clamp(24px,4vw,36px)}.oasis-dialog__header p{margin:.35rem 0 0}
+.oasis-close{width:44px;height:44px;border:0;border-radius:50%;cursor:pointer;font-size:30px;line-height:1;background:#e9c46a;color:#3b2509}
+.oasis-maze-wrap{margin-top:16px;width:100%;overflow:auto;border-radius:14px;background:#d79a3c;padding:7px;box-shadow:inset 0 0 0 2px rgba(73,42,8,.22)}
+.oasis-maze{display:grid;width:min(780px,86vw);aspect-ratio:1;margin:auto;background:#8d5a24;touch-action:none}
+.oasis-cell{min-width:0;min-height:0;background:#f1d083;position:relative}.oasis-cell--wall{background:#8d5a24}
+.oasis-cell--goal::after{content:"🌴";position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(8px,1.8vw,18px)}
+.oasis-cell--player::after{content:"🧭";position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(8px,1.8vw,18px);filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.oasis-controls{margin-top:14px;display:grid;justify-content:center;gap:5px}.oasis-controls>button{justify-self:center}.oasis-controls div{display:flex;gap:5px}
+.oasis-controls button{width:58px;height:46px;border:0;border-radius:11px;background:#c98a31;color:#fff;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #87551c}
+.oasis-controls button:active{transform:translateY(2px);box-shadow:0 1px 0 #87551c}
+.oasis-result{min-height:1.5em;margin:12px 0 0;text-align:center;font-weight:900;font-size:18px}
+@media(max-width:600px){.oasis-dialog{padding:12px;border-radius:16px}.oasis-maze{width:82vw}.oasis-controls button{width:54px;height:43px}}
