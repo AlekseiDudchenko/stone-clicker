@@ -4,14 +4,14 @@
 .oasis-card__title{margin:0}.oasis-card__description{margin:.35rem 0 0}
 .oasis-card__footer{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .oasis-card__status{font-weight:700;opacity:.8}
-.oasis-modal{position:fixed;inset:0;z-index:10000;background:rgba(35,22,8,.72);display:grid;place-items:center;padding:16px}
+.oasis-modal{position:fixed;inset:0;z-index:10000;background:#2e2419;display:block;padding:0}
 .oasis-modal[hidden]{display:none}
-.oasis-dialog{width:min(94vw,900px);max-height:94vh;overflow:auto;border-radius:22px;padding:18px;background:#f7e4ad;color:#38260f;box-shadow:0 24px 70px rgba(0,0,0,.38);border:3px solid #c8943e}
+.oasis-dialog{width:100vw;height:100vh;max-width:none;max-height:none;overflow:hidden;border-radius:0;padding:10px 12px;background:#f7e4ad;color:#38260f;box-shadow:none;border:0;display:flex;flex-direction:column}
 .oasis-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 .oasis-dialog__header h2{margin:0;font-size:clamp(24px,4vw,36px)}.oasis-dialog__header p{margin:.35rem 0 0}
 .oasis-close{width:44px;height:44px;border:0;border-radius:50%;cursor:pointer;font-size:30px;line-height:1;background:#e9c46a;color:#3b2509}
-.oasis-maze-wrap{margin-top:16px;width:100%;overflow:auto;border-radius:14px;background:#d79a3c;padding:7px;box-shadow:inset 0 0 0 2px rgba(73,42,8,.22)}
-.oasis-maze{display:grid;width:min(900px,88vw);aspect-ratio:1;margin:auto;background:#2e2419;touch-action:none}
+.oasis-maze-wrap{margin-top:8px;width:100%;flex:1;min-height:0;overflow:hidden;border-radius:10px;background:#d79a3c;padding:4px;box-shadow:inset 0 0 0 2px rgba(73,42,8,.22);display:grid;place-items:center}
+.oasis-maze{display:grid;width:min(calc(100vw - 16px),calc(100vh - 160px));height:min(calc(100vw - 16px),calc(100vh - 160px));aspect-ratio:1;margin:auto;background:#2e2419;touch-action:none}
 .oasis-cell{min-width:0;min-height:0;background:#f1d083;position:relative;transition:background .12s ease,opacity .12s ease}.oasis-cell--wall{background:#8d5a24}.oasis-cell--hidden{background:#2e2419;box-shadow:inset 0 0 0 1px rgba(255,255,255,.015)}
 .oasis-cell--goal::after{content:"🌴";position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(8px,1.8vw,18px)}
 .oasis-cell--player{z-index:2;box-shadow:inset 0 0 0 2px rgba(255,244,184,.8)}
@@ -24,8 +24,8 @@
   linear-gradient(90deg,#6a4c2f 0 16%,transparent 16% 84%,#6a4c2f 84% 100%),
   linear-gradient(to bottom,#a64f2d 0 24%,#d9874b 24% 42%,#496d8e 42% 100%);
   box-shadow:0 1px 2px rgba(0,0,0,.3),inset -2px 0 0 rgba(73,48,28,.35)}
-.oasis-controls{margin-top:14px;display:grid;justify-content:center;gap:5px}.oasis-controls>button{justify-self:center}.oasis-controls div{display:flex;gap:5px}
+.oasis-controls{margin-top:8px;display:grid;justify-content:center;gap:4px}.oasis-controls>button{justify-self:center}.oasis-controls div{display:flex;gap:5px}
 .oasis-controls button{width:58px;height:46px;border:0;border-radius:11px;background:#c98a31;color:#fff;font-size:22px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #87551c}
 .oasis-controls button:active{transform:translateY(2px);box-shadow:0 1px 0 #87551c}
 .oasis-result{min-height:1.5em;margin:12px 0 0;text-align:center;font-weight:900;font-size:18px}
-@media(max-width:600px){.oasis-dialog{padding:12px;border-radius:16px}.oasis-maze{width:86vw}.oasis-controls button{width:54px;height:43px}}
+@media(max-width:600px){.oasis-dialog{padding:8px}.oasis-dialog__header p{font-size:12px}.oasis-dialog__header h2{font-size:22px}.oasis-maze{width:min(calc(100vw - 12px),calc(100vh - 150px));height:min(calc(100vw - 12px),calc(100vh - 150px))}.oasis-controls button{width:52px;height:40px}}
