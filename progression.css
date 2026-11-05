@@ -1,0 +1,108 @@
+/* Progression panels use the existing game's warm quarry palette. */
+html, body { height: auto; min-height: 100%; overflow: auto; }
+.layout { height: auto; min-height: 100dvh; grid-template-columns: minmax(0, 1fr) minmax(360px, .9fr); align-items: start; }
+.game { position: sticky; top: 0; height: 100dvh; min-height: 750px; grid-template-rows: auto auto minmax(0, 1fr) auto; gap: 14px; padding: 64px 28px 18px; }
+.game-controls { top: 16px; }
+.stats { width: 100%; }
+.counter { font-size: clamp(1.8rem, 3vw, 3rem); }
+.stat-line { display: inline-block; margin: 10px 7px 0; font-size: .95rem; }
+.click-x2-upgrade { display: flex; margin: 12px auto 0; }
+.future-panel { height: 100dvh; min-height: 750px; padding: 24px; background: #eeede7; }
+.future-list { gap: 20px; }
+.next-goal { width: min(100%, 480px); padding: 14px 16px; border: 1px solid #d3c6a8; border-radius: 14px; background: #fffdf5; box-shadow: 0 4px 18px #664d2510; }
+.next-goal__heading { display: flex; justify-content: space-between; gap: 8px; color: #7a6744; font-size: .65rem; font-weight: 800; letter-spacing: .09em; }
+.next-goal strong { display: block; margin: 7px 0; font-size: .95rem; }
+progress { appearance: none; display: block; width: 100%; height: 6px; border: 0; border-radius: 10px; overflow: hidden; background: #e8e6dc; accent-color: #718363; }
+progress::-webkit-progress-bar { background: #e8e6dc; border-radius: 10px; }
+progress::-webkit-progress-value { background: #718363; border-radius: 10px; transition: width .15s ease; }
+progress::-moz-progress-bar { background: #718363; border-radius: 10px; }
+.next-goal p { margin: 7px 0 0; font-size: .73rem; color: #77715e; }
+.goal-action { padding: 0; margin-top: 7px; border: 0; background: transparent; color: #4d6844; text-decoration: underline; font-size: .72rem; cursor: pointer; }
+.stone-stage { grid-template-rows: minmax(130px, 1fr) auto auto auto; gap: 8px; }
+.stone-wrap { max-width: 350px; }
+.stone { position: relative; width: min(100%, 300px); max-height: 100%; }
+.rock-cracks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.crack { fill: none; stroke: #292c2b; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; opacity: 0; filter: drop-shadow(1px 1px 0 #e8e6cb); }
+.stone[data-crack-stage="1"] .crack--1,
+.stone[data-crack-stage="2"] .crack--1, .stone[data-crack-stage="2"] .crack--2,
+.stone[data-crack-stage="3"] .crack { opacity: .85; }
+.stone--shattering { animation: rock-replace 450ms ease-out; }
+.rock-shard { position: absolute; left: 50%; top: 50%; width: 17px; height: 21px; background: #777b70; clip-path: polygon(15% 0, 100% 30%, 74% 100%, 0 65%); pointer-events: none; animation: rock-shard 450ms ease-out forwards; }
+@keyframes rock-replace { 0% { transform: scale(1); } 28% { opacity: .1; transform: scale(.7) rotate(-5deg); } 55% { opacity: .4; transform: scale(.8); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes rock-shard { to { transform: translate(var(--x), var(--y)) rotate(120deg); opacity: 0; } }
+.rock-status { width: min(80%, 320px); }
+.rock-status > div { display: flex; justify-content: space-between; font-size: .7rem; font-weight: 700; color: #656b60; margin-bottom: 5px; }
+.rock-status p { margin: 5px 0 0; font-size: .68rem; color: #7d7e73; text-align: center; }
+.settlement { width: min(100%, 480px); }
+.settlement__heading { display: flex; justify-content: space-between; padding: 0 10px; color: #77806c; font-size: .7rem; }
+.settlement__heading strong { font-weight: 600; }
+.settlement-scene { height: 95px; border-bottom: 1px solid #d3d7bf; border-radius: 0 0 12px 12px; overflow: hidden; }
+.settlement-scene svg { display: block; width: 100%; height: 100%; }
+.land-back { fill: #e6e8d9; }
+.land-front { fill: #d7dfc6; }
+.scene-road { stroke: #ede6d0; stroke-width: 5; fill: none; }
+.game--desert .land-back { fill: #efdcaf; }
+.game--desert .land-front { fill: #e5ca95; }
+.scene-building { opacity: .13; filter: grayscale(1); transition: opacity .3s, filter .3s; }
+.scene-building--built { opacity: 1; filter: none; }
+.skin-picker { flex-wrap: wrap; min-height: 24px; gap: 5px; }
+.skin-picker__label { font-size: .6rem; }
+.skin-option { font-size: .65rem; padding: 3px 6px; }
+.skin-option__preview { width: 21px; height: 20px; }
+.progression-card { padding: 20px; border: 1px solid #dfdfd4; border-radius: 14px; background: #fffefb; }
+.progression-card h2 { font-size: 1.05rem; margin: 0 0 6px; color: #3f4839; }
+.progression-card > p { color: #7c8074; font-size: .77rem; line-height: 1.5; margin: 0 0 10px; }
+.progression-card .eyebrow { color: #9a845c; letter-spacing: .15em; font-weight: 800; font-size: .62rem; margin-bottom: 8px; }
+.choice-row, .project-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #eeeee4; }
+.choice-row:last-child, .project-row:last-child { border-bottom: 0; }
+.choice-icon { font-size: 1.5rem; text-align: center; }
+.choice-row strong, .project-row strong { font-size: .8rem; color: #4c5543; }
+.choice-row p, .project-row p { color: #7d8176; font-size: .68rem; line-height: 1.4; margin: 4px 0; }
+.choice-row small { color: #9c8b67; font-size: .63rem; }
+.choice-row button, .project-row button { border: 1px solid #b9c5ab; background: #edf2e5; color: #4d6040; padding: 8px 10px; border-radius: 8px; font-size: .68rem; font-weight: 700; cursor: pointer; max-width: 140px; }
+.choice-row button:disabled, .project-row button:disabled { opacity: .55; cursor: default; }
+.choice-row button:hover:enabled, .project-row button:hover:enabled { background: #dce9cc; }
+button:focus-visible, summary:focus-visible { outline: 3px solid #769bba; outline-offset: 3px; }
+.project-row--built .choice-icon { filter: none; }
+.project-row--built button:disabled { opacity: 1; color: #507340; }
+.progression-card .production-summary { margin: 10px 0 0; color: #6b7b54; font-size: .7rem; }
+#achievements-details summary { cursor: pointer; color: #4c5543; font-size: .85rem; font-weight: 700; }
+#achievements-count { float: right; color: #8b906e; font-size: .75rem; }
+.achievements-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.achievement { display: flex; gap: 8px; padding: 10px; border: 1px dashed #dddcd1; border-radius: 8px; background: #f6f5ee; color: #777b71; }
+.achievement > span { filter: grayscale(1); opacity: .5; font-size: 1.2rem; }
+.achievement strong { font-size: .72rem; }
+.achievement p { margin: 4px 0; font-size: .64rem; line-height: 1.4; }
+.achievement small { font-size: .6rem; color: #62834c; }
+.achievement--earned { border-style: solid; border-color: #cbd8b5; background: #f1f6e9; color: #495d3b; }
+.achievement--earned > span { filter: none; opacity: 1; }
+.set-badge { margin: 0; color: #8e8c7e; font-size: .66rem; line-height: 1.4; }
+.set-badge--full { color: #5a7b42; font-weight: 700; }
+.progression-toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 100; max-width: min(90vw, 480px); padding: 14px 22px; background: #3e5036; border: 1px solid #9bac84; color: #fff9e8; border-radius: 12px; box-shadow: 0 6px 25px #0002; font-size: .85rem; text-align: center; pointer-events: none; }
+@media (max-width: 900px) {
+  .game { padding-inline: 18px; }
+  .future-panel { padding: 16px; }
+  .choice-row, .project-row { grid-template-columns: 26px minmax(0, 1fr); }
+  .choice-row button, .project-row button { grid-column: 2; justify-self: start; }
+  .achievements-list { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  .layout { grid-template-columns: 1fr; }
+  .game { position: relative; height: auto; min-height: 800px; padding: 64px 20px 20px; grid-template-rows: auto auto minmax(360px, 1fr) auto; }
+  .stone-wrap { height: 190px; }
+  .stone { width: 220px; }
+  .future-panel { height: auto; min-height: 0; overflow: visible; padding: 20px; }
+  .choice-row, .project-row { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .choice-row button, .project-row button { grid-column: auto; max-width: 100px; font-size: .65rem; padding: 8px; }
+  .progression-card { padding: 16px; }
+  .settlement-scene { height: 90px; }
+  .total-stats { font-size: .7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stone--shattering, .rock-shard { animation: none; }
+  .rock-shard { display: none; }
+  progress::-webkit-progress-value, .scene-building { transition: none; }
+}
+/* Keep the first hire immediately reachable while new systems are introduced. */
+.future-list > .crew-card { order: -1; }
+.upgrade-card--locked { padding-top: 42px; }

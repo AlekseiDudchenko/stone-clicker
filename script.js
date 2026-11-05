@@ -74,7 +74,7 @@ const TRANSLATIONS = {
     lockedShort: '🔒', skinOptionAria: 'Use the {skin} stone skin', skinLockedAria: 'The {skin} stone skin is locked',
     stonesLabel: 'Stones', perSecond: 'per second', perClick: 'per click', clickX2: 'Clicks ×2', clickX2Aria: 'Double click power for {cost} stones',
     totalMined: 'Total mined', clicks: 'Clicks', unlockedBiome: 'Unlocked biome', newBiome: 'New biome',
-    desert: 'Desert', desertUpper: 'DESERT', desertWorldTitle: 'Desert', desertWorldDescription: 'Unlocks after all 8 Diamond Creators.', crewTitle: 'Stone Crew',
+    desert: 'Desert', desertUpper: 'DESERT', desertWorldTitle: 'Desert', desertWorldDescription: 'Unlocks after 4 Diamond Creators.', crewTitle: 'Stone Crew',
     crewDescription: 'Every second, the crew throws stones at the poor guy. You keep them.', poorGuy: 'Poor guy',
     people: 'people', hire: 'Hire', crewFull: 'Crew full', stonesUnit: 'stones', salesTitle: 'Sales',
     salesDescription: 'Each recruit mines 1.5 stones per second with a pickaxe.', salesPeople: 'Sales',
@@ -89,38 +89,38 @@ const TRANSLATIONS = {
     holesDescription: 'Stones tumble into each hole, bringing 48 stones per second.', holes: 'holes', open: 'Open',
     stormsTitle: 'Sandstorms', stormsDescription: 'Each desert whirlwind carries 75 stones per second.',
     storms: 'storms', summon: 'Summon',
-    cityTitle: 'City', cityDescription: 'The city opens after all 8 Sandstorms.',
+    cityTitle: 'City', cityDescription: 'The city opens after 4 Sandstorms.',
     jackhammersTitle: 'Jackhammers', jackhammersDescription: 'A handheld jackhammer rapidly breaks asphalt and produces 120 stones per second.',
     jackhammers: 'jackhammers', jackhammersRosterAria: '{count} of 8 Jackhammers bought',
-    jackhammersLockedAria: 'Summon all 8 Sandstorms to unlock Jackhammers',
+    jackhammersLockedAria: 'Summon 4 Sandstorms to unlock Jackhammers',
     jackhammersFullAria: 'Maximum number of Jackhammers reached',
     jackhammersBuyAria: 'Buy a Jackhammer for {cost} stones',
     cementMixersTitle: 'Cement Mixers', cementMixersDescription: 'Each cement mixer spins continuously and produces 240 stones per second.',
     cementMixers: 'mixers', cementMixersRosterAria: '{count} of 8 Cement Mixers bought',
-    cementMixersLockedAria: 'Buy all 8 Jackhammers to unlock Cement Mixers',
+    cementMixersLockedAria: 'Buy 4 Jackhammers to unlock Cement Mixers',
     cementMixersFullAria: 'Maximum number of Cement Mixers reached',
     cementMixersBuyAria: 'Buy a Cement Mixer for {cost} stones',
     resetProgress: 'Reset progress', resetConfirm: 'Reset absolutely all progress? Stones, upgrades, biome unlocks and stone skins will be lost.',
     stonesAria: 'Stones: {count}', crewRosterAria: '{count} of 8 people hired', targetAria: 'Stone collector',
     hirePersonAria: 'Hire another person for {cost} stones', crewFullAria: 'Maximum crew size reached',
-    salesRosterAria: '{count} of 8 Sales recruited', salesLockedAria: 'Hire all 8 Stone Crew people to unlock Sales',
+    salesRosterAria: '{count} of 8 Sales recruited', salesLockedAria: 'Hire 4 Stone Crew people to unlock Sales',
     salesFullAria: 'Maximum Sales team size reached', salesBuyAria: 'Recruit Sales for {cost} stones',
     creatorsRosterAria: '{count} of 8 Diamond Creators invited',
-    creatorsLockedAria: 'Recruit all 8 Sales to unlock Diamond Creators',
+    creatorsLockedAria: 'Recruit 4 Sales to unlock Diamond Creators',
     creatorsFullAria: 'Maximum creator team size reached', creatorsBuyAria: 'Invite a Diamond Creator for {cost} stones',
     waterRosterAria: '{count} of 8 Water Sources built',
-    waterLockedAria: 'Invite all 8 Diamond Creators to unlock Water Sources',
+    waterLockedAria: 'Invite 4 Diamond Creators to unlock Water Sources',
     waterFullAria: 'Maximum number of Water Sources reached', waterBuyAria: 'Build a Water Source for {cost} stones',
     diggersRosterAria: '{count} of 8 Shovel Diggers hired',
-    diggersLockedAria: 'Build all 8 Water Sources to unlock Shovel Diggers',
+    diggersLockedAria: 'Build 4 Water Sources to unlock Shovel Diggers',
     diggersFullAria: 'Maximum number of Shovel Diggers reached', diggersBuyAria: 'Hire a Shovel Digger for {cost} stones',
-    cactusRosterAria: '{count} of 8 Stone Cacti planted', cactusLockedAria: 'Hire all 8 Shovel Diggers to unlock Stone Cacti',
+    cactusRosterAria: '{count} of 8 Stone Cacti planted', cactusLockedAria: 'Hire 4 Shovel Diggers to unlock Stone Cacti',
     cactusFullAria: 'Maximum number of Stone Cacti reached', cactusBuyAria: 'Plant a Stone Cactus for {cost} stones',
-    tractorsRosterAria: '{count} of 8 Sand Tractors bought', tractorsLockedAria: 'Plant all 8 Stone Cacti to unlock Sand Tractors',
+    tractorsRosterAria: '{count} of 8 Sand Tractors bought', tractorsLockedAria: 'Plant 4 Stone Cacti to unlock Sand Tractors',
     tractorsFullAria: 'Maximum number of Sand Tractors reached', tractorsBuyAria: 'Buy a Sand Tractor for {cost} stones',
-    holesRosterAria: '{count} of 8 Stone Holes opened', holesLockedAria: 'Buy all 8 Sand Tractors to unlock Stone Holes',
+    holesRosterAria: '{count} of 8 Stone Holes opened', holesLockedAria: 'Buy 4 Sand Tractors to unlock Stone Holes',
     holesFullAria: 'Maximum number of Stone Holes reached', holesBuyAria: 'Open a Stone Hole for {cost} stones',
-    stormsRosterAria: '{count} of 8 Sandstorms summoned', stormsLockedAria: 'Open all 8 Stone Holes to unlock Sandstorms',
+    stormsRosterAria: '{count} of 8 Sandstorms summoned', stormsLockedAria: 'Open 4 Stone Holes to unlock Sandstorms',
     stormsFullAria: 'Maximum number of Sandstorms reached', stormsBuyAria: 'Summon a Sandstorm for {cost} stones',
   },
   ru: {
@@ -129,7 +129,7 @@ const TRANSLATIONS = {
     lockedShort: '🔒', skinOptionAria: 'Выбрать скин камня «{skin}»', skinLockedAria: 'Скин камня «{skin}» пока закрыт',
     stonesLabel: 'Камни', perSecond: 'в секунду', perClick: 'за клик', clickX2: 'Клики ×2', clickX2Aria: 'Удвоить силу клика за {cost} камней',
     totalMined: 'Всего добыто', clicks: 'Клики', unlockedBiome: 'Открытый биом', newBiome: 'Новый биом',
-    desert: 'Пустыня', desertUpper: 'ПУСТЫНЯ', desertWorldTitle: 'Пустыня', desertWorldDescription: 'Открывается после всех 8 Diamond Creators.', crewTitle: 'Каменная команда',
+    desert: 'Пустыня', desertUpper: 'ПУСТЫНЯ', desertWorldTitle: 'Пустыня', desertWorldDescription: 'Открывается после приглашения 4 алмазных ютуберов.', crewTitle: 'Каменная команда',
     crewDescription: 'Каждую секунду команда бросает камни в беднягу. Камни достаются тебе.', poorGuy: 'Бедняга',
     people: 'людей', hire: 'Нанять', crewFull: 'Команда полна', stonesUnit: 'камней', salesTitle: 'Продажи',
     salesDescription: 'Каждый работник добывает киркой 1,5 камня в секунду.', salesPeople: 'работников',
@@ -144,38 +144,38 @@ const TRANSLATIONS = {
     holesDescription: 'В каждую яму сыпятся камни. Она приносит 48 камней в секунду.', holes: 'ям', open: 'Открыть',
     stormsTitle: 'Песчаные бури', stormsDescription: 'Каждый пустынный вихрь приносит 75 камней в секунду.',
     storms: 'бурь', summon: 'Призвать',
-    cityTitle: 'Город', cityDescription: 'Город открывается после всех 8 песчаных бурь.',
+    cityTitle: 'Город', cityDescription: 'Город открывается после 4 песчаных бурь.',
     jackhammersTitle: 'Отбойные молотки', jackhammersDescription: 'Ручной отбойный молоток очень часто бьёт по асфальту и приносит 120 камней в секунду.',
     jackhammers: 'молотков', jackhammersRosterAria: 'Куплено отбойных молотков: {count} из 8',
-    jackhammersLockedAria: 'Призови все 8 песчаных бурь, чтобы открыть отбойные молотки',
+    jackhammersLockedAria: 'Призови 4 песчаные бури, чтобы открыть отбойные молотки',
     jackhammersFullAria: 'Достигнут максимум отбойных молотков',
     jackhammersBuyAria: 'Купить отбойный молоток за {cost} камней',
     cementMixersTitle: 'Бетономешалки', cementMixersDescription: 'Каждая бетономешалка постоянно вращает барабан и приносит 240 камней в секунду.',
     cementMixers: 'бетономешалок', cementMixersRosterAria: 'Куплено бетономешалок: {count} из 8',
-    cementMixersLockedAria: 'Купи все 8 отбойных молотков, чтобы открыть бетономешалки',
+    cementMixersLockedAria: 'Купи 4 отбойных молотка, чтобы открыть бетономешалки',
     cementMixersFullAria: 'Достигнут максимум бетономешалок',
     cementMixersBuyAria: 'Купить бетономешалку за {cost} камней',
     resetProgress: 'Сбросить прогресс', resetConfirm: 'Сбросить абсолютно весь прогресс? Камни, улучшения, открытые биомы и скины будут потеряны.',
     stonesAria: 'Камни: {count}', crewRosterAria: 'Нанято людей: {count} из 8', targetAria: 'Сборщик камней',
     hirePersonAria: 'Нанять ещё одного человека за {cost} камней', crewFullAria: 'Достигнут максимум команды',
-    salesRosterAria: 'Нанято работников: {count} из 8', salesLockedAria: 'Найми всю команду из 8 человек, чтобы открыть Продажи',
+    salesRosterAria: 'Нанято работников: {count} из 8', salesLockedAria: 'Найми 4 человек, чтобы открыть Продажи',
     salesFullAria: 'Достигнут максимум работников', salesBuyAria: 'Нанять работника за {cost} камней',
     creatorsRosterAria: 'Приглашено ютуберов: {count} из 8',
-    creatorsLockedAria: 'Найми всех 8 работников, чтобы открыть Алмазных ютуберов',
+    creatorsLockedAria: 'Найми 4 работника, чтобы открыть Алмазных ютуберов',
     creatorsFullAria: 'Достигнут максимум ютуберов', creatorsBuyAria: 'Пригласить ютубера за {cost} камней',
     waterRosterAria: 'Построено источников: {count} из 8',
-    waterLockedAria: 'Пригласи всех 8 ютуберов, чтобы открыть Источники воды',
+    waterLockedAria: 'Пригласи 4 ютубера, чтобы открыть Источники воды',
     waterFullAria: 'Достигнут максимум источников воды', waterBuyAria: 'Построить источник за {cost} камней',
     diggersRosterAria: 'Нанято копателей: {count} из 8',
-    diggersLockedAria: 'Построй все 8 источников воды, чтобы открыть копателей с лопатами',
+    diggersLockedAria: 'Построй 4 источника воды, чтобы открыть копателей с лопатами',
     diggersFullAria: 'Достигнут максимум копателей', diggersBuyAria: 'Нанять копателя за {cost} камней',
-    cactusRosterAria: 'Посажено кактусов: {count} из 8', cactusLockedAria: 'Найми всех 8 копателей, чтобы открыть каменные кактусы',
+    cactusRosterAria: 'Посажено кактусов: {count} из 8', cactusLockedAria: 'Найми 4 копателя, чтобы открыть каменные кактусы',
     cactusFullAria: 'Достигнут максимум кактусов', cactusBuyAria: 'Посадить каменный кактус за {cost} камней',
-    tractorsRosterAria: 'Куплено тракторов: {count} из 8', tractorsLockedAria: 'Посади все 8 кактусов, чтобы открыть песчаные тракторы',
+    tractorsRosterAria: 'Куплено тракторов: {count} из 8', tractorsLockedAria: 'Посади 4 кактуса, чтобы открыть песчаные тракторы',
     tractorsFullAria: 'Достигнут максимум тракторов', tractorsBuyAria: 'Купить песчаный трактор за {cost} камней',
-    holesRosterAria: 'Открыто каменных ям: {count} из 8', holesLockedAria: 'Купи все 8 песчаных тракторов, чтобы открыть каменные ямы',
+    holesRosterAria: 'Открыто каменных ям: {count} из 8', holesLockedAria: 'Купи 4 песчаных трактора, чтобы открыть каменные ямы',
     holesFullAria: 'Достигнут максимум каменных ям', holesBuyAria: 'Открыть каменную яму за {cost} камней',
-    stormsRosterAria: 'Призвано песчаных бурь: {count} из 8', stormsLockedAria: 'Открой все 8 каменных ям, чтобы открыть песчаные бури',
+    stormsRosterAria: 'Призвано песчаных бурь: {count} из 8', stormsLockedAria: 'Открой 4 каменные ямы, чтобы открыть песчаные бури',
     stormsFullAria: 'Достигнут максимум песчаных бурь', stormsBuyAria: 'Призвать песчаную бурю за {cost} камней',
   },
   de: {
@@ -184,7 +184,7 @@ const TRANSLATIONS = {
     lockedShort: '🔒', skinOptionAria: 'Stein-Skin „{skin}“ verwenden', skinLockedAria: 'Stein-Skin „{skin}“ ist gesperrt',
     stonesLabel: 'Steine', perSecond: 'pro Sekunde', perClick: 'pro Klick', clickX2: 'Klicks ×2', clickX2Aria: 'Klickstärke für {cost} Steine verdoppeln',
     totalMined: 'Insgesamt abgebaut', clicks: 'Klicks', unlockedBiome: 'Freigeschaltetes Biom', newBiome: 'Neues Biom',
-    desert: 'Wüste', desertUpper: 'WÜSTE', desertWorldTitle: 'Wüste', desertWorldDescription: 'Wird nach allen 8 Diamond Creators freigeschaltet.', crewTitle: 'Steintrupp',
+    desert: 'Wüste', desertUpper: 'WÜSTE', desertWorldTitle: 'Wüste', desertWorldDescription: 'Wird nach 4 Diamond Creators freigeschaltet.', crewTitle: 'Steintrupp',
     crewDescription: 'Jede Sekunde wirft der Trupp Steine auf den armen Kerl. Du behältst sie.', poorGuy: 'Armer Kerl',
     people: 'Personen', hire: 'Anheuern', crewFull: 'Trupp voll', stonesUnit: 'Steine', salesTitle: 'Verkauf',
     salesDescription: 'Jeder Arbeiter baut mit einer Spitzhacke 1,5 Steine pro Sekunde ab.', salesPeople: 'Arbeiter',
@@ -199,38 +199,38 @@ const TRANSLATIONS = {
     holesDescription: 'In jedes Loch fallen Steine. Es bringt 48 Steine pro Sekunde.', holes: 'Löcher', open: 'Öffnen',
     stormsTitle: 'Sandstürme', stormsDescription: 'Jeder Wüstenwirbel bringt 75 Steine pro Sekunde.',
     storms: 'Stürme', summon: 'Beschwören',
-    cityTitle: 'Stadt', cityDescription: 'Die Stadt wird nach allen 8 Sandstürmen freigeschaltet.',
+    cityTitle: 'Stadt', cityDescription: 'Die Stadt wird nach 4 Sandstürmen freigeschaltet.',
     jackhammersTitle: 'Presslufthämmer', jackhammersDescription: 'Ein handgeführter Presslufthammer schlägt schnell auf Asphalt und bringt 120 Steine pro Sekunde.',
     jackhammers: 'Presslufthämmer', jackhammersRosterAria: '{count} von 8 Presslufthämmern gekauft',
-    jackhammersLockedAria: 'Beschwöre alle 8 Sandstürme, um Presslufthämmer freizuschalten',
+    jackhammersLockedAria: 'Beschwöre 4 Sandstürme, um Presslufthämmer freizuschalten',
     jackhammersFullAria: 'Maximale Anzahl an Presslufthämmern erreicht',
     jackhammersBuyAria: 'Presslufthammer für {cost} Steine kaufen',
     cementMixersTitle: 'Betonmischer', cementMixersDescription: 'Jeder Betonmischer dreht sich ständig und bringt 240 Steine pro Sekunde.',
     cementMixers: 'Betonmischer', cementMixersRosterAria: '{count} von 8 Betonmischern gekauft',
-    cementMixersLockedAria: 'Kaufe alle 8 Presslufthämmer, um Betonmischer freizuschalten',
+    cementMixersLockedAria: 'Kaufe 4 Presslufthämmer, um Betonmischer freizuschalten',
     cementMixersFullAria: 'Maximale Anzahl an Betonmischern erreicht',
     cementMixersBuyAria: 'Betonmischer für {cost} Steine kaufen',
     resetProgress: 'Fortschritt zurücksetzen', resetConfirm: 'Wirklich den gesamten Fortschritt zurücksetzen? Steine, Upgrades, freigeschaltete Biome und Stein-Skins gehen verloren.',
     stonesAria: 'Steine: {count}', crewRosterAria: '{count} von 8 Personen angeheuert', targetAria: 'Steinsammler',
     hirePersonAria: 'Eine weitere Person für {cost} Steine anheuern', crewFullAria: 'Maximale Truppgröße erreicht',
-    salesRosterAria: '{count} von 8 Arbeitern angeworben', salesLockedAria: 'Heuere alle 8 Personen an, um Verkauf freizuschalten',
+    salesRosterAria: '{count} von 8 Arbeitern angeworben', salesLockedAria: 'Heuere 4 Personen an, um Verkauf freizuschalten',
     salesFullAria: 'Maximale Arbeiterzahl erreicht', salesBuyAria: 'Arbeiter für {cost} Steine anwerben',
     creatorsRosterAria: '{count} von 8 Diamant-Creatorn eingeladen',
-    creatorsLockedAria: 'Wirb alle 8 Arbeiter an, um Diamant-Creator freizuschalten',
+    creatorsLockedAria: 'Wirb 4 Arbeiter an, um Diamant-Creator freizuschalten',
     creatorsFullAria: 'Maximale Creatorzahl erreicht', creatorsBuyAria: 'Diamant-Creator für {cost} Steine einladen',
     waterRosterAria: '{count} von 8 Wasserquellen gebaut',
-    waterLockedAria: 'Lade alle 8 Diamant-Creator ein, um Wasserquellen freizuschalten',
+    waterLockedAria: 'Lade 4 Diamant-Creator ein, um Wasserquellen freizuschalten',
     waterFullAria: 'Maximale Anzahl an Wasserquellen erreicht', waterBuyAria: 'Wasserquelle für {cost} Steine bauen',
     diggersRosterAria: '{count} von 8 Schaufelgräbern angeheuert',
-    diggersLockedAria: 'Baue alle 8 Wasserquellen, um Schaufelgräber freizuschalten',
+    diggersLockedAria: 'Baue 4 Wasserquellen, um Schaufelgräber freizuschalten',
     diggersFullAria: 'Maximale Anzahl an Schaufelgräbern erreicht', diggersBuyAria: 'Schaufelgräber für {cost} Steine anheuern',
-    cactusRosterAria: '{count} von 8 Steinkakteen gepflanzt', cactusLockedAria: 'Heuere alle 8 Schaufelgräber an, um Steinkakteen freizuschalten',
+    cactusRosterAria: '{count} von 8 Steinkakteen gepflanzt', cactusLockedAria: 'Heuere 4 Schaufelgräber an, um Steinkakteen freizuschalten',
     cactusFullAria: 'Maximale Anzahl an Steinkakteen erreicht', cactusBuyAria: 'Steinkaktus für {cost} Steine pflanzen',
-    tractorsRosterAria: '{count} von 8 Sandtraktoren gekauft', tractorsLockedAria: 'Pflanze alle 8 Steinkakteen, um Sandtraktoren freizuschalten',
+    tractorsRosterAria: '{count} von 8 Sandtraktoren gekauft', tractorsLockedAria: 'Pflanze 4 Steinkakteen, um Sandtraktoren freizuschalten',
     tractorsFullAria: 'Maximale Anzahl an Sandtraktoren erreicht', tractorsBuyAria: 'Sandtraktor für {cost} Steine kaufen',
-    holesRosterAria: '{count} von 8 Steinlöchern geöffnet', holesLockedAria: 'Kaufe alle 8 Sandtraktoren, um Steinlöcher freizuschalten',
+    holesRosterAria: '{count} von 8 Steinlöchern geöffnet', holesLockedAria: 'Kaufe 4 Sandtraktoren, um Steinlöcher freizuschalten',
     holesFullAria: 'Maximale Anzahl an Steinlöchern erreicht', holesBuyAria: 'Steinloch für {cost} Steine öffnen',
-    stormsRosterAria: '{count} von 8 Sandstürmen beschworen', stormsLockedAria: 'Öffne alle 8 Steinlöcher, um Sandstürme freizuschalten',
+    stormsRosterAria: '{count} von 8 Sandstürmen beschworen', stormsLockedAria: 'Öffne 4 Steinlöcher, um Sandstürme freizuschalten',
     stormsFullAria: 'Maximale Anzahl an Sandstürmen erreicht', stormsBuyAria: 'Sandsturm für {cost} Steine beschwören',
   },
 };
@@ -348,6 +348,7 @@ const resetProgressButton = document.querySelector('#reset-progress');
 
 function createInitialState() {
   return {
+    ...freshProgression(),
     stones: 0,
     totalStones: 0,
     clicks: 0,
@@ -394,6 +395,7 @@ function loadState() {
     if (!saved) return fresh;
 
     return {
+      ...loadProgression(saved),
       stones: Number.isFinite(saved.stones) ? Math.max(0, saved.stones) : 0,
       totalStones: Number.isFinite(saved.totalStones) ? Math.max(0, saved.totalStones) : 0,
       clicks: Number.isFinite(saved.clicks) ? Math.max(0, saved.clicks) : 0,
@@ -478,6 +480,7 @@ function loadState() {
 let state = loadState();
 
 function t(key) {
+  if (['citySkin', 'cityUpper'].includes(key)) return pt(key);
   return TRANSLATIONS[state.language][key] ?? TRANSLATIONS.en[key] ?? key;
 }
 
@@ -556,7 +559,7 @@ function stonesPerSecond() {
   const stormRate = (state.storms * STORM_STONES_PER_SWIRL) / (STORM_INTERVAL / 1000);
   const jackhammerRate = (state.jackhammers * JACKHAMMER_STONES_PER_HIT) / (JACKHAMMER_INTERVAL / 1000);
   const cementMixerRate = (state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN) / (CEMENT_MIXER_INTERVAL / 1000);
-  return crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate + jackhammerRate + cementMixerRate;
+  return (crewRate + salesRate + creatorRate + waterRate + diggerRate + cactusRate + tractorRate + holeRate + stormRate + jackhammerRate + cementMixerRate) * productionMultiplier(state);
 }
 
 function nextPersonCost() {
@@ -604,7 +607,7 @@ function nextCementMixerCost() {
 }
 
 function clickPower() {
-  return 2 ** state.clickX2Level;
+  return 2 ** state.clickX2Level * 1.5 ** state.research.tools;
 }
 
 function nextClickX2Cost() {
@@ -639,7 +642,7 @@ function renderCrew() {
 }
 
 function renderSales() {
-  const isLocked = state.people < MAX_PEOPLE;
+  const isLocked = !isProducerUnlocked('sales');
   const isFull = state.sales >= MAX_SALES;
   const cost = nextSalesCost();
 
@@ -663,7 +666,7 @@ function renderSales() {
 }
 
 function renderCreators() {
-  const isLocked = state.sales < MAX_SALES;
+  const isLocked = !isProducerUnlocked('creators');
   const isFull = state.creators >= MAX_CREATORS;
   const cost = nextCreatorCost();
 
@@ -687,12 +690,12 @@ function renderCreators() {
 }
 
 function renderDesertWorld() {
-  const unlocked = state.creators >= MAX_CREATORS;
+  const unlocked = isProducerUnlocked('waterSources');
   desertWorldCard.classList.toggle('upgrade-card--locked', !unlocked);
 }
 
 function renderWaterSources() {
-  const isLocked = state.creators < MAX_CREATORS;
+  const isLocked = !isProducerUnlocked('waterSources');
   const isFull = state.waterSources >= MAX_WATER_SOURCES;
   const cost = nextWaterCost();
 
@@ -716,7 +719,7 @@ function renderWaterSources() {
 }
 
 function renderDiggers() {
-  const isLocked = state.waterSources < MAX_WATER_SOURCES;
+  const isLocked = !isProducerUnlocked('diggers');
   const isFull = state.diggers >= MAX_DIGGERS;
   const cost = nextDiggerCost();
 
@@ -740,7 +743,7 @@ function renderDiggers() {
 }
 
 function renderCacti() {
-  const isLocked = state.diggers < MAX_DIGGERS;
+  const isLocked = !isProducerUnlocked('cacti');
   const isFull = state.cacti >= MAX_CACTI;
   const cost = nextCactusCost();
 
@@ -764,7 +767,7 @@ function renderCacti() {
 }
 
 function renderTractors() {
-  const isLocked = state.cacti < MAX_CACTI;
+  const isLocked = !isProducerUnlocked('tractors');
   const isFull = state.tractors >= MAX_TRACTORS;
   const cost = nextTractorCost();
 
@@ -788,7 +791,7 @@ function renderTractors() {
 }
 
 function renderHoles() {
-  const isLocked = state.tractors < MAX_TRACTORS;
+  const isLocked = !isProducerUnlocked('holes');
   const isFull = state.holes >= MAX_HOLES;
   const cost = nextHoleCost();
 
@@ -812,7 +815,7 @@ function renderHoles() {
 }
 
 function renderStorms() {
-  const isLocked = state.holes < MAX_HOLES;
+  const isLocked = !isProducerUnlocked('storms');
   const isFull = state.storms >= MAX_STORMS;
   const cost = nextStormCost();
 
@@ -836,7 +839,7 @@ function renderStorms() {
 }
 
 function renderCity() {
-  const cityUnlocked = state.storms >= MAX_STORMS;
+  const cityUnlocked = isProducerUnlocked('jackhammers');
   cityCard.classList.toggle('upgrade-card--locked', !cityUnlocked);
   jackhammersCard.classList.toggle('upgrade-card--locked', !cityUnlocked);
 
@@ -860,7 +863,7 @@ function renderCity() {
         : tf('jackhammersBuyAria', { cost: formatNumber(cost) }),
   );
 
-  const cementMixersUnlocked = state.jackhammers >= MAX_JACKHAMMERS;
+  const cementMixersUnlocked = isProducerUnlocked('cementMixers');
   const cementMixersFull = state.cementMixers >= MAX_CEMENT_MIXERS;
   const cementMixerNextCost = nextCementMixerCost();
 
@@ -884,8 +887,8 @@ function renderCity() {
 }
 
 function renderBiome() {
-  const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
-  const cityUnlocked = state.storms >= MAX_STORMS;
+  const desertUnlocked = isProducerUnlocked('waterSources');
+  const cityUnlocked = isProducerUnlocked('jackhammers');
   const shouldRevealDesert = desertUnlocked && !state.desertIntroSeen;
   const shouldRevealCity = cityUnlocked && !state.cityIntroSeen;
 
@@ -900,6 +903,9 @@ function renderBiome() {
   stone.classList.toggle('stone--desert', usesDesertSkin);
   stone.classList.toggle('stone--city', usesCitySkin);
   biomeChip.hidden = !desertUnlocked;
+  const chipTitle = biomeChip.querySelector('strong');
+  chipTitle.dataset.i18n = cityUnlocked ? 'cityTitle' : 'desert';
+  chipTitle.textContent = t(chipTitle.dataset.i18n);
 
   skinOptions.forEach((option) => {
     const skin = option.dataset.stoneSkin;
@@ -1144,7 +1150,7 @@ function render() {
   counter.setAttribute('aria-label', tf('stonesAria', { count: stonesText }));
   renderStoneValue(stonesText);
   rateValue.textContent = formatRate(stonesPerSecond());
-  perClickValue.textContent = formatNumber(clickPower());
+  perClickValue.textContent = clickPower() < 1000 ? formatRate(clickPower()) : formatNumber(clickPower());
   const clickUpgradeCost = nextClickX2Cost();
   clickX2Cost.textContent = formatNumber(clickUpgradeCost);
   clickX2Button.disabled = state.stones < clickUpgradeCost;
@@ -1163,6 +1169,7 @@ function render() {
   renderStorms();
   renderCity();
   renderBiome();
+  renderProgression();
   document.title = `${stonesText} ${t('stonesUnit')} — ${t('appTitle')}`;
 }
 
@@ -1177,8 +1184,8 @@ languageSelect.addEventListener('change', () => {
 skinOptions.forEach((option) => {
   option.addEventListener('click', () => {
     const skin = option.dataset.stoneSkin;
-    const desertUnlocked = state.creators >= MAX_CREATORS || state.waterSources > 0;
-    const cityUnlocked = state.storms >= MAX_STORMS;
+    const desertUnlocked = isProducerUnlocked('waterSources');
+    const cityUnlocked = isProducerUnlocked('jackhammers');
     if (skin === 'desert' && !desertUnlocked) return;
     if (skin === 'city' && !cityUnlocked) return;
     state.stoneSkin = skin;
@@ -1240,6 +1247,7 @@ stone.addEventListener('click', (event) => {
   const amount = clickPower();
   gainStones(amount);
   state.clicks += 1;
+  strikeRock(amount);
 
   const rect = stone.getBoundingClientRect();
   const x = event.clientX || rect.left + rect.width / 2;
@@ -1261,7 +1269,7 @@ hireButton.addEventListener('click', () => {
 });
 
 salesButton.addEventListener('click', () => {
-  if (state.people < MAX_PEOPLE || state.sales >= MAX_SALES) return;
+  if (!isProducerUnlocked('sales') || state.sales >= MAX_SALES) return;
 
   const cost = nextSalesCost();
   if (state.stones < cost) return;
@@ -1274,7 +1282,7 @@ salesButton.addEventListener('click', () => {
 });
 
 creatorButton.addEventListener('click', () => {
-  if (state.sales < MAX_SALES || state.creators >= MAX_CREATORS) return;
+  if (!isProducerUnlocked('creators') || state.creators >= MAX_CREATORS) return;
 
   const cost = nextCreatorCost();
   if (state.stones < cost) return;
@@ -1287,7 +1295,7 @@ creatorButton.addEventListener('click', () => {
 });
 
 waterButton.addEventListener('click', () => {
-  if (state.creators < MAX_CREATORS || state.waterSources >= MAX_WATER_SOURCES) return;
+  if (!isProducerUnlocked('waterSources') || state.waterSources >= MAX_WATER_SOURCES) return;
 
   const cost = nextWaterCost();
   if (state.stones < cost) return;
@@ -1300,7 +1308,7 @@ waterButton.addEventListener('click', () => {
 });
 
 diggerButton.addEventListener('click', () => {
-  if (state.waterSources < MAX_WATER_SOURCES || state.diggers >= MAX_DIGGERS) return;
+  if (!isProducerUnlocked('diggers') || state.diggers >= MAX_DIGGERS) return;
 
   const cost = nextDiggerCost();
   if (state.stones < cost) return;
@@ -1313,7 +1321,7 @@ diggerButton.addEventListener('click', () => {
 });
 
 cactusButton.addEventListener('click', () => {
-  if (state.diggers < MAX_DIGGERS || state.cacti >= MAX_CACTI) return;
+  if (!isProducerUnlocked('cacti') || state.cacti >= MAX_CACTI) return;
 
   const cost = nextCactusCost();
   if (state.stones < cost) return;
@@ -1326,7 +1334,7 @@ cactusButton.addEventListener('click', () => {
 });
 
 tractorButton.addEventListener('click', () => {
-  if (state.cacti < MAX_CACTI || state.tractors >= MAX_TRACTORS) return;
+  if (!isProducerUnlocked('tractors') || state.tractors >= MAX_TRACTORS) return;
 
   const cost = nextTractorCost();
   if (state.stones < cost) return;
@@ -1339,7 +1347,7 @@ tractorButton.addEventListener('click', () => {
 });
 
 holeButton.addEventListener('click', () => {
-  if (state.tractors < MAX_TRACTORS || state.holes >= MAX_HOLES) return;
+  if (!isProducerUnlocked('holes') || state.holes >= MAX_HOLES) return;
 
   const cost = nextHoleCost();
   if (state.stones < cost) return;
@@ -1352,7 +1360,7 @@ holeButton.addEventListener('click', () => {
 });
 
 stormButton.addEventListener('click', () => {
-  if (state.holes < MAX_HOLES || state.storms >= MAX_STORMS) return;
+  if (!isProducerUnlocked('storms') || state.storms >= MAX_STORMS) return;
 
   const cost = nextStormCost();
   if (state.stones < cost) return;
@@ -1365,7 +1373,7 @@ stormButton.addEventListener('click', () => {
 });
 
 jackhammerButton.addEventListener('click', () => {
-  if (state.storms < MAX_STORMS || state.jackhammers >= MAX_JACKHAMMERS) return;
+  if (!isProducerUnlocked('jackhammers') || state.jackhammers >= MAX_JACKHAMMERS) return;
 
   const cost = nextJackhammerCost();
   if (state.stones < cost) return;
@@ -1378,7 +1386,7 @@ jackhammerButton.addEventListener('click', () => {
 });
 
 cementMixerButton.addEventListener('click', () => {
-  if (state.jackhammers < MAX_JACKHAMMERS || state.cementMixers >= MAX_CEMENT_MIXERS) return;
+  if (!isProducerUnlocked('cementMixers') || state.cementMixers >= MAX_CEMENT_MIXERS) return;
 
   const cost = nextCementMixerCost();
   if (state.stones < cost) return;
@@ -1496,13 +1504,13 @@ function applyOfflineProgress() {
   const accumulatedMs = state.crewProgressMs + elapsedMs;
   const completedDrops = Math.floor(accumulatedMs / CREW_DROP_INTERVAL);
   state.crewProgressMs = accumulatedMs % CREW_DROP_INTERVAL;
-  gainStones(completedDrops * state.people);
+  gainProductionStones(completedDrops * state.people);
 
   if (state.sales > 0) {
     const accumulatedSalesMs = state.salesProgressMs + elapsedMs;
     const completedSalesSwings = Math.floor(accumulatedSalesMs / SALES_INTERVAL);
     state.salesProgressMs = accumulatedSalesMs % SALES_INTERVAL;
-    gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
+    gainProductionStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
   } else {
     state.salesProgressMs = 0;
   }
@@ -1511,7 +1519,7 @@ function applyOfflineProgress() {
     const accumulatedCreatorMs = state.creatorProgressMs + elapsedMs;
     const completedCreatorSearches = Math.floor(accumulatedCreatorMs / CREATOR_INTERVAL);
     state.creatorProgressMs = accumulatedCreatorMs % CREATOR_INTERVAL;
-    gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
+    gainProductionStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
   } else {
     state.creatorProgressMs = 0;
   }
@@ -1520,7 +1528,7 @@ function applyOfflineProgress() {
     const accumulatedWaterMs = state.waterProgressMs + elapsedMs;
     const completedWaterFlows = Math.floor(accumulatedWaterMs / WATER_INTERVAL);
     state.waterProgressMs = accumulatedWaterMs % WATER_INTERVAL;
-    gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
+    gainProductionStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
   } else {
     state.waterProgressMs = 0;
   }
@@ -1529,7 +1537,7 @@ function applyOfflineProgress() {
     const accumulatedDiggerMs = state.diggerProgressMs + elapsedMs;
     const completedDiggerScoops = Math.floor(accumulatedDiggerMs / DIGGER_INTERVAL);
     state.diggerProgressMs = accumulatedDiggerMs % DIGGER_INTERVAL;
-    gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
+    gainProductionStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
   } else {
     state.diggerProgressMs = 0;
   }
@@ -1538,7 +1546,7 @@ function applyOfflineProgress() {
     const accumulatedCactusMs = state.cactusProgressMs + elapsedMs;
     const completedCactusGrowths = Math.floor(accumulatedCactusMs / CACTUS_INTERVAL);
     state.cactusProgressMs = accumulatedCactusMs % CACTUS_INTERVAL;
-    gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
+    gainProductionStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
   } else {
     state.cactusProgressMs = 0;
   }
@@ -1547,7 +1555,7 @@ function applyOfflineProgress() {
     const accumulatedTractorMs = state.tractorProgressMs + elapsedMs;
     const completedTractorScoops = Math.floor(accumulatedTractorMs / TRACTOR_INTERVAL);
     state.tractorProgressMs = accumulatedTractorMs % TRACTOR_INTERVAL;
-    gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
+    gainProductionStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
   } else {
     state.tractorProgressMs = 0;
   }
@@ -1556,7 +1564,7 @@ function applyOfflineProgress() {
     const accumulatedHoleMs = state.holeProgressMs + elapsedMs;
     const completedHoleDrops = Math.floor(accumulatedHoleMs / HOLE_INTERVAL);
     state.holeProgressMs = accumulatedHoleMs % HOLE_INTERVAL;
-    gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
+    gainProductionStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
   } else {
     state.holeProgressMs = 0;
   }
@@ -1565,7 +1573,7 @@ function applyOfflineProgress() {
     const accumulatedStormMs = state.stormProgressMs + elapsedMs;
     const completedStormSwirls = Math.floor(accumulatedStormMs / STORM_INTERVAL);
     state.stormProgressMs = accumulatedStormMs % STORM_INTERVAL;
-    gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
+    gainProductionStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
   } else {
     state.stormProgressMs = 0;
   }
@@ -1574,7 +1582,7 @@ function applyOfflineProgress() {
     const accumulatedJackhammerMs = state.jackhammerProgressMs + elapsedMs;
     const completedJackhammerHits = Math.floor(accumulatedJackhammerMs / JACKHAMMER_INTERVAL);
     state.jackhammerProgressMs = accumulatedJackhammerMs % JACKHAMMER_INTERVAL;
-    gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
+    gainProductionStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
   } else {
     state.jackhammerProgressMs = 0;
   }
@@ -1583,7 +1591,7 @@ function applyOfflineProgress() {
     const accumulatedCementMixerMs = state.cementMixerProgressMs + elapsedMs;
     const completedCementMixerSpins = Math.floor(accumulatedCementMixerMs / CEMENT_MIXER_INTERVAL);
     state.cementMixerProgressMs = accumulatedCementMixerMs % CEMENT_MIXER_INTERVAL;
-    gainStones(completedCementMixerSpins * state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN);
+    gainProductionStones(completedCementMixerSpins * state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN);
   } else {
     state.cementMixerProgressMs = 0;
   }
@@ -1613,77 +1621,77 @@ function tick() {
   const completedDrops = Math.floor(state.crewProgressMs / CREW_DROP_INTERVAL);
   if (completedDrops > 0) {
     state.crewProgressMs %= CREW_DROP_INTERVAL;
-    gainStones(completedDrops * state.people);
+    gainProductionStones(completedDrops * state.people);
     playCrewVolley();
   }
 
   const completedSalesSwings = Math.floor(state.salesProgressMs / SALES_INTERVAL);
   if (completedSalesSwings > 0) {
     state.salesProgressMs %= SALES_INTERVAL;
-    gainStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
+    gainProductionStones(completedSalesSwings * state.sales * SALES_STONES_PER_SWING);
     playSalesSwing();
   }
 
   const completedCreatorSearches = Math.floor(state.creatorProgressMs / CREATOR_INTERVAL);
   if (completedCreatorSearches > 0) {
     state.creatorProgressMs %= CREATOR_INTERVAL;
-    gainStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
+    gainProductionStones(completedCreatorSearches * state.creators * CREATOR_STONES_PER_SEARCH);
     playCreatorSearch();
   }
 
   const completedWaterFlows = Math.floor(state.waterProgressMs / WATER_INTERVAL);
   if (completedWaterFlows > 0) {
     state.waterProgressMs %= WATER_INTERVAL;
-    gainStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
+    gainProductionStones(completedWaterFlows * state.waterSources * WATER_STONES_PER_FLOW);
     playWaterFlow();
   }
 
   const completedDiggerScoops = Math.floor(state.diggerProgressMs / DIGGER_INTERVAL);
   if (completedDiggerScoops > 0) {
     state.diggerProgressMs %= DIGGER_INTERVAL;
-    gainStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
+    gainProductionStones(completedDiggerScoops * state.diggers * DIGGER_STONES_PER_SCOOP);
     playDiggerScoop();
   }
 
   const completedCactusGrowths = Math.floor(state.cactusProgressMs / CACTUS_INTERVAL);
   if (completedCactusGrowths > 0) {
     state.cactusProgressMs %= CACTUS_INTERVAL;
-    gainStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
+    gainProductionStones(completedCactusGrowths * state.cacti * CACTUS_STONES_PER_GROWTH);
     playCactusGrowth();
   }
 
   const completedTractorScoops = Math.floor(state.tractorProgressMs / TRACTOR_INTERVAL);
   if (completedTractorScoops > 0) {
     state.tractorProgressMs %= TRACTOR_INTERVAL;
-    gainStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
+    gainProductionStones(completedTractorScoops * state.tractors * TRACTOR_STONES_PER_SCOOP);
     playTractorScoop();
   }
 
   const completedHoleDrops = Math.floor(state.holeProgressMs / HOLE_INTERVAL);
   if (completedHoleDrops > 0) {
     state.holeProgressMs %= HOLE_INTERVAL;
-    gainStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
+    gainProductionStones(completedHoleDrops * state.holes * HOLE_STONES_PER_DROP);
     playHoleDrop();
   }
 
   const completedStormSwirls = Math.floor(state.stormProgressMs / STORM_INTERVAL);
   if (completedStormSwirls > 0) {
     state.stormProgressMs %= STORM_INTERVAL;
-    gainStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
+    gainProductionStones(completedStormSwirls * state.storms * STORM_STONES_PER_SWIRL);
     playStormSwirl();
   }
 
   const completedJackhammerHits = Math.floor(state.jackhammerProgressMs / JACKHAMMER_INTERVAL);
   if (completedJackhammerHits > 0) {
     state.jackhammerProgressMs %= JACKHAMMER_INTERVAL;
-    gainStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
+    gainProductionStones(completedJackhammerHits * state.jackhammers * JACKHAMMER_STONES_PER_HIT);
     playJackhammerHit();
   }
 
   const completedCementMixerSpins = Math.floor(state.cementMixerProgressMs / CEMENT_MIXER_INTERVAL);
   if (completedCementMixerSpins > 0) {
     state.cementMixerProgressMs %= CEMENT_MIXER_INTERVAL;
-    gainStones(completedCementMixerSpins * state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN);
+    gainProductionStones(completedCementMixerSpins * state.cementMixers * CEMENT_MIXER_STONES_PER_SPIN);
     playCementMixerSpin();
   }
 
@@ -1714,6 +1722,7 @@ resetProgressButton.addEventListener('click', () => {
   }
 
   state = createInitialState();
+  resetProgressionView();
   state.language = language;
   state.lastSaved = Date.now();
   lastTick = Date.now();
@@ -1727,6 +1736,7 @@ resetProgressButton.addEventListener('click', () => {
   render();
 });
 
+initProgression();
 applyTranslations();
 applyOfflineProgress();
 render();
