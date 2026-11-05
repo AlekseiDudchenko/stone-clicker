@@ -11,7 +11,7 @@
   };
   const lang=()=>texts[state?.language]||texts.en;
   const purchased=()=>localStorage.getItem(PURCHASE_KEY)==='1';
-  const desertUnlocked=()=>state.creators>=MAX_CREATORS||state.waterSources>0;
+  const desertUnlocked=()=>isProducerUnlocked('waterSources');
   function updateText(){
     const x=lang();
     card.querySelector('.oasis-card__title').textContent=x.title;

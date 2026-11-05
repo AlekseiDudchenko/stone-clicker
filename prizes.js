@@ -1,26 +1,15 @@
-// Prizes: to add a new one, append an object to this list.
-//
-//   id           unique string, stored in the save file (themes refer to it via unlockedBy)
-//   name         shown in the Prizes panel and in the "Prize won" popup
-//   icon         emoji on the prize badge
-//   description  what the player has to do
-//   check        function that returns true once the prize is earned. It receives:
-//                  stones, totalStones, clicks, perSecond, perClick,
-//                  buildings (e.g. buildings.miner), upgrades (count bought)
-//   bonus        optional, extra production for owning the prize (0.01 = +1%)
-//
-// A prize is awarded once and kept forever (until the progress is reset).
+// Achievements use the same state as the game. They are awarded once and saved.
 const PRIZES = [
-  { id: 'first-click', name: 'First Strike', icon: '👆', description: 'Click the stone once.', check: (g) => g.clicks >= 1 },
-  { id: 'clicks-100', name: 'Busy Hands', icon: '✋', description: 'Click the stone 100 times.', check: (g) => g.clicks >= 100, bonus: 0.01 },
-  { id: 'clicks-1000', name: 'Tireless', icon: '💪', description: 'Click the stone 1,000 times.', check: (g) => g.clicks >= 1000, bonus: 0.02 },
-  { id: 'first-building', name: 'Hired Help', icon: '🤝', description: 'Buy your first building.', check: (g) => Object.values(g.buildings).some((count) => count > 0) },
-  { id: 'miners-10', name: 'Mining Crew', icon: '👷', description: 'Own 10 Miners.', check: (g) => g.buildings.miner >= 10, bonus: 0.02 },
-  { id: 'all-buildings', name: 'Stone Empire', icon: '🏰', description: 'Own at least one of every building.', check: (g) => Object.values(g.buildings).every((count) => count > 0), bonus: 0.05 },
-  { id: 'upgrades-5', name: 'Tinkerer', icon: '🔧', description: 'Buy 5 upgrades.', check: (g) => g.upgrades >= 5, bonus: 0.02 },
-  { id: 'total-1k', name: 'Rock Pile', icon: '⛰️', description: 'Mine 1,000 stones in total.', check: (g) => g.totalStones >= 1e3 },
-  { id: 'total-100k', name: 'Rock Mountain', icon: '🗻', description: 'Mine 100,000 stones in total.', check: (g) => g.totalStones >= 1e5, bonus: 0.02 },
-  { id: 'total-1b', name: 'Tectonic Tycoon', icon: '🌐', description: 'Mine 1 billion stones in total.', check: (g) => g.totalStones >= 1e9, bonus: 0.05 },
-  { id: 'rate-10', name: 'Steady Flow', icon: '⏱️', description: 'Reach 10 stones per second.', check: (g) => g.perSecond >= 10 },
-  { id: 'rate-1000', name: 'Landslide', icon: '🌊', description: 'Reach 1,000 stones per second.', check: (g) => g.perSecond >= 1000, bonus: 0.03 },
+  { id: 'first-click', icon: '👆', name: { en: 'First strike', ru: 'Первый удар', de: 'Erster Schlag' }, description: { en: 'Click the stone once.', ru: 'Ударь по камню один раз.', de: 'Klicke einmal auf den Stein.' }, check: s => s.clicks >= 1 },
+  { id: 'clicks-100', icon: '✋', name: { en: 'Busy hands', ru: 'Золотые руки', de: 'Fleißige Hände' }, description: { en: 'Click 100 times.', ru: 'Сделай 100 кликов.', de: 'Klicke 100-mal.' }, check: s => s.clicks >= 100 },
+  { id: 'clicks-1000', icon: '💪', name: { en: 'Tireless', ru: 'Неутомимый', de: 'Unermüdlich' }, description: { en: 'Click 1,000 times.', ru: 'Сделай 1 000 кликов.', de: 'Klicke 1.000-mal.' }, check: s => s.clicks >= 1000 },
+  { id: 'first-rock', icon: '💥', name: { en: 'Crack it!', ru: 'Крепкий орешек', de: 'Geknackt!' }, description: { en: 'Shatter your first rock.', ru: 'Расколи первый камень.', de: 'Zerbrich deinen ersten Felsen.' }, check: s => s.rocksBroken >= 1 },
+  { id: 'rocks-25', icon: '🪨', name: { en: 'Rock breaker', ru: 'Камнедробитель', de: 'Steinbrecher' }, description: { en: 'Shatter 25 rocks.', ru: 'Расколи 25 камней.', de: 'Zerbrich 25 Felsen.' }, check: s => s.rocksBroken >= 25 },
+  { id: 'first-set', icon: '👷', name: { en: 'Full team', ru: 'Полный состав', de: 'Volles Team' }, description: { en: 'Complete any set of 8 producers.', ru: 'Собери любой комплект из 8 добытчиков.', de: 'Vervollständige ein Set aus 8 Produzenten.' }, check: s => PRODUCERS.some(p => s[p.id] >= 8) },
+  { id: 'desert', icon: '🏜️', name: { en: 'Into the desert', ru: 'Покоритель пустыни', de: 'In die Wüste' }, description: { en: 'Unlock the Desert.', ru: 'Открой пустыню.', de: 'Schalte die Wüste frei.' }, check: s => producerUnlocked(s, 'waterSources') },
+  { id: 'city', icon: '🏙️', name: { en: 'City founder', ru: 'Основатель города', de: 'Stadtgründer' }, description: { en: 'Unlock the City.', ru: 'Открой город.', de: 'Schalte die Stadt frei.' }, check: s => producerUnlocked(s, 'jackhammers') },
+  { id: 'research', icon: '⚙️', name: { en: 'Inventor', ru: 'Изобретатель', de: 'Erfinder' }, description: { en: 'Buy a research upgrade.', ru: 'Купи улучшение одного из трёх направлений.', de: 'Kaufe eine Forschungsverbesserung.' }, check: s => Object.values(s.research).some(n => n > 0) },
+  { id: 'first-building', icon: '⛺', name: { en: 'New home', ru: 'Новоселье', de: 'Ein neues Zuhause' }, description: { en: 'Build your first building.', ru: 'Построй первое здание.', de: 'Errichte dein erstes Gebäude.' }, check: s => s.buildings.length > 0 },
+  { id: 'total-100k', icon: '⛰️', name: { en: 'Rock mountain', ru: 'Каменная гора', de: 'Steinberg' }, description: { en: 'Collect 100,000 stones in total.', ru: 'Добудь суммарно 100 000 камней.', de: 'Sammle insgesamt 100.000 Steine.' }, check: s => s.totalStones >= 100000 },
+  { id: 'monument', icon: '🗿', name: { en: 'A lasting legacy', ru: 'На века', de: 'Für die Ewigkeit' }, description: { en: 'Build the Stone Monument.', ru: 'Построй каменный монумент.', de: 'Errichte das Steinmonument.' }, check: s => s.buildings.includes('monument') },
 ];

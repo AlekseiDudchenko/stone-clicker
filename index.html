@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- deploy-marker: v16 -->
+    <!-- deploy-marker: progression-v1 -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stone Clicker</title>
     <link rel="stylesheet" href="styles.css?v=26" />
     <link rel="stylesheet" href="oasis.css?v=4" />
+    <link rel="stylesheet" href="progression.css?v=1" />
   </head>
   <body>
     <div class="layout">
@@ -35,6 +36,14 @@
           </button>
         </header>
 
+        <section class="next-goal" aria-labelledby="goal-label">
+          <div class="next-goal__heading"><span id="goal-label"></span><span id="goal-count"></span></div>
+          <strong id="goal-title"></strong>
+          <progress id="goal-progress" max="4" value="1" aria-labelledby="goal-title"></progress>
+          <p id="goal-detail"></p>
+          <button id="goal-action" type="button" class="goal-action"></button>
+        </section>
+
         <div id="biome-banner" class="biome-banner" role="status" aria-live="polite" hidden>
           <span class="biome-banner__eyebrow" data-i18n="newBiome">New biome</span>
           <strong class="biome-banner__title" data-i18n="desertUpper">DESERT</strong>
@@ -42,9 +51,24 @@
 
         <div class="stone-stage">
           <div class="stone-wrap">
-            <button id="stone" class="stone" type="button" aria-label="Collect a stone"></button>
-            <span class="update-check" aria-label="Updated version loaded" title="Updated version loaded">✓</span>
+            <button id="stone" class="stone" type="button" aria-label="Collect a stone">
+              <svg class="rock-cracks" viewBox="0 0 200 180" aria-hidden="true">
+                <path class="crack crack--1" d="M90 30l9 31-16 23 16 18-9 45" />
+                <path class="crack crack--2" d="M99 61l29 13 19-14M83 84l-24 8-12 23" />
+                <path class="crack crack--3" d="M99 102l30 13 19 26M90 147l-28-13" />
+              </svg>
+            </button>
+
           </div>
+          <div class="rock-status">
+            <div><span id="rock-label"></span><span id="rock-health"></span></div>
+            <progress id="rock-progress" max="20" value="20" aria-labelledby="rock-label"></progress>
+            <p id="rock-reward"></p>
+          </div>
+          <section class="settlement" aria-labelledby="settlement-title">
+            <div class="settlement__heading"><strong id="settlement-title"></strong><span id="settlement-count"></span></div>
+            <div id="settlement-scene" class="settlement-scene" role="img"></div>
+          </section>
           <div class="skin-picker" role="group" aria-labelledby="skin-picker-label">
             <span id="skin-picker-label" class="skin-picker__label" data-i18n="stoneSkins">Stone skins</span>
             <button class="skin-option skin-option--classic" type="button" data-stone-skin="classic" aria-pressed="true">
@@ -73,6 +97,21 @@
 
       <aside class="future-panel" aria-label="Future updates">
         <div class="future-list">
+          <section class="progression-card" aria-labelledby="choices-title">
+            <p class="eyebrow" id="choices-eyebrow"></p>
+            <h2 id="choices-title"></h2><p id="choices-description"></p>
+            <div id="upgrade-choices" class="upgrade-choices"></div>
+            <p id="production-summary" class="production-summary"></p>
+          </section>
+          <section class="progression-card" aria-labelledby="construction-title">
+            <h2 id="construction-title"></h2><p id="construction-description"></p>
+            <div id="construction-list" class="construction-list"></div>
+          </section>
+          <section class="progression-card" aria-labelledby="achievements-title">
+            <details id="achievements-details"><summary><span id="achievements-title"></span><span id="achievements-count"></span></summary>
+              <div id="achievements-list" class="achievements-list"></div>
+            </details>
+          </section>
           <section class="future-strip crew-card" aria-labelledby="crew-title">
             <div class="crew-card__heading">
               <span class="crew-card__hero" aria-hidden="true">&#128100;</span>
@@ -179,7 +218,7 @@
               </span>
               <div>
                 <h2 id="desert-world-title" class="desert-world-card__title" data-i18n="desertWorldTitle">Desert</h2>
-                <p class="desert-world-card__description" data-i18n="desertWorldDescription">Unlocks after all 8 Diamond Creators.</p>
+                <p class="desert-world-card__description" data-i18n="desertWorldDescription">Unlocks after 4 Diamond Creators.</p>
               </div>
             </div>
           </section>
@@ -372,7 +411,7 @@
               <span class="city-card__hero" aria-hidden="true">🏙️</span>
               <div>
                 <h2 id="city-title" class="city-card__title" data-i18n="cityTitle">City</h2>
-                <p class="city-card__description" data-i18n="cityDescription">The city opens after all 8 Sandstorms.</p>
+                <p class="city-card__description" data-i18n="cityDescription">The city opens after 4 Sandstorms.</p>
               </div>
             </div>
           </section>
@@ -448,12 +487,6 @@
               </button>
             </div>
           </section>
-          <div class="future-strip" aria-hidden="true"></div>
-          <div class="future-strip" aria-hidden="true"></div>
-          <div class="future-strip" aria-hidden="true"></div>
-          <div class="future-strip" aria-hidden="true"></div>
-          <div class="future-strip" aria-hidden="true"></div>
-          <div class="future-strip" aria-hidden="true"></div>
         </div>
       </aside>
     </div>
@@ -482,7 +515,10 @@
       </div>
     </div>
 
-    <script src="script.js?v=26"></script>
-    <script src="oasis.js?v=4"></script>
+    <div id="progression-toast" class="progression-toast" role="status" aria-live="polite" hidden></div>
+    <script src="prizes.js?v=2"></script>
+    <script src="progression.js?v=1"></script>
+    <script src="script.js?v=27"></script>
+    <script src="oasis.js?v=5"></script>
   </body>
 </html>
